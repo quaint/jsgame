@@ -135,13 +135,11 @@ function animate(lastTime) {
             for (var j = 0; j < field.height; j++) {
                 partOfField = field.parts[i][j];
                 var distance = Math.sqrt(Math.pow(combine.x - partOfField.rect.x1 + field.grid / 2, 2) + Math.pow(combine.y - partOfField.rect.y1 + field.grid / 2, 2));
-                /*
                 if (!partOfField.empty && distance < combine.width && intersectWithObject(combine.header, partOfField)) {
                     partOfField.empty = true;
                     partOfField.sprite.setTexture(fieldEmptyTexture);
                 }
-                */
-                if (distance < combine.width * 2 && intersectWithObject(combine.back, partOfField)) {
+                if (distance < combine.width * 2 && partOfField.empty && intersectWithObject(combine.back, partOfField)) {
                     partOfField.sprite.setTexture(fieldBackTexture);
                 }
             }
