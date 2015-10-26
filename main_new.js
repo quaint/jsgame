@@ -49,6 +49,11 @@ bufferCanvas.width = screenWidth;
 bufferCanvas.height = screenHeight;
 var bufferContext = bufferCanvas.getContext("2d");
 
+var serverCanvas = document.createElement('canvas');
+serverCanvas.width = screenWidth;
+serverCanvas.height = screenHeight;
+var serverContext = serverCanvas.getContext("2d");
+
 var fieldCanvas = document.createElement('canvas');
 fieldCanvas.width = screenWidth;
 fieldCanvas.height = screenHeight;
@@ -63,6 +68,14 @@ spritesImage.onload = function() {
   var time = date.getTime();
   animate(time);
 }
+
+var socket = io();
+socket.on('message', function(msg){
+  // console.log(msg);
+  msg.x = msg.x + 20;
+  serverContext.clearRect(0, 0, serverCanvas.width, serverCanvas.height);
+  renderCombine(serverContext, msg);
+});
 
 document.onkeydown = function (e) {
   var key = e.keyCode;
@@ -150,8 +163,13 @@ function animate(lastTime) {
   combine.back.x2 = Math.cos(diagonalAngleBackRad2) * combine.diagonal2 + combine.x;
   combine.back.y2 = Math.sin(diagonalAngleBackRad2) * combine.diagonal2 + combine.y;
 
+if (lastTime % 100 == 0) {
+  socket.emit('message', combine);
+  // console.log("sending object");
+}
+
   bufferContext.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
-  renderCombine(bufferContext);
+  renderCombine(bufferContext, combine);
 
   if (dy < 0) {
     bline(combine.header.x1, combine.header.y1, combine.header.x2, combine.header.y2, 1);
@@ -161,6 +179,7 @@ function animate(lastTime) {
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.drawImage(fieldCanvas, 0, 0);
   context.drawImage(bufferCanvas, 0, 0);
+  context.drawImage(serverCanvas, 0, 0);
 
   lastTime = time;
   requestAnimFrame(function () {
@@ -168,13 +187,13 @@ function animate(lastTime) {
   });
 }
 
-function renderCombine(ctx) {
+function renderCombine(ctx, combineObj) {
   ctx.save();
-  ctx.translate(combine.x, combine.y);
-  ctx.rotate(combine.angle * Math.PI / 180);
-  ctx.translate(-combine.width, -combine.height / 2);
+  ctx.translate(combineObj.x, combineObj.y);
+  ctx.rotate(combineObj.angle * Math.PI / 180);
+  ctx.translate(-combineObj.width, -combineObj.height / 2);
   ctx.translate(30, 0);
-  ctx.drawImage(spritesImage, 0, 0, 20, 20, 0, 0, combine.width, combine.height);
+  ctx.drawImage(spritesImage, 0, 0, 20, 20, 0, 0, combineObj.width, combineObj.height);
   ctx.restore();
 }
 
