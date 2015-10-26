@@ -6,12 +6,8 @@ app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
-app.get('/main_new.js', function (req, res) {
-  res.sendFile(__dirname + '/main_new.js');
-});
-
-app.get('/atlas.png', function (req, res) {
-  res.sendFile(__dirname + '/atlas.png');
+app.get('/:name', function (req, res) {
+  res.sendFile(__dirname + '/' + req.params.name);
 });
 
 io.on('connection', function(socket){
@@ -24,7 +20,25 @@ io.on('connection', function(socket){
 io.on('connection', function(socket){
   socket.on('message', function(msg){
     // console.log('message: ' + msg);
-    io.emit('message', msg);
+    socket.broadcast.emit('message', msg);
+  });
+});
+
+io.on('connection', function(socket){
+  socket.on('combine', function(msg){
+    socket.broadcast.emit('combine', msg);
+  });
+});
+
+io.on('connection', function(socket){
+  socket.on('empty', function(msg){
+    socket.broadcast.emit('empty', msg);
+  });
+});
+
+io.on('connection', function(socket){
+  socket.on('straw', function(msg){
+    socket.broadcast.emit('straw', msg);
   });
 });
 

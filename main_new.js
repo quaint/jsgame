@@ -69,13 +69,22 @@ spritesImage.onload = function() {
   animate(time);
 }
 
+/*
 var socket = io();
-socket.on('message', function(msg){
+socket.on('combine', function(msg){
   // console.log(msg);
-  msg.x = msg.x + 20;
   serverContext.clearRect(0, 0, serverCanvas.width, serverCanvas.height);
   renderCombine(serverContext, msg);
 });
+
+socket.on('empty', function(msg){
+  fieldContext.drawImage(spritesImage, 20, 60, 20, 20, msg.i * field.grid, msg.j * field.grid, field.grid, field.grid);
+});
+
+socket.on('straw', function(msg){
+  fieldContext.drawImage(spritesImage, 40, 60, 20, 20, msg.i * field.grid, msg.j * field.grid, field.grid, field.grid);
+});
+*/
 
 document.onkeydown = function (e) {
   var key = e.keyCode;
@@ -119,8 +128,10 @@ function renderField(ctx) {
 
 function updateFieldView(ctx, i, j, type) {
   if (type === 1) {
+    // socket.emit('empty', {i:i, j:j});
     ctx.drawImage(spritesImage, 20, 60, 20, 20, i * field.grid, j * field.grid, field.grid, field.grid);
   } else if (type === 2) {
+    // socket.emit('straw', {i:i, j:j});
     ctx.drawImage(spritesImage, 40, 60, 20, 20, i * field.grid, j * field.grid, field.grid, field.grid);
   }
 }
@@ -139,7 +150,6 @@ function animate(lastTime) {
     } else {
       combine.angle += linearDistEachFrame * dx;
     }
-
   }
 
   combine.x -= dy * Math.cos(combine.angle * Math.PI / 180) * linearDistEachFrame;
@@ -163,10 +173,7 @@ function animate(lastTime) {
   combine.back.x2 = Math.cos(diagonalAngleBackRad2) * combine.diagonal2 + combine.x;
   combine.back.y2 = Math.sin(diagonalAngleBackRad2) * combine.diagonal2 + combine.y;
 
-if (lastTime % 100 == 0) {
-  socket.emit('message', combine);
-  // console.log("sending object");
-}
+  // socket.emit('combine', combine);
 
   bufferContext.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
   renderCombine(bufferContext, combine);
