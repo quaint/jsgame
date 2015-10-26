@@ -12,13 +12,13 @@ window.requestAnimFrame = (function (callback) {
 var dx = 0;
 var dy = 0;
 
-var screenWidth = 800;
-var screenHeight = 600;
+var screenWidth = 1600;
+var screenHeight = 900;
 
-var linearSpeed = 30;
+var linearSpeed = 50;
 
 var field = {
-  grid: 20, width: 40, height: 30, parts: []
+  grid: 10, width: 160, height: 90, parts: []
 };
 
 var combine = {
@@ -35,8 +35,8 @@ var combine = {
 };
 
 combine.diagonal = combine.height / 2;
-combine.diagonal2 = Math.sqrt(Math.pow(combine.height / 10, 2) + Math.pow(combine.width, 2));
-combine.diagonal2AngleRad = Math.atan2(combine.height / 10, combine.width);
+combine.diagonal2 = Math.sqrt(Math.pow(combine.height / 10, 2) + Math.pow(combine.width - 30, 2));
+combine.diagonal2AngleRad = Math.atan2(combine.height / 10, combine.width - 30);
 combine.diagonal2AngleDeg = combine.diagonal2AngleRad * 180 / Math.PI;
 
 var canvas = document.getElementById("canvas");
@@ -120,15 +120,20 @@ function animate(lastTime) {
   var timeDiff = time - lastTime;
   var linearDistEachFrame = linearSpeed * timeDiff / 1000;
 
-  //if (dy !== 0) {
-  combine.angle += linearDistEachFrame * dx;
-  //}
+  if (dy !== 0) {
+    if (dy == 1) {
+      combine.angle += linearDistEachFrame * -dx;
+    } else {
+      combine.angle += linearDistEachFrame * dx;
+    }
 
-  combine.x -= dy * Math.cos(combine.angle * Math.PI / 180);
-  combine.y -= dy * Math.sin(combine.angle * Math.PI / 180);
+  }
 
-  var diagonalAngle1 = combine.angle + 90;//combine.diagonalAngleDeg;
-  var diagonalAngle2 = combine.angle - 90;//combine.diagonalAngleDeg;
+  combine.x -= dy * Math.cos(combine.angle * Math.PI / 180) * linearDistEachFrame;
+  combine.y -= dy * Math.sin(combine.angle * Math.PI / 180) * linearDistEachFrame;
+
+  var diagonalAngle1 = combine.angle + 60;//combine.diagonalAngleDeg;
+  var diagonalAngle2 = combine.angle - 60;//combine.diagonalAngleDeg;
   var diagonalAngleRad1 = diagonalAngle1 * Math.PI / 180;
   var diagonalAngleRad2 = diagonalAngle2 * Math.PI / 180;
   combine.header.x1 = Math.cos(diagonalAngleRad1) * combine.diagonal + combine.x;
@@ -148,7 +153,9 @@ function animate(lastTime) {
   bufferContext.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
   renderCombine(bufferContext);
 
-  bline(combine.header.x1, combine.header.y1, combine.header.x2, combine.header.y2, 1);
+  if (dy < 0) {
+    bline(combine.header.x1, combine.header.y1, combine.header.x2, combine.header.y2, 1);
+  }
   bline(combine.back.x1, combine.back.y1, combine.back.x2, combine.back.y2, 2);
 
   context.clearRect(0, 0, canvas.width, canvas.height);
@@ -166,15 +173,16 @@ function renderCombine(ctx) {
   ctx.translate(combine.x, combine.y);
   ctx.rotate(combine.angle * Math.PI / 180);
   ctx.translate(-combine.width, -combine.height / 2);
+  ctx.translate(30, 0);
   ctx.drawImage(spritesImage, 0, 0, 20, 20, 0, 0, combine.width, combine.height);
   ctx.restore();
 }
 
 function bline(x0, y0, x1, y1, type) {
-  x0 = parseInt(x0/field.grid);
-  y0 = parseInt(y0/field.grid);
-  x1 = parseInt(x1/field.grid);
-  y1 = parseInt(y1/field.grid);
+  x0 = Math.floor(x0/field.grid);
+  y0 = Math.floor(y0/field.grid);
+  x1 = Math.floor(x1/field.grid);
+  y1 = Math.floor(y1/field.grid);
   var dx = Math.abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
   var dy = Math.abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
   var err = (dx>dy ? dx : -dy)/2;
