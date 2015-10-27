@@ -18,15 +18,8 @@ io.on('connection', function(socket){
 });
 
 io.on('connection', function(socket){
-  socket.on('message', function(msg){
-    // console.log('message: ' + msg);
-    socket.broadcast.emit('message', msg);
-  });
-});
-
-io.on('connection', function(socket){
-  socket.on('combine', function(msg){
-    socket.broadcast.emit('combine', msg);
+  socket.on('combine', function(combine){
+    socket.broadcast.emit('combine', combine);
   });
 });
 

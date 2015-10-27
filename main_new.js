@@ -21,7 +21,11 @@ var field = {
   grid: 10, width: 160, height: 90, parts: []
 };
 
+var id = getRandomInt(1000, 9999);
+var connectedCombines = {};
+
 var combine = {
+  id: id,
   x: 100, y: 100, angle: 0, width: 80, height: 80,
   header: { x1: 0, y1: 0, x2: 10, y2: 10},
   back: { x1: 0, y1: 0, x2: 10, y2: 10},
@@ -71,10 +75,8 @@ spritesImage.onload = function() {
 
 /*
 var socket = io();
-socket.on('combine', function(msg){
-  // console.log(msg);
-  serverContext.clearRect(0, 0, serverCanvas.width, serverCanvas.height);
-  renderCombine(serverContext, msg);
+socket.on('combine', function(combineMsg){
+  connectedCombines[combineMsg.id] = combineMsg;
 });
 
 socket.on('empty', function(msg){
@@ -173,10 +175,15 @@ function animate(lastTime) {
   combine.back.x2 = Math.cos(diagonalAngleBackRad2) * combine.diagonal2 + combine.x;
   combine.back.y2 = Math.sin(diagonalAngleBackRad2) * combine.diagonal2 + combine.y;
 
-  // socket.emit('combine', combine);
+  // socket.emit('combine', {id:combine.id, x:combine.x, y:combine.y, angle:combine.angle});
 
   bufferContext.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
   renderCombine(bufferContext, combine);
+  // for (var prop in connectedCombines) {
+  //   if (connectedCombines.hasOwnProperty(prop)) {
+  //     renderCombine(bufferContext, connectedCombines[prop]);
+  //   }
+  // }
 
   if (dy < 0) {
     bline(combine.header.x1, combine.header.y1, combine.header.x2, combine.header.y2, 1);
@@ -198,9 +205,9 @@ function renderCombine(ctx, combineObj) {
   ctx.save();
   ctx.translate(combineObj.x, combineObj.y);
   ctx.rotate(combineObj.angle * Math.PI / 180);
-  ctx.translate(-combineObj.width, -combineObj.height / 2);
+  ctx.translate(-combine.width, -combine.height / 2);
   ctx.translate(30, 0);
-  ctx.drawImage(spritesImage, 0, 0, 20, 20, 0, 0, combineObj.width, combineObj.height);
+  ctx.drawImage(spritesImage, 0, 0, 20, 20, 0, 0, combine.width, combine.height);
   ctx.restore();
 }
 
@@ -220,4 +227,8 @@ function bline(x0, y0, x1, y1, type) {
     if (e2 > -dx) { err -= dy; x0 += sx; }
     if (e2 < dy) { err += dx; y0 += sy; }
   }
+}
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
