@@ -129,7 +129,7 @@ function generateField() {
 function renderField(ctx) {
   for (var i = 0; i < field.width; i++) {
     for (var j = 0; j < field.height; j++) {
-      var partOfField = field.parts[i][j];
+      // var partOfField = field.parts[i][j];
       ctx.drawImage(spritesImage, 0, 60, 20, 20, i * field.grid, j * field.grid, field.grid, field.grid);
     }
   }
@@ -164,7 +164,7 @@ function animate(lastTime) {
   var time = date.getTime();
   var timeDiff = time - lastTime;
   var linearDistEachFrame = linearSpeed * timeDiff / 1000;
-
+  
   if (dy !== 0) {
     if (combine.fuel > 0) {
       combine.fuel -= timeDiff * 0.001;
