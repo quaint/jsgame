@@ -26,6 +26,8 @@ var connectedCombines = {};
 
 var combine = {
   id: id,
+  grain: 0,
+  fuel: 300,
   x: 100, y: 100, angle: 0, width: 80, height: 80,
   header: { x1: 0, y1: 0, x2: 10, y2: 10},
   back: { x1: 0, y1: 0, x2: 10, y2: 10},
@@ -76,15 +78,15 @@ spritesImage.onload = function() {
 /*
 var socket = io();
 socket.on('combine', function(combineMsg){
-  connectedCombines[combineMsg.id] = combineMsg;
+connectedCombines[combineMsg.id] = combineMsg;
 });
 
 socket.on('empty', function(msg){
-  fieldContext.drawImage(spritesImage, 20, 60, 20, 20, msg.i * field.grid, msg.j * field.grid, field.grid, field.grid);
+fieldContext.drawImage(spritesImage, 20, 60, 20, 20, msg.i * field.grid, msg.j * field.grid, field.grid, field.grid);
 });
 
 socket.on('straw', function(msg){
-  fieldContext.drawImage(spritesImage, 40, 60, 20, 20, msg.i * field.grid, msg.j * field.grid, field.grid, field.grid);
+fieldContext.drawImage(spritesImage, 40, 60, 20, 20, msg.i * field.grid, msg.j * field.grid, field.grid, field.grid);
 });
 */
 
@@ -129,12 +131,23 @@ function renderField(ctx) {
 }
 
 function updateFieldView(ctx, i, j, type) {
-  if (type === 1) {
+  if (field.parts[i] === undefined || field.parts[i][j] === undefined) {
+    return false;
+  }
+  var partOfField = field.parts[i][j];
+  if (partOfField.type === 0 && type === 1) {
+    partOfField.type = type;
+    if (combine.grain < 5000) {
+      combine.grain += 1;
+    }
     // socket.emit('empty', {i:i, j:j});
     ctx.drawImage(spritesImage, 20, 60, 20, 20, i * field.grid, j * field.grid, field.grid, field.grid);
-  } else if (type === 2) {
+    return true;
+  } else if (partOfField.type === 1 && type === 2) {
+    partOfField.type = type;
     // socket.emit('straw', {i:i, j:j});
     ctx.drawImage(spritesImage, 40, 60, 20, 20, i * field.grid, j * field.grid, field.grid, field.grid);
+    return false;
   }
 }
 
@@ -147,6 +160,11 @@ function animate(lastTime) {
   var linearDistEachFrame = linearSpeed * timeDiff / 1000;
 
   if (dy !== 0) {
+    if (combine.fuel > 0) {
+      combine.fuel -= timeDiff * 0.001;
+    } else {
+      combine.fuel = 0;
+    }
     if (dy == 1) {
       combine.angle += linearDistEachFrame * -dx;
     } else {
@@ -186,19 +204,37 @@ function animate(lastTime) {
   // }
 
   if (dy < 0) {
-    bline(combine.header.x1, combine.header.y1, combine.header.x2, combine.header.y2, 1);
+    if (bline(combine.header.x1, combine.header.y1, combine.header.x2, combine.header.y2, 1)) {
+      bline(combine.back.x1, combine.back.y1, combine.back.x2, combine.back.y2, 2);
+    }
   }
-  bline(combine.back.x1, combine.back.y1, combine.back.x2, combine.back.y2, 2);
+
+  var grainLevel = combine.grain * 100/5000;
+  var fuelLevel = combine.fuel * 100/300;
+  renderBar(bufferContext, grainLevel, 10, 10);
+  renderBar(bufferContext, fuelLevel, 40, 10);
 
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.drawImage(fieldCanvas, 0, 0);
   context.drawImage(bufferCanvas, 0, 0);
-  context.drawImage(serverCanvas, 0, 0);
+  // context.drawImage(serverCanvas, 0, 0);
+
 
   lastTime = time;
   requestAnimFrame(function () {
     animate(lastTime);
   });
+}
+
+function renderBar(ctx, level, x, y) {
+  ctx.save();
+  ctx.fillStyle="#FFFFFF";
+  ctx.fillRect(x, y, 20, 100);
+  ctx.fillStyle="#68c1e7";
+  ctx.fillRect(x,100 + y - level, 20, level);
+  ctx.strokeStyle="#000000";
+  ctx.strokeRect(x, y, 20, 100);
+  ctx.restore();
 }
 
 function renderCombine(ctx, combineObj) {
@@ -219,16 +255,19 @@ function bline(x0, y0, x1, y1, type) {
   var dx = Math.abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
   var dy = Math.abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
   var err = (dx>dy ? dx : -dy)/2;
-
+  var notEmptyField = false;
   while (true) {
-    updateFieldView(fieldContext, x0, y0, type);
+    if (updateFieldView(fieldContext, x0, y0, type)) {
+      notEmptyField = true;
+    }
     if (x0 === x1 && y0 === y1) break;
     var e2 = err;
     if (e2 > -dx) { err -= dy; x0 += sx; }
     if (e2 < dy) { err += dx; y0 += sy; }
   }
+  return notEmptyField;
 }
 
 function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
