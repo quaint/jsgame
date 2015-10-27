@@ -217,8 +217,8 @@ function animate(lastTime) {
 
   var grainLevel = combine.grain * 100/combine.maxGrain;
   var fuelLevel = combine.fuel * 100/combine.maxFuel;
-  renderBar(bufferContext, grainLevel, 10, 10);
-  renderBar(bufferContext, fuelLevel, 40, 10);
+  renderBar(bufferContext, grainLevel, 10, 10, 80, false);
+  renderBar(bufferContext, fuelLevel, 40, 10, 20, true);
 
   bufferContext.fillText(Math.floor((fieldPartsCount-fieldPartsLeft)/fieldPartsCount * 100) + "% done", 80, 20);
   bufferContext.fillText("grain", 9, 122);
@@ -236,11 +236,17 @@ function animate(lastTime) {
   });
 }
 
-function renderBar(ctx, level, x, y) {
+function renderBar(ctx, level, x, y, warningLevel, below) {
   ctx.save();
   ctx.fillStyle="#FFFFFF";
   ctx.fillRect(x, y, 20, 100);
-  ctx.fillStyle="#68c1e7";
+  if (below && level < warningLevel) {
+    ctx.fillStyle="#ff0000";
+  } else if (!below && level > warningLevel) {
+    ctx.fillStyle="#ff0000";
+  } else {
+    ctx.fillStyle="#68c1e7";
+  }
   ctx.fillRect(x,100 + y - level, 20, level);
   ctx.strokeStyle="#000000";
   ctx.strokeRect(x, y, 20, 100);
