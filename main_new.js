@@ -21,13 +21,18 @@ var field = {
   grid: 10, width: 160, height: 90, parts: []
 };
 
+var fieldPartsCount = field.width * field.height;
+var fieldPartsLeft = fieldPartsCount;
+
 var id = getRandomInt(1000, 9999);
 var connectedCombines = {};
 
 var combine = {
   id: id,
   grain: 0,
+  maxGrain: 5000,
   fuel: 300,
+  maxFuel: 300,
   x: 100, y: 100, angle: 0, width: 80, height: 80,
   header: { x1: 0, y1: 0, x2: 10, y2: 10},
   back: { x1: 0, y1: 0, x2: 10, y2: 10},
@@ -137,9 +142,10 @@ function updateFieldView(ctx, i, j, type) {
   var partOfField = field.parts[i][j];
   if (partOfField.type === 0 && type === 1) {
     partOfField.type = type;
-    if (combine.grain < 5000) {
+    if (combine.grain < combine.maxGrain) {
       combine.grain += 1;
     }
+    fieldPartsLeft--;
     // socket.emit('empty', {i:i, j:j});
     ctx.drawImage(spritesImage, 20, 60, 20, 20, i * field.grid, j * field.grid, field.grid, field.grid);
     return true;
@@ -209,10 +215,12 @@ function animate(lastTime) {
     }
   }
 
-  var grainLevel = combine.grain * 100/5000;
-  var fuelLevel = combine.fuel * 100/300;
+  var grainLevel = combine.grain * 100/combine.maxGrain;
+  var fuelLevel = combine.fuel * 100/combine.maxFuel;
   renderBar(bufferContext, grainLevel, 10, 10);
   renderBar(bufferContext, fuelLevel, 40, 10);
+
+  bufferContext.fillText(Math.floor((fieldPartsCount-fieldPartsLeft)/fieldPartsCount * 100) + "% done", 80, 20);
 
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.drawImage(fieldCanvas, 0, 0);
