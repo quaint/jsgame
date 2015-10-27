@@ -221,6 +221,8 @@ function animate(lastTime) {
   renderBar(bufferContext, fuelLevel, 40, 10);
 
   bufferContext.fillText(Math.floor((fieldPartsCount-fieldPartsLeft)/fieldPartsCount * 100) + "% done", 80, 20);
+  bufferContext.fillText("grain", 9, 122);
+  bufferContext.fillText("fuel", 42, 122);
 
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.drawImage(fieldCanvas, 0, 0);
