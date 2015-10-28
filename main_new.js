@@ -12,8 +12,8 @@ window.requestAnimFrame = (function (callback) {
 var dx = 0;
 var dy = 0;
 
-var screenWidth = 1600;
-var screenHeight = 900;
+var screenWidth = 1000;
+var screenHeight = 600;
 
 var linearSpeed = 50;
 
@@ -21,8 +21,8 @@ var field = {
   grid: 10, width: 160, height: 90, parts: []
 };
 
-var fieldPartsCount = field.width * field.height;
-var fieldPartsLeft = fieldPartsCount;
+// var fieldPartsCount = field.width * field.height;
+// var fieldPartsLeft = fieldPartsCount;
 
 var id = getRandomInt(1000, 9999);
 var connectedCombines = {};
@@ -114,6 +114,20 @@ document.onkeyup = function (e) {
 };
 
 function generateField() {
+  field.width = fieldData[0].length;
+  field.height = fieldData.length
+  for (var i = 0; i < fieldData.length; i++) {
+    var rowData = fieldData[i].split('');
+    for (var j = 0; j < rowData.length; j++) {
+      if (!field.parts[j]) {
+        field.parts[j] = [];
+      }
+      field.parts[j][i] = {
+        type: parseInt(rowData[j])
+      };
+    }
+  }
+/*  
   for (var i = 0; i < field.width; i++) {
     if (!field.parts[i]) {
       field.parts[i] = [];
@@ -124,13 +138,20 @@ function generateField() {
       };
     }
   }
+  */
 }
 
 function renderField(ctx) {
   for (var i = 0; i < field.width; i++) {
     for (var j = 0; j < field.height; j++) {
-      // var partOfField = field.parts[i][j];
-      ctx.drawImage(spritesImage, 0, 60, 20, 20, i * field.grid, j * field.grid, field.grid, field.grid);
+      var partOfField = field.parts[i][j];
+      if (partOfField.type === 0) {
+        ctx.drawImage(spritesImage, 0, 60, 20, 20, i * field.grid, j * field.grid, field.grid, field.grid);
+      } else if (partOfField.type === 3) {
+        ctx.drawImage(spritesImage, 60, 60, 20, 20, i * field.grid, j * field.grid, field.grid, field.grid);
+      } else if (partOfField.type === 4) {
+        ctx.drawImage(spritesImage, 80, 60, 20, 20, i * field.grid, j * field.grid, field.grid, field.grid);
+      }
     }
   }
 }
@@ -145,7 +166,7 @@ function updateFieldView(ctx, i, j, type) {
     if (combine.grain < combine.maxGrain) {
       combine.grain += 1;
     }
-    fieldPartsLeft--;
+    // fieldPartsLeft--;
     // socket.emit('empty', {i:i, j:j});
     ctx.drawImage(spritesImage, 20, 60, 20, 20, i * field.grid, j * field.grid, field.grid, field.grid);
     return true;
@@ -220,7 +241,7 @@ function animate(lastTime) {
   renderBar(bufferContext, grainLevel, 10, 10, 80, false);
   renderBar(bufferContext, fuelLevel, 40, 10, 20, true);
 
-  bufferContext.fillText(Math.floor((fieldPartsCount-fieldPartsLeft)/fieldPartsCount * 100) + "% done", 80, 20);
+  // bufferContext.fillText(Math.floor((fieldPartsCount-fieldPartsLeft)/fieldPartsCount * 100) + "% done", 80, 20);
   bufferContext.fillText("grain", 9, 122);
   bufferContext.fillText("fuel", 42, 122);
 
