@@ -31,7 +31,7 @@ var connectedCombines = {};
 var combine = {
   id: id,
   grain: 0,
-  maxGrain: 5000,
+  maxGrain: 3000,
   fuel: 300,
   maxFuel: 300,
   x: 50, y: 300, angle: 0, width: 80, height: 80,
@@ -49,7 +49,7 @@ var combine = {
 
 var trailer = {
   grain: 0,
-  maxGrain: 15000,
+  maxGrain: 9000,
   x: 500, y: 500, angle: 0, width: 60, height: 60,
   sprite: null,
 };
@@ -200,10 +200,11 @@ function animate(lastTime) {
   var linearDistEachFrame = linearSpeed * timeDiff / 1000;
 
   if (combine.pouring) {
-    if (combine.grain > 0) {
-      combine.grain -= timeDiff;
+    var distance = calculateDistance(combine, trailer);
+    if (combine.grain > 0 && distance < 80) {
+      combine.grain -= timeDiff / 10;
       if (trailer.grain < trailer.maxGrain) {
-        trailer.grain += timeDiff;
+        trailer.grain += timeDiff / 10;
       }
     }
   }
@@ -284,8 +285,8 @@ function animate(lastTime) {
   
   // bufferContext.fillText(Math.floor((fieldPartsCount-fieldPartsLeft)/fieldPartsCount * 100) + "% done", 80, 20);
   bufferContext.fillText("grain", 9, 122);
-  bufferContext.fillText("trailer", 42, 122);
-  bufferContext.fillText("fuel", 70, 122);
+  bufferContext.fillText("trailer", 38, 122);
+  bufferContext.fillText("fuel", 72, 122);
   
 
   context.clearRect(0, 0, canvas.width, canvas.height);
@@ -364,4 +365,8 @@ function bline(x0, y0, x1, y1, type) {
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function calculateDistance(firstObject, secondObject) {
+  return Math.sqrt(Math.pow(firstObject.x - secondObject.x, 2) + Math.pow(firstObject.y - secondObject.y, 2));
 }
