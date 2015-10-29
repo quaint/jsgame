@@ -34,7 +34,7 @@ var combine = {
   maxGrain: 5000,
   fuel: 300,
   maxFuel: 300,
-  x: 100, y: 100, angle: 0, width: 80, height: 80,
+  x: 50, y: 300, angle: 0, width: 80, height: 80,
   header: { x1: 0, y1: 0, x2: 10, y2: 10},
   back: { x1: 0, y1: 0, x2: 10, y2: 10},
   diagonal: 0,
@@ -43,6 +43,14 @@ var combine = {
   diagonal2: 0,
   diagonal2AngleRad: 0,
   diagonal2AngleDeg: 0,
+  sprite: null,
+  pouring: false
+};
+
+var trailer = {
+  grain: 0,
+  maxGrain: 15000,
+  x: 500, y: 500, angle: 0, width: 60, height: 60,
   sprite: null,
 };
 
@@ -104,6 +112,7 @@ document.onkeydown = function (e) {
   else if (key == 38) dy = -1;
   else if (key == 39) dx = 1;
   else if (key == 40) dy = 1;
+  else if (key == 49) combine.pouring = true;
   else return true;
   return false;
 };
@@ -112,6 +121,7 @@ document.onkeyup = function (e) {
   var key = e.keyCode;
   if (key == 37 || key == 39) dx = 0;
   else if (key == 38 || key == 40) dy = 0;
+  else if (key == 49) combine.pouring = false;
   else return true;
   return false;
 };
@@ -189,6 +199,15 @@ function animate(lastTime) {
   var timeDiff = time - lastTime;
   var linearDistEachFrame = linearSpeed * timeDiff / 1000;
 
+  if (combine.pouring) {
+    if (combine.grain > 0) {
+      combine.grain -= timeDiff;
+      if (trailer.grain < trailer.maxGrain) {
+        trailer.grain += timeDiff;
+      }
+    }
+  }
+
   if (workingTime > 0) {
     workingTime -= timeDiff;
   }
@@ -242,6 +261,7 @@ function animate(lastTime) {
   bufferContext.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
   
   renderCombine(bufferContext, combine);
+  renderTrailer(bufferContext, trailer);
   
   // for (var prop in connectedCombines) {
   //   if (connectedCombines.hasOwnProperty(prop)) {
@@ -256,13 +276,17 @@ function animate(lastTime) {
   }
 
   var grainLevel = combine.grain * 100/combine.maxGrain;
+  var trailerGrainLevel = trailer.grain * 100/trailer.maxGrain;
   var fuelLevel = combine.fuel * 100/combine.maxFuel;
   renderBar(bufferContext, grainLevel, 10, 10, 80, false);
-  renderBar(bufferContext, fuelLevel, 40, 10, 20, true);
-
+  renderBar(bufferContext, trailerGrainLevel, 40, 10, 80, false);
+  renderBar(bufferContext, fuelLevel, 70, 10, 20, true);
+  
   // bufferContext.fillText(Math.floor((fieldPartsCount-fieldPartsLeft)/fieldPartsCount * 100) + "% done", 80, 20);
   bufferContext.fillText("grain", 9, 122);
-  bufferContext.fillText("fuel", 42, 122);
+  bufferContext.fillText("trailer", 42, 122);
+  bufferContext.fillText("fuel", 70, 122);
+  
 
   context.clearRect(0, 0, canvas.width, canvas.height);
   context.drawImage(fieldCanvas, 0, 0);
@@ -299,9 +323,21 @@ function renderCombine(ctx, combineObj) {
   ctx.rotate(combineObj.angle * Math.PI / 180);
   // ctx.translate(-combine.width, -combine.height / 2);
   if (workingTime > 0) {
-    ctx.drawImage(spritesImage, animationFrame * 20, 80, 20, 20, -combine.width + 6, -combine.height/2 + 22, 36, 36);
+    ctx.drawImage(spritesImage, animationFrame * 20, 80, 20, 20, -combineObj.width + 6, -combineObj.height/2 + 22, 36, 36);
   }
-  ctx.drawImage(spritesImage, 0, 0, 20, 20, -combine.width + 30, -combine.height/2, combine.width, combine.height);
+  ctx.drawImage(spritesImage, 0, 0, 20, 20, -combineObj.width + 30, -combineObj.height/2, combineObj.width, combineObj.height);
+  ctx.restore();
+}
+
+function renderTrailer(ctx, trailerObj) {
+  ctx.save();
+  ctx.translate(trailerObj.x, trailerObj.y);
+  ctx.rotate(trailerObj.angle * Math.PI / 180);
+  if (trailerObj.grain > 0) {
+    ctx.drawImage(spritesImage, 20, 20, 20, 20, -trailerObj.width, -trailerObj.height/2, trailerObj.width, trailerObj.height);
+  } else {
+    ctx.drawImage(spritesImage, 0, 20, 20, 20, -trailerObj.width, -trailerObj.height/2, trailerObj.width, trailerObj.height);
+  }
   ctx.restore();
 }
 
