@@ -12,11 +12,10 @@ window.requestAnimFrame = (function (callback) {
 var dx = 0;
 var dy = 0;
 
-var screenWidth = 1000;
-var screenHeight = 600;
-
 var linearSpeed = 50;
-
+var animationFrame = 0;
+var acDelta = 0;
+var msPerFrame = 100;
 var field = {
   grid: 10, width: 160, height: 90, parts: []
 };
@@ -42,7 +41,8 @@ var combine = {
   diagonal2: 0,
   diagonal2AngleRad: 0,
   diagonal2AngleDeg: 0,
-  sprite: null
+  sprite: null,
+  working: true
 };
 
 combine.diagonal = combine.height / 2;
@@ -51,6 +51,8 @@ combine.diagonal2AngleRad = Math.atan2(combine.height / 10, combine.width - 30);
 combine.diagonal2AngleDeg = combine.diagonal2AngleRad * 180 / Math.PI;
 
 var canvas = document.getElementById("canvas");
+var screenWidth = canvas.parentNode.clientWidth;
+var screenHeight = canvas.parentNode.clientHeight;
 canvas.width = screenWidth;
 canvas.height = screenHeight;
 var context = canvas.getContext("2d");
@@ -181,10 +183,19 @@ function updateFieldView(ctx, i, j, type) {
 function animate(lastTime) {
 
   // update
-  var date = new Date();
-  var time = date.getTime();
+  var time = Date.now();
   var timeDiff = time - lastTime;
   var linearDistEachFrame = linearSpeed * timeDiff / 1000;
+  
+  if (acDelta > msPerFrame) {
+    acDelta = 0;
+    animationFrame++;
+    if (animationFrame > 1) {
+      animationFrame = 0;
+    }
+  } else {
+    acDelta += timeDiff;
+  }
   
   if (dy !== 0) {
     if (combine.fuel > 0) {
@@ -223,7 +234,9 @@ function animate(lastTime) {
   // socket.emit('combine', {id:combine.id, x:combine.x, y:combine.y, angle:combine.angle});
 
   bufferContext.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
+  
   renderCombine(bufferContext, combine);
+  
   // for (var prop in connectedCombines) {
   //   if (connectedCombines.hasOwnProperty(prop)) {
   //     renderCombine(bufferContext, connectedCombines[prop]);
@@ -278,9 +291,11 @@ function renderCombine(ctx, combineObj) {
   ctx.save();
   ctx.translate(combineObj.x, combineObj.y);
   ctx.rotate(combineObj.angle * Math.PI / 180);
-  ctx.translate(-combine.width, -combine.height / 2);
-  ctx.translate(30, 0);
-  ctx.drawImage(spritesImage, 0, 0, 20, 20, 0, 0, combine.width, combine.height);
+  // ctx.translate(-combine.width, -combine.height / 2);
+  if (combineObj.working) {
+    ctx.drawImage(spritesImage, animationFrame * 20, 80, 20, 20, -combine.width + 6, -combine.height/2 + 22, 36, 36);
+  }
+  ctx.drawImage(spritesImage, 0, 0, 20, 20, -combine.width + 30, -combine.height/2, combine.width, combine.height);
   ctx.restore();
 }
 
