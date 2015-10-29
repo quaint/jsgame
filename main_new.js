@@ -16,6 +16,8 @@ var linearSpeed = 50;
 var animationFrame = 0;
 var acDelta = 0;
 var msPerFrame = 100;
+var workingTime = 0;
+
 var field = {
   grid: 10, width: 160, height: 90, parts: []
 };
@@ -42,7 +44,6 @@ var combine = {
   diagonal2AngleRad: 0,
   diagonal2AngleDeg: 0,
   sprite: null,
-  working: true
 };
 
 combine.diagonal = combine.height / 2;
@@ -171,6 +172,7 @@ function updateFieldView(ctx, i, j, type) {
     // fieldPartsLeft--;
     // socket.emit('empty', {i:i, j:j});
     ctx.drawImage(spritesImage, 20, 60, 20, 20, i * field.grid, j * field.grid, field.grid, field.grid);
+    workingTime = 1000;
     return true;
   } else if (partOfField.type === 1 && type === 2) {
     partOfField.type = type;
@@ -186,6 +188,10 @@ function animate(lastTime) {
   var time = Date.now();
   var timeDiff = time - lastTime;
   var linearDistEachFrame = linearSpeed * timeDiff / 1000;
+
+  if (workingTime > 0) {
+    workingTime -= timeDiff;
+  }
   
   if (acDelta > msPerFrame) {
     acDelta = 0;
@@ -292,7 +298,7 @@ function renderCombine(ctx, combineObj) {
   ctx.translate(combineObj.x, combineObj.y);
   ctx.rotate(combineObj.angle * Math.PI / 180);
   // ctx.translate(-combine.width, -combine.height / 2);
-  if (combineObj.working) {
+  if (workingTime > 0) {
     ctx.drawImage(spritesImage, animationFrame * 20, 80, 20, 20, -combine.width + 6, -combine.height/2 + 22, 36, 36);
   }
   ctx.drawImage(spritesImage, 0, 0, 20, 20, -combine.width + 30, -combine.height/2, combine.width, combine.height);
