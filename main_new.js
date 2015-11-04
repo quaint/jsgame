@@ -34,7 +34,7 @@ var combine = {
   maxGrain: 3000,
   fuel: 300,
   maxFuel: 300,
-  x: 50, y: 300, angle: 0, width: 80, height: 80,
+  x: 50, y: 300, angle: 0, width: 70, height: 80,
   header: { x1: 0, y1: 0, x2: 10, y2: 10},
   back: { x1: 0, y1: 0, x2: 10, y2: 10},
   diagonal: 0,
@@ -50,7 +50,7 @@ var combine = {
 var trailer = {
   grain: 0,
   maxGrain: 9000,
-  x: 500, y: 500, angle: 0, width: 60, height: 60,
+  x: 500, y: 500, angle: 0, width: 20, height: 20,
   sprite: null,
 };
 
@@ -159,11 +159,11 @@ function renderField(ctx) {
     for (var j = 0; j < field.height; j++) {
       var partOfField = field.parts[i][j];
       if (partOfField.type === 0) {
-        ctx.drawImage(spritesImage, 0, 60, 20, 20, i * field.grid, j * field.grid, field.grid, field.grid);
+        ctx.drawImage(spritesImage, 0, 60, field.grid, field.grid, i * field.grid, j * field.grid, field.grid, field.grid);
       } else if (partOfField.type === 3) {
-        ctx.drawImage(spritesImage, 60, 60, 20, 20, i * field.grid, j * field.grid, field.grid, field.grid);
+        ctx.drawImage(spritesImage, 60, 60, field.grid, field.grid, i * field.grid, j * field.grid, field.grid, field.grid);
       } else if (partOfField.type === 4) {
-        ctx.drawImage(spritesImage, 80, 60, 20, 20, i * field.grid, j * field.grid, field.grid, field.grid);
+        ctx.drawImage(spritesImage, 80, 60, field.grid, field.grid, i * field.grid, j * field.grid, field.grid, field.grid);
       }
     }
   }
@@ -181,13 +181,13 @@ function updateFieldView(ctx, i, j, type) {
     }
     // fieldPartsLeft--;
     // socket.emit('empty', {i:i, j:j});
-    ctx.drawImage(spritesImage, 20, 60, 20, 20, i * field.grid, j * field.grid, field.grid, field.grid);
+    ctx.drawImage(spritesImage, 20, 60, field.grid, field.grid, i * field.grid, j * field.grid, field.grid, field.grid);
     workingTime = 1000;
     return true;
   } else if (partOfField.type === 1 && type === 2) {
     partOfField.type = type;
     // socket.emit('straw', {i:i, j:j});
-    ctx.drawImage(spritesImage, 40, 60, 20, 20, i * field.grid, j * field.grid, field.grid, field.grid);
+    ctx.drawImage(spritesImage, 40, 60, field.grid, field.grid, i * field.grid, j * field.grid, field.grid, field.grid);
     return false;
   }
 }
@@ -322,11 +322,10 @@ function renderCombine(ctx, combineObj) {
   ctx.save();
   ctx.translate(combineObj.x, combineObj.y);
   ctx.rotate(combineObj.angle * Math.PI / 180);
-  // ctx.translate(-combine.width, -combine.height / 2);
   if (workingTime > 0) {
-    ctx.drawImage(spritesImage, animationFrame * 20, 80, 20, 20, -combineObj.width + 6, -combineObj.height/2 + 22, 36, 36);
+    ctx.drawImage(spritesImage, animationFrame * 20, 80, 20, 20, -combineObj.width + 20, -combineObj.height/2 + 31, 20, 20);
   }
-  ctx.drawImage(spritesImage, 0, 0, 20, 20, -combineObj.width + 30, -combineObj.height/2, combineObj.width, combineObj.height);
+  ctx.drawImage(spritesImage, 0, 100, combineObj.width, combineObj.height, -combineObj.width + 30, -combineObj.height/2, combineObj.width, combineObj.height);
   ctx.restore();
 }
 
