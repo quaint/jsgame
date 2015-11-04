@@ -34,7 +34,7 @@ var combine = {
   maxGrain: 3000,
   fuel: 300,
   maxFuel: 300,
-  x: 50, y: 300, angle: 0, width: 70, height: 80,
+  x: 50, y: 300, angle: 0, width: 71, height: 80,
   header: { x1: 0, y1: 0, x2: 10, y2: 10},
   back: { x1: 0, y1: 0, x2: 10, y2: 10},
   diagonal: 0,
