@@ -1,17 +1,5 @@
 define(function (require) {
 
-  
-  window.requestAnimFrame = (function (callback) {
-    return window.requestAnimationFrame ||
-      window.webkitRequestAnimationFrame ||
-      window.mozRequestAnimationFrame ||
-      window.oRequestAnimationFrame ||
-      window.msRequestAnimationFrame ||
-      function (callback) {
-        window.setTimeout(callback, 1000 / 60);
-      }
-  })();
-
   var dx = 0;
   var dy = 0;
 
@@ -25,6 +13,7 @@ define(function (require) {
   var fieldData = require('./fielddata');
   var combine = require('./combine');
   var trailer = require('./trailer');
+  var renderer = require('./renderer');
 
   combine.diagonal = combine.height / 2;
   combine.diagonal2 = Math.sqrt(Math.pow(combine.height / 10, 2) + Math.pow(combine.width - 30, 2));
@@ -43,11 +32,6 @@ define(function (require) {
   bufferCanvas.height = screenHeight;
   var bufferContext = bufferCanvas.getContext("2d");
 
-  var serverCanvas = document.createElement('canvas');
-  serverCanvas.width = screenWidth;
-  serverCanvas.height = screenHeight;
-  var serverContext = serverCanvas.getContext("2d");
-
   var fieldCanvas = document.createElement('canvas');
   fieldCanvas.width = screenWidth;
   fieldCanvas.height = screenHeight;
@@ -57,7 +41,7 @@ define(function (require) {
   spritesImage.src = 'assets/atlas.png';
   spritesImage.onload = function () {
     generateField();
-    renderField(fieldContext);
+    renderer.renderField(fieldContext, field, spritesImage);
     var date = new Date();
     var time = date.getTime();
     animate(time);
@@ -99,20 +83,7 @@ define(function (require) {
     }
   }
 
-  function renderField(ctx) {
-    for (var i = 0; i < field.width; i++) {
-      for (var j = 0; j < field.height; j++) {
-        var partOfField = field.parts[i][j];
-        if (partOfField.type === 0) {
-          ctx.drawImage(spritesImage, 0, 60, field.grid, field.grid, i * field.grid, j * field.grid, field.grid, field.grid);
-        } else if (partOfField.type === 3) {
-          ctx.drawImage(spritesImage, 60, 60, field.grid, field.grid, i * field.grid, j * field.grid, field.grid, field.grid);
-        } else if (partOfField.type === 4) {
-          ctx.drawImage(spritesImage, 80, 60, field.grid, field.grid, i * field.grid, j * field.grid, field.grid, field.grid);
-        }
-      }
-    }
-  }
+  
 
   function updateFieldView(ctx, i, j, type) {
     if (field.parts[i] === undefined || field.parts[i][j] === undefined) {
@@ -206,9 +177,9 @@ define(function (require) {
 
     bufferContext.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
 
-    renderCombine(bufferContext, combine);
-    renderTrailer(bufferContext, trailer);
-  
+    renderer.renderCombine(bufferContext, combine, spritesImage, workingTime);
+    renderer.renderTrailer(bufferContext, trailer, spritesImage);
+
     if (dy < 0) {
       if (bline(combine.header.x1, combine.header.y1, combine.header.x2, combine.header.y2, 1)) {
         bline(combine.back.x1, combine.back.y1, combine.back.x2, combine.back.y2, 2);
@@ -218,66 +189,24 @@ define(function (require) {
     var grainLevel = combine.grain * 100 / combine.maxGrain;
     var trailerGrainLevel = trailer.grain * 100 / trailer.maxGrain;
     var fuelLevel = combine.fuel * 100 / combine.maxFuel;
-    renderBar(bufferContext, grainLevel, 10, 10, 80, false);
-    renderBar(bufferContext, trailerGrainLevel, 40, 10, 80, false);
-    renderBar(bufferContext, fuelLevel, 70, 10, 20, true);
+    renderer.renderBar(bufferContext, grainLevel, 10, 10, 80, false);
+    renderer.renderBar(bufferContext, trailerGrainLevel, 40, 10, 80, false);
+    renderer.renderBar(bufferContext, fuelLevel, 70, 10, 20, true);
   
     // bufferContext.fillText(Math.floor((fieldPartsCount-fieldPartsLeft)/fieldPartsCount * 100) + "% done", 80, 20);
     bufferContext.fillText("grain", 9, 122);
     bufferContext.fillText("trailer", 38, 122);
     bufferContext.fillText("fuel", 72, 122);
 
-
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.drawImage(fieldCanvas, 0, 0);
     context.drawImage(bufferCanvas, 0, 0);
     // context.drawImage(serverCanvas, 0, 0);
 
-
     lastTime = time;
     requestAnimFrame(function () {
       animate(lastTime);
     });
-  }
-
-  function renderBar(ctx, level, x, y, warningLevel, below) {
-    ctx.save();
-    ctx.fillStyle = "#FFFFFF";
-    ctx.fillRect(x, y, 20, 100);
-    if (below && level < warningLevel) {
-      ctx.fillStyle = "#ff0000";
-    } else if (!below && level > warningLevel) {
-      ctx.fillStyle = "#ff0000";
-    } else {
-      ctx.fillStyle = "#68c1e7";
-    }
-    ctx.fillRect(x, 100 + y - level, 20, level);
-    ctx.strokeStyle = "#000000";
-    ctx.strokeRect(x, y, 20, 100);
-    ctx.restore();
-  }
-
-  function renderCombine(ctx, combineObj) {
-    ctx.save();
-    ctx.translate(combineObj.x, combineObj.y);
-    ctx.rotate(combineObj.angle * Math.PI / 180);
-    if (workingTime > 0) {
-      ctx.drawImage(spritesImage, animationFrame * 20, 80, 20, 20, -combineObj.width + 20, -combineObj.height / 2 + 31, 20, 20);
-    }
-    ctx.drawImage(spritesImage, 0, 100, combineObj.width, combineObj.height, -combineObj.width + 30, -combineObj.height / 2, combineObj.width, combineObj.height);
-    ctx.restore();
-  }
-
-  function renderTrailer(ctx, trailerObj) {
-    ctx.save();
-    ctx.translate(trailerObj.x, trailerObj.y);
-    ctx.rotate(trailerObj.angle * Math.PI / 180);
-    if (trailerObj.grain > 0) {
-      ctx.drawImage(spritesImage, 20, 20, 20, 20, -trailerObj.width, -trailerObj.height / 2, trailerObj.width, trailerObj.height);
-    } else {
-      ctx.drawImage(spritesImage, 0, 20, 20, 20, -trailerObj.width, -trailerObj.height / 2, trailerObj.width, trailerObj.height);
-    }
-    ctx.restore();
   }
 
   function bline(x0, y0, x1, y1, type) {
