@@ -1,6 +1,8 @@
-define({
-  grain: 0,
-  maxGrain: 9000,
-  x: 500, y: 500, angle: 0, width: 20, height: 20,
-  sprite: null,
+define(['./vehicle'], function (createVehicle) {
+  return function (x, y, width, height, maxGrain) {
+    var trailer = createVehicle(x, y, width, height);
+    trailer.grain = 0;
+    trailer.maxGrain = maxGrain;
+    return trailer;
+  }
 });

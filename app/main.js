@@ -9,10 +9,13 @@ define(function (require) {
   var msPerFrame = 100;
   var workingTime = 0;
 
-  var field = require('./field');
+  var createField = require('./field');
+  var field = createField(10);
   var fieldData = require('./fielddata');
-  var combine = require('./combine');
-  var trailer = require('./trailer');
+  var createCombine = require('./combine');
+  var combine = createCombine(50, 300, 71, 80, 3000, 300);
+  var createTrailer = require('./trailer');
+  var trailer = createTrailer(500, 500, 20, 20, 9000);
   var renderer = require('./renderer');
 
   combine.diagonal = combine.height / 2;
@@ -82,9 +85,7 @@ define(function (require) {
       }
     }
   }
-
   
-
   function updateFieldView(ctx, i, j, type) {
     if (field.parts[i] === undefined || field.parts[i][j] === undefined) {
       return false;
@@ -139,7 +140,7 @@ define(function (require) {
       acDelta += timeDiff;
     }
 
-    if (dy !== 0) {
+    if (dy !== 0 || combine.pouring) {
       if (combine.fuel > 0) {
         combine.fuel -= timeDiff * 0.001;
       } else {

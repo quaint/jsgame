@@ -1,3 +1,9 @@
-define({
-  grid: 10, width: 160, height: 90, parts: []
-});
+define(function () {
+  return function (grid) {
+    return {
+      grid: grid,
+      width: 0,
+      height: 0,
+      parts: []
+    };
+  });
