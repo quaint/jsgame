@@ -31,7 +31,7 @@ define({
     ctx.restore();
   },
   
-  renderCombine: function (ctx, combineObj, spritesImage, workingTime) {
+  renderCombine: function (ctx, combineObj, spritesImage, workingTime, animationFrame) {
     ctx.save();
     ctx.translate(combineObj.x, combineObj.y);
     ctx.rotate(combineObj.angle * Math.PI / 180);

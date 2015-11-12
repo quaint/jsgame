@@ -1,5 +1,4 @@
 define({
-    id: id,
     grain: 0,
     maxGrain: 3000,
     fuel: 300,

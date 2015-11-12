@@ -177,7 +177,7 @@ define(function (require) {
 
     bufferContext.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
 
-    renderer.renderCombine(bufferContext, combine, spritesImage, workingTime);
+    renderer.renderCombine(bufferContext, combine, spritesImage, workingTime, animationFrame);
     renderer.renderTrailer(bufferContext, trailer, spritesImage);
 
     if (dy < 0) {
