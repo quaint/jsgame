@@ -8,6 +8,7 @@ var objects = [];
 var xSize = 4;
 var ySize = 4;
 var zSize = 4;
+var materials = [];
 
 init();
 animate();
@@ -27,7 +28,12 @@ function onMouseMove( event ) {
 	if ( intersects.length > 0 ) {
 		if (intersects[0].object.userData.type == 0) {
 			intersects[0].object.userData.type = 2;
-			intersects[0].object.material = materialSelected;
+			var clonedMaterial = intersects[0].object.material.clone();
+			var objectMaterials = clonedMaterial.materials;
+			for (var i = 0; i < objectMaterials.length; i++) {
+				objectMaterials[i].color.setHex(0xff0000);
+			}
+			intersects[0].object.material = clonedMaterial;
 		} else if (intersects[0].object.userData.type == 1) {
 			intersects[0].object.userData.type = 3;
 			intersects[0].object.visible = false;
@@ -51,35 +57,62 @@ function init() {
 	controls.enableZoom = true;
 	
 	var loader = new THREE.TextureLoader();
-	loader.load('crate.jpg', function ( texture ) {
-		materialNormal = new THREE.MeshBasicMaterial( { map: texture } );
-		materialSelected = new THREE.MeshBasicMaterial( { color: 0xff0000, map: texture } );
-		geometry = new THREE.BoxGeometry( 1, 1, 1 );
-
-		for (var i = 0; i < xSize; i++) {
-			if (!objects[i]) {
-				objects[i] = [];
-			}
-			for (var j = 0; j < ySize; j++) {
-				if (!objects[i][j]) {
-					objects[i][j] = [];
-				}
-				for (var k = 0; k < zSize; k++) {
-					var mesh = new THREE.Mesh( geometry, materialNormal );
-					mesh.position.x = i - 1.5;
-					mesh.position.y = j - 1.5;
-					mesh.position.z = k - 1.5;
-					mesh.userData = { type : Math.random() > 0.5 ? 0 : 1 };
-					objects[i][j][k] = mesh;
-					scene.add( mesh );
-				}
-			}
-		}
-		
-		document.body.appendChild( renderer.domElement );
-		window.addEventListener( 'mousedown', onMouseMove, false );
+	loader.load('crate1.jpg', function ( texture ) {
+		materials[0] = new THREE.MeshBasicMaterial( { map: texture } );
+		configureMaterials();
+	});
+	loader.load('crate2.jpg', function ( texture ) {
+		materials[1] = new THREE.MeshBasicMaterial( { map: texture } );
+		configureMaterials();
+	});
+	loader.load('crate3.jpg', function ( texture ) {
+		materials[2] = new THREE.MeshBasicMaterial( { map: texture } );
+		configureMaterials();
+	});
+	loader.load('crate4.jpg', function ( texture ) {
+		materials[3] = new THREE.MeshBasicMaterial( { map: texture } );
+		configureMaterials();
+	});
+	loader.load('crate5.jpg', function ( texture ) {
+		materials[4] = new THREE.MeshBasicMaterial( { map: texture } );
+		configureMaterials();
+	});
+	loader.load('crate6.jpg', function ( texture ) {
+		materials[5] = new THREE.MeshBasicMaterial( { map: texture } );
+		configureMaterials();
 	});
 }
+	
+function configureMaterials() {
+	if (materials.length < 6) {
+		return;
+	}
+	
+	geometry = new THREE.BoxGeometry( 1, 1, 1 );
+
+	for (var i = 0; i < xSize; i++) {
+		if (!objects[i]) {
+			objects[i] = [];
+		}
+		for (var j = 0; j < ySize; j++) {
+			if (!objects[i][j]) {
+				objects[i][j] = [];
+			}
+			for (var k = 0; k < zSize; k++) {
+				var mesh = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial(materials) );
+				mesh.position.x = i - 1.5;
+				mesh.position.y = j - 1.5;
+				mesh.position.z = k - 1.5;
+				mesh.userData = { type : Math.random() > 0.5 ? 0 : 1 };
+				objects[i][j][k] = mesh;
+				scene.add( mesh );
+			}
+		}
+	}
+	
+	document.body.appendChild( renderer.domElement );
+	window.addEventListener( 'mousedown', onMouseMove, false );
+}	
 	
 function hideX(index) {
 	if (index <= xSize) {
@@ -93,7 +126,9 @@ function hideX(index) {
 		for (var ii = index; ii < xSize; ii++) {
 				for (var jj = 0; jj < ySize; jj++) {
 					for (var kk = 0; kk < zSize; kk++) {
-						objects[ii][jj][kk].visible = true;
+						if (objects[ii][jj][kk].userData.type != 3) {
+							objects[ii][jj][kk].visible = true;
+						}
 					}
 				}
 		}
@@ -112,7 +147,9 @@ function hideY(index) {
 		for (var ii = 0; ii < xSize; ii++) {
 				for (var jj = index; jj < ySize; jj++) {
 					for (var kk = 0; kk < zSize; kk++) {
-						objects[ii][jj][kk].visible = true;
+						if (objects[ii][jj][kk].userData.type != 3) {
+							objects[ii][jj][kk].visible = true;
+						}
 					}
 				}
 		}
@@ -131,7 +168,9 @@ function hideZ(index) {
 		for (var ii = 0; ii < xSize; ii++) {
 				for (var jj = 0; jj < ySize; jj++) {
 					for (var kk = index; kk < zSize; kk++) {
-						objects[ii][jj][kk].visible = true;
+						if (objects[ii][jj][kk].userData.type != 3) {
+							objects[ii][jj][kk].visible = true;
+						}
 					}
 				}
 		}
