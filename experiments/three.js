@@ -43,7 +43,7 @@ function init() {
 	renderer.setClearColor( 0xffffff );
 
 	camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
-	camera.position.z = 5;
+	camera.position.z = 6;
 	
 	controls = new THREE.OrbitControls( camera, renderer.domElement );
 	controls.enableDamping = true;
@@ -52,8 +52,8 @@ function init() {
 	
 	var loader = new THREE.TextureLoader();
 	loader.load('crate.jpg', function ( texture ) {
-		materialNormal = new THREE.MeshBasicMaterial( { color: 0xaaaaaa, wireframe: false, map: texture } );
-		materialSelected = new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true, map: texture } );
+		materialNormal = new THREE.MeshBasicMaterial( { map: texture } );
+		materialSelected = new THREE.MeshBasicMaterial( { color: 0xff0000, map: texture } );
 		geometry = new THREE.BoxGeometry( 1, 1, 1 );
 
 		for (var i = 0; i < xSize; i++) {
