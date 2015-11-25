@@ -89,6 +89,9 @@ function configureMaterials() {
 	}
 	
 	geometry = new THREE.BoxGeometry( 1, 1, 1 );
+	for (var i=0; i<geometry.faces.length; i++) {
+		geometry.faces[i].materialIndex = 1;
+	}
 
 	for (var i = 0; i < xSize; i++) {
 		if (!objects[i]) {
