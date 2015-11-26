@@ -172,12 +172,19 @@ function configureMaterials() {
 			}
 			for (var k = 0; k < zSize; k++) {
 				var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+				console.log(geometry.faces);
 				geometry.faces[0].materialIndex = 0;
 				geometry.faces[1].materialIndex = 0;
-				geometry.faces[2].materialIndex = 2;
-				geometry.faces[3].materialIndex = 2;
-				geometry.faces[4].materialIndex = 3;
-				geometry.faces[5].materialIndex = 3;
+				geometry.faces[2].materialIndex = 0;
+				geometry.faces[3].materialIndex = 0;
+				geometry.faces[4].materialIndex = 1;
+				geometry.faces[5].materialIndex = 1;
+				geometry.faces[6].materialIndex = 1;
+				geometry.faces[7].materialIndex = 1;
+				geometry.faces[8].materialIndex = 2;
+				geometry.faces[9].materialIndex = 2;
+				geometry.faces[10].materialIndex = 2;
+				geometry.faces[11].materialIndex = 2;
 				var mesh = new THREE.Mesh( geometry, normalMaterial );
 				mesh.position.x = i - 1.5;
 				mesh.position.y = j - 1.5;
