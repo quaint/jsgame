@@ -17,25 +17,90 @@ var damagedMaterial;
 init();
 animate();
 
+var hideXPosition = 0;
+var hideYPosition = 0;
+var hideZPosition = 0;
+
+var actionMode = 0;
 /*
  * 0 - filled block
  * 1 - empty block
- * 2 - touched filled block
- * 3 - touched empty block
+ * 2 - destroyed filled block
+ * 3 - destroyed empty block
+ * 4 - marked filled block
+ * 5 - marked empty block
+ * 
+ * action 1 - mark
+ * action 2 - destroy
  */
 
-function onMouseMove( event ) {
+document.onkeydown = function (e) {
+    var key = e.keyCode;
+	console.log(key);
+    if (key == 49) actionMode = 1;
+	else if (key == 50) actionMode = 2;
+    else return true;
+    return false;
+  };
+
+document.onkeyup = function (e) {
+    var key = e.keyCode;
+    if (key == 81) {
+		if (hideXPosition < xSize) {
+			hideXPosition++;
+			hideX(hideXPosition);
+		}
+	} else if (key == 87) {
+		if (hideXPosition > 0) {
+			hideXPosition--;
+			hideX(hideXPosition);
+		}
+	} else if (key == 65) {
+		if (hideYPosition < ySize) {
+			hideYPosition++;
+			hideY(hideYPosition);
+		}
+	} else if (key == 83) {
+		if (hideYPosition > 0) {
+			hideYPosition--;
+			hideY(hideYPosition);
+		}
+	} else if (key == 49 || key == 50) {
+		actionMode = 0;
+	} else {
+		return true
+	};
+    return false;
+};
+
+function onMouseDown( event ) {
 	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 	raycaster.setFromCamera( mouse, camera );	
 	var intersects = raycaster.intersectObjects( scene.children );
 	if ( intersects.length > 0 ) {
-		if (intersects[0].object.userData.type == 0) {
-			intersects[0].object.userData.type = 2;
-			intersects[0].object.material = damagedMaterial;
-		} else if (intersects[0].object.userData.type == 1) {
-			intersects[0].object.userData.type = 3;
-			intersects[0].object.visible = false;
+		if (actionMode == 2) {
+			if (intersects[0].object.userData.type == 0) {
+				intersects[0].object.userData.type = 2;
+				intersects[0].object.material = damagedMaterial;
+			} else if (intersects[0].object.userData.type == 1) {
+				intersects[0].object.userData.type = 3;
+				intersects[0].object.visible = false;
+			}
+		} else if (actionMode == 1) {
+			if (intersects[0].object.userData.type == 0) {
+				intersects[0].object.userData.type = 4;
+				intersects[0].object.material = markedMaterial;
+			} else if (intersects[0].object.userData.type == 1) {
+				intersects[0].object.userData.type = 5;
+				intersects[0].object.material = markedMaterial;
+			} else if (intersects[0].object.userData.type == 4) {
+				intersects[0].object.userData.type = 0;
+				intersects[0].object.material = normalMaterial;
+			} else if (intersects[0].object.userData.type == 5) {
+				intersects[0].object.userData.type = 1;
+				intersects[0].object.material = normalMaterial;
+			}
 		}
 	}	
 }
@@ -87,7 +152,7 @@ function configureMaterials() {
 		return;
 	}
 	
-	normalMaterial = new THREE.MeshFaceMaterial(materials);
+	normalMaterial = new THREE.MeshFaceMaterial( materials );
 	markedMaterial = normalMaterial.clone();
 	damagedMaterial = normalMaterial.clone();
 	for (var i = 0; i < markedMaterial.materials.length; i++) {
@@ -123,11 +188,11 @@ function configureMaterials() {
 	}
 	
 	document.body.appendChild( renderer.domElement );
-	window.addEventListener( 'mousedown', onMouseMove, false );
+	window.addEventListener( 'mousedown', onMouseDown, false );
 }	
 	
 function hideX(index) {
-	if (index <= xSize) {
+	if (index <= xSize && index >= 0) {
 		for (var i = 0; i < index; i++) {
 			for (var j = 0; j < ySize; j++) {
 				for (var k = 0; k < zSize; k++) {
@@ -148,7 +213,7 @@ function hideX(index) {
 }	
 
 function hideY(index) {
-	if (index <= ySize) {
+	if (index <= ySize && index >= 0) {
 		for (var i = 0; i < xSize; i++) {
 			for (var j = 0; j < index; j++) {
 				for (var k = 0; k < zSize; k++) {
@@ -169,7 +234,7 @@ function hideY(index) {
 }	
 
 function hideZ(index) {
-	if (index <= zSize) {
+	if (index <= zSize && index >= 0) {
 		for (var i = 0; i < xSize; i++) {
 			for (var j = 0; j < ySize; j++) {
 				for (var k = 0; k < index; k++) {
@@ -188,7 +253,6 @@ function hideZ(index) {
 		}
 	}
 }	
-
 	
 function animate() {
 	requestAnimationFrame( animate );
