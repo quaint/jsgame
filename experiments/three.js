@@ -10,6 +10,10 @@ var ySize = 4;
 var zSize = 4;
 var materials = [];
 
+var normalMaterial;
+var markedMaterial;
+var damagedMaterial;
+
 init();
 animate();
 
@@ -28,12 +32,7 @@ function onMouseMove( event ) {
 	if ( intersects.length > 0 ) {
 		if (intersects[0].object.userData.type == 0) {
 			intersects[0].object.userData.type = 2;
-			var clonedMaterial = intersects[0].object.material.clone();
-			var objectMaterials = clonedMaterial.materials;
-			for (var i = 0; i < objectMaterials.length; i++) {
-				objectMaterials[i].color.setHex(0xff0000);
-			}
-			intersects[0].object.material = clonedMaterial;
+			intersects[0].object.material = damagedMaterial;
 		} else if (intersects[0].object.userData.type == 1) {
 			intersects[0].object.userData.type = 3;
 			intersects[0].object.visible = false;
@@ -88,10 +87,20 @@ function configureMaterials() {
 		return;
 	}
 	
-	geometry = new THREE.BoxGeometry( 1, 1, 1 );
-	for (var i=0; i<geometry.faces.length; i++) {
-		geometry.faces[i].materialIndex = 1;
+	normalMaterial = new THREE.MeshFaceMaterial(materials);
+	markedMaterial = normalMaterial.clone();
+	damagedMaterial = normalMaterial.clone();
+	for (var i = 0; i < markedMaterial.materials.length; i++) {
+		markedMaterial.materials[i].color.setHex(0x00ff00);
 	}
+	for (var i = 0; i < damagedMaterial.materials.length; i++) {
+		damagedMaterial.materials[i].color.setHex(0xff0000);
+	}
+	
+	geometry = new THREE.BoxGeometry( 1, 1, 1 );
+	// for (var i=0; i<geometry.faces.length; i++) {
+	// 	geometry.faces[i].materialIndex = 1;
+	// }
 
 	for (var i = 0; i < xSize; i++) {
 		if (!objects[i]) {
@@ -102,7 +111,7 @@ function configureMaterials() {
 				objects[i][j] = [];
 			}
 			for (var k = 0; k < zSize; k++) {
-				var mesh = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial(materials) );
+				var mesh = new THREE.Mesh( geometry, normalMaterial );
 				mesh.position.x = i - 1.5;
 				mesh.position.y = j - 1.5;
 				mesh.position.z = k - 1.5;
@@ -127,13 +136,13 @@ function hideX(index) {
 			}
 		}
 		for (var ii = index; ii < xSize; ii++) {
-				for (var jj = 0; jj < ySize; jj++) {
-					for (var kk = 0; kk < zSize; kk++) {
-						if (objects[ii][jj][kk].userData.type != 3) {
-							objects[ii][jj][kk].visible = true;
-						}
+			for (var jj = 0; jj < ySize; jj++) {
+				for (var kk = 0; kk < zSize; kk++) {
+					if (objects[ii][jj][kk].userData.type != 3) {
+						objects[ii][jj][kk].visible = true;
 					}
 				}
+			}
 		}
 	}
 }	
@@ -148,13 +157,13 @@ function hideY(index) {
 			}
 		}
 		for (var ii = 0; ii < xSize; ii++) {
-				for (var jj = index; jj < ySize; jj++) {
-					for (var kk = 0; kk < zSize; kk++) {
-						if (objects[ii][jj][kk].userData.type != 3) {
-							objects[ii][jj][kk].visible = true;
-						}
+			for (var jj = index; jj < ySize; jj++) {
+				for (var kk = 0; kk < zSize; kk++) {
+					if (objects[ii][jj][kk].userData.type != 3) {
+						objects[ii][jj][kk].visible = true;
 					}
 				}
+			}
 		}
 	}
 }	
@@ -169,13 +178,13 @@ function hideZ(index) {
 			}
 		}
 		for (var ii = 0; ii < xSize; ii++) {
-				for (var jj = 0; jj < ySize; jj++) {
-					for (var kk = index; kk < zSize; kk++) {
-						if (objects[ii][jj][kk].userData.type != 3) {
-							objects[ii][jj][kk].visible = true;
-						}
+			for (var jj = 0; jj < ySize; jj++) {
+				for (var kk = index; kk < zSize; kk++) {
+					if (objects[ii][jj][kk].userData.type != 3) {
+						objects[ii][jj][kk].visible = true;
 					}
 				}
+			}
 		}
 	}
 }	
