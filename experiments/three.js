@@ -1,5 +1,5 @@
 var scene, camera, renderer, controls;
-var geometry, materialNormal, materialSelected;
+var geomtry, materialNormal, materialSelected;
 var cubes = [];
 var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
@@ -22,6 +22,7 @@ var hideYPosition = 0;
 var hideZPosition = 0;
 
 var actionMode = 0;
+
 /*
  * 0 - filled block
  * 1 - empty block
@@ -36,7 +37,6 @@ var actionMode = 0;
 
 document.onkeydown = function (e) {
     var key = e.keyCode;
-	console.log(key);
     if (key == 49) actionMode = 1;
 	else if (key == 50) actionMode = 2;
     else return true;
@@ -162,11 +162,6 @@ function configureMaterials() {
 		damagedMaterial.materials[i].color.setHex(0xff0000);
 	}
 	
-	geometry = new THREE.BoxGeometry( 1, 1, 1 );
-	// for (var i=0; i<geometry.faces.length; i++) {
-	// 	geometry.faces[i].materialIndex = 1;
-	// }
-
 	for (var i = 0; i < xSize; i++) {
 		if (!objects[i]) {
 			objects[i] = [];
@@ -176,6 +171,13 @@ function configureMaterials() {
 				objects[i][j] = [];
 			}
 			for (var k = 0; k < zSize; k++) {
+				var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+				geometry.faces[0].materialIndex = 0;
+				geometry.faces[1].materialIndex = 0;
+				geometry.faces[2].materialIndex = 2;
+				geometry.faces[3].materialIndex = 2;
+				geometry.faces[4].materialIndex = 3;
+				geometry.faces[5].materialIndex = 3;
 				var mesh = new THREE.Mesh( geometry, normalMaterial );
 				mesh.position.x = i - 1.5;
 				mesh.position.y = j - 1.5;
