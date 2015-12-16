@@ -56,14 +56,14 @@ document.onkeyup = function (e) {
 			hideX(hideXPosition);
 		}
 	} else if (key == 65) {
-		if (hideYPosition < ySize) {
-			hideYPosition++;
-			hideY(hideYPosition);
+		if (hideZPosition < zSize) {
+			hideZPosition++;
+			hideZ(hideZPosition);
 		}
 	} else if (key == 83) {
-		if (hideYPosition > 0) {
-			hideYPosition--;
-			hideY(hideYPosition);
+		if (hideZPosition > 0) {
+			hideZPosition--;
+			hideZ(hideZPosition);
 		}
 	} else if (key == 49 || key == 50) {
 		actionMode = 0;
