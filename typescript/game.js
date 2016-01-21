@@ -72,6 +72,62 @@ var Entity = (function (_super) {
     };
     return Entity;
 })(Sprite);
+var Background = (function (_super) {
+    __extends(Background, _super);
+    function Background(world) {
+        _super.call(this, world);
+        this.destinationWidth = world.viewWidth;
+        this.destinationHeight = world.viewHeight;
+        this.sourceWidth = world.viewWidth;
+        this.sourceHeight = world.viewHeight;
+    }
+    Background.prototype.draw = function () {
+        var x = this.world.hero.x - this.world.heroViewOffsetX();
+        var y = this.world.hero.y - this.world.heroViewOffsetY();
+        if (this.world.atViewLimitLeft()) {
+            var x = 0;
+        }
+        if (this.world.atViewLimitTop()) {
+            var y = 0;
+        }
+        if (this.world.atViewLimitRight()) {
+            var x = this.world.viewWidthLimit();
+        }
+        if (this.world.atViewLimitBottom()) {
+            var y = this.world.viewHeightLimit();
+        }
+        this.drawImage(x, y, this.destinationX, this.destinationY);
+    };
+    return Background;
+})(Sprite);
+var InputHandler = (function () {
+    function InputHandler(world) {
+        var _this = this;
+        this.world = world;
+        this.keysDown = {};
+        $("body").keydown = function (e) {
+            _this.keysDown[e.keyCode] = true;
+        };
+        $("body").keyup = function (e) {
+            delete _this.keysDown[e.keyCode];
+        };
+    }
+    InputHandler.prototype.update = function (modifier) {
+        if (38 in this.keysDown) {
+            this.world.up(modifier);
+        }
+        if (40 in this.keysDown) {
+            this.world.down(modifier);
+        }
+        if (37 in this.keysDown) {
+            this.world.left(modifier);
+        }
+        if (39 in this.keysDown) {
+            this.world.right(modifier);
+        }
+    };
+    return InputHandler;
+})();
 var Hero = (function (_super) {
     __extends(Hero, _super);
     function Hero() {
@@ -99,6 +155,32 @@ var Hero = (function (_super) {
         this.x = this.viewOffsetX(width);
         this.y = this.viewOffsetY(height);
     };
+    Hero.prototype.velocity = function (mod) {
+        return this.speed * mod;
+    };
+    Hero.prototype.collision = function (x, y) {
+        var _this = this;
+        this.world.collidableSprites().forEach(function (sprite) {
+            if (y > sprite.y - _this.destinationHeight && y < sprite.y + sprite.destinationHeight && x > sprite.x - _this.destinationWidth && x < sprite.x + sprite.destinationWidth) {
+                return true;
+            }
+        });
+        return false;
+    };
+    Hero.prototype.up = function (mod) {
+        this.direction = 64;
+        var y = this.y - this.velocity(mod);
+        if (y > 0 && !this.collision(this.x, y)) {
+            this.y -= this.velocity(mod);
+        }
+    };
+    Hero.prototype.down = function (mod, height) {
+        this.direction = 0;
+        var y = this.y + this.velocity(mod);
+        if (y < height - this.destinationHeight && !this.collision(this.x, y)) {
+            this.y += this.velocity(mod);
+        }
+    };
     return Hero;
 })(Entity);
 var World = (function () {
@@ -110,6 +192,7 @@ var World = (function () {
         this.sprites = [];
         this.ctx = this.createCanvas();
         this.hero = new Hero(this);
+        this.sprites.push(new Background(this));
         this.sprites.push(this.hero);
     }
     World.prototype.createCanvas = function () {
@@ -154,6 +237,18 @@ var World = (function () {
     World.prototype.reset = function () {
         this.hero.reset(this.width, this.height);
     };
+    World.prototype.up = function (mod) {
+        this.hero.up(mod);
+    };
+    World.prototype.collidableSprites = function () {
+        var result = [];
+        this.sprites.forEach(function (sprite) {
+            if (sprite.collidable) {
+                result.push(sprite);
+            }
+        });
+        return result;
+    };
     return World;
 })();
 var Game = (function () {
@@ -174,6 +269,7 @@ var Game = (function () {
     };
     Game.prototype.setup = function () {
         this.world = new World;
+        this.inputHandler = new InputHandler(this.world);
     };
     Game.prototype.reset = function () {
         this.world.reset();
@@ -187,6 +283,7 @@ var Game = (function () {
         this.render();
     };
     Game.prototype.update = function (modifier) {
+        this.inputHandler.update(modifier);
     };
     Game.prototype.render = function () {
         this.world.render(this.lastUpdate, this.lastElapsed);

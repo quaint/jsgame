@@ -70,6 +70,62 @@ class Entity extends Sprite {
     }
 }
 
+class Background extends Sprite {
+    constructor(world: World) {
+        super(world);
+        this.destinationWidth = world.viewWidth;
+        this.destinationHeight = world.viewHeight;
+        this.sourceWidth = world.viewWidth;
+        this.sourceHeight = world.viewHeight
+    }
+
+    draw() {
+        var x = this.world.hero.x - this.world.heroViewOffsetX();
+        var y = this.world.hero.y - this.world.heroViewOffsetY();
+        if (this.world.atViewLimitLeft()) {
+            var x = 0;
+        }
+        if (this.world.atViewLimitTop()) {
+            var y = 0;
+        }
+        if (this.world.atViewLimitRight()) {
+            var x = this.world.viewWidthLimit();
+        }
+        if (this.world.atViewLimitBottom()) {
+            var y = this.world.viewHeightLimit();
+        }
+        this.drawImage(x, y, this.destinationX, this.destinationY);
+    }
+}
+
+class InputHandler {
+    keysDown: { [key: number]: boolean } = {};
+
+    constructor(public world: World) {
+        $("body").keydown = (e) => {
+            this.keysDown[e.keyCode] = true;
+        }
+        $("body").keyup = (e) => {
+            delete this.keysDown[e.keyCode];
+        }
+    }
+
+    update(modifier) {
+        if (38 in this.keysDown) {
+            this.world.up(modifier);
+        }
+        if (40 in this.keysDown) {
+            this.world.down(modifier);
+        }
+        if (37 in this.keysDown) {
+            this.world.left(modifier);
+        }
+        if (39 in this.keysDown) {
+            this.world.right(modifier);
+        }
+    }
+}
+
 class Hero extends Entity {
     sourceWidth: number = 32;
     sourceHeight: number = 30;
@@ -97,6 +153,38 @@ class Hero extends Entity {
         this.x = this.viewOffsetX(width);
         this.y = this.viewOffsetY(height);
     }
+    
+    velocity(mod: number): number {
+        return this.speed * mod;
+    }
+    
+    collision(x: number, y: number): boolean {
+        this.world.collidableSprites().forEach(sprite => {
+            if (y > sprite.y - this.destinationHeight && y < sprite.y + sprite.destinationHeight && x > sprite.x - this.destinationWidth && x < sprite.x + sprite.destinationWidth) {
+                return true;
+            }
+        });
+        return false;
+    }
+    
+    up(mod: number) {
+        this.direction = 64;
+        var y = this.y - this.velocity(mod);
+        if (y > 0 && !this.collision(this.x, y)) {
+            this.y -= this.velocity(mod);
+        }
+    }
+    
+    down(mod: number, height: number) {
+        this.direction = 0;
+        var y = this.y + this.velocity(mod);
+        if (y < height - this.destinationHeight && !this.collision(this.x, y)) {
+            this.y += this.velocity(mod);
+        }
+    }
+    
+    
+
 }
 
 class World {
@@ -105,12 +193,13 @@ class World {
     viewWidth: number = 400;
     viewHeight: number = 300;
     ctx: any;
-    sprites: Entity[] = [];
+    sprites: Sprite[] = [];
     hero: Hero;
 
     constructor() {
         this.ctx = this.createCanvas();
         this.hero = new Hero(this);
+        this.sprites.push(new Background(this));
         this.sprites.push(this.hero);
     }
 
@@ -166,6 +255,20 @@ class World {
     reset() {
         this.hero.reset(this.width, this.height);
     }
+    
+    up(mod: number) {
+        this.hero.up(mod);
+    }
+    
+    collidableSprites(): Sprite[] {
+        var result: Sprite[] = [];
+        this.sprites.forEach(sprite => {
+            if (sprite.collidable) {
+                result.push(sprite);
+            }
+        });
+        return result;
+    }
 }
 
 class Game {
@@ -174,6 +277,7 @@ class Game {
     world: World;
     lastUpdate: number;
     lastElapsed: number;
+    inputHandler: InputHandler;
 
     run() {
         this.setup();
@@ -191,6 +295,7 @@ class Game {
 
     setup() {
         this.world = new World;
+        this.inputHandler = new InputHandler(this.world);
     }
 
     reset() {
@@ -207,7 +312,7 @@ class Game {
     }
 
     update(modifier: number) {
-
+        this.inputHandler.update(modifier);
     }
 
     render() {
