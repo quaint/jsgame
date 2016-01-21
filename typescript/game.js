@@ -105,12 +105,14 @@ var InputHandler = (function () {
         var _this = this;
         this.world = world;
         this.keysDown = {};
-        $("body").keydown = function (e) {
+        $("body").keydown(function (e) {
+            console.log("------------------");
             _this.keysDown[e.keyCode] = true;
-        };
-        $("body").keyup = function (e) {
+        });
+        $("body").keyup(function (e) {
+            console.log("------------------");
             delete _this.keysDown[e.keyCode];
-        };
+        });
     }
     InputHandler.prototype.update = function (modifier) {
         if (38 in this.keysDown) {
@@ -199,7 +201,7 @@ var World = (function () {
         var canvas = document.createElement("canvas");
         canvas.width = this.viewWidth;
         canvas.height = this.viewHeight;
-        $(".container .game").append(canvas);
+        $("#game").append(canvas);
         return canvas.getContext("2d");
     };
     //Hero coordinates in view

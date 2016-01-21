@@ -102,12 +102,12 @@ class InputHandler {
     keysDown: { [key: number]: boolean } = {};
 
     constructor(public world: World) {
-        $("body").keydown = (e) => {
+        $("body").keydown( (e) => {
             this.keysDown[e.keyCode] = true;
-        }
-        $("body").keyup = (e) => {
+        });
+        $("body").keyup( (e) => {
             delete this.keysDown[e.keyCode];
-        }
+        });
     }
 
     update(modifier) {
@@ -207,7 +207,7 @@ class World {
         var canvas = document.createElement("canvas");
         canvas.width = this.viewWidth;
         canvas.height = this.viewHeight;
-        $(".container .game").append(canvas);
+        $("#game").append(canvas);
         return canvas.getContext("2d");
     }
     
