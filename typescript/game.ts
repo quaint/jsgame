@@ -182,9 +182,22 @@ class Hero extends Entity {
             this.y += this.velocity(mod);
         }
     }
-    
-    
 
+    left(mod: number) {
+        this.direction = 128;
+        var x = this.x - this.velocity(mod);
+        if (x > 0 && !this.collision(x, this.y)) {
+            this.x -= this.velocity(mod); 
+        }
+    }
+    
+    right(mod: number, width: number) {
+        this.direction = 192;
+        var x = this.x + this.velocity(mod);
+        if (x < width - this.destinationWidth && !this.collision(x, this.y)) {
+            this.x += this.velocity(mod);
+        }
+    }
 }
 
 class World {
@@ -203,7 +216,7 @@ class World {
         this.sprites.push(this.hero);
     }
 
-    createCanvas(): any {
+    createCanvas() {
         var canvas = document.createElement("canvas");
         canvas.width = this.viewWidth;
         canvas.height = this.viewHeight;
@@ -258,6 +271,18 @@ class World {
     
     up(mod: number) {
         this.hero.up(mod);
+    }
+    
+    down(mod: number) {
+        this.hero.down(mod, this.height);
+    }
+    
+    left(mod: number) {
+        this.hero.left(mod);
+    }
+    
+    right(mod: number) {
+        this.hero.right(mod, this.width);
     }
     
     collidableSprites(): Sprite[] {

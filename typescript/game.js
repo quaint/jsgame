@@ -106,11 +106,9 @@ var InputHandler = (function () {
         this.world = world;
         this.keysDown = {};
         $("body").keydown(function (e) {
-            console.log("------------------");
             _this.keysDown[e.keyCode] = true;
         });
         $("body").keyup(function (e) {
-            console.log("------------------");
             delete _this.keysDown[e.keyCode];
         });
     }
@@ -183,6 +181,20 @@ var Hero = (function (_super) {
             this.y += this.velocity(mod);
         }
     };
+    Hero.prototype.left = function (mod) {
+        this.direction = 128;
+        var x = this.x - this.velocity(mod);
+        if (x > 0 && !this.collision(x, this.y)) {
+            this.x -= this.velocity(mod);
+        }
+    };
+    Hero.prototype.right = function (mod, width) {
+        this.direction = 192;
+        var x = this.x + this.velocity(mod);
+        if (x < width - this.destinationWidth && !this.collision(x, this.y)) {
+            this.x += this.velocity(mod);
+        }
+    };
     return Hero;
 })(Entity);
 var World = (function () {
@@ -241,6 +253,15 @@ var World = (function () {
     };
     World.prototype.up = function (mod) {
         this.hero.up(mod);
+    };
+    World.prototype.down = function (mod) {
+        this.hero.down(mod, this.height);
+    };
+    World.prototype.left = function (mod) {
+        this.hero.left(mod);
+    };
+    World.prototype.right = function (mod) {
+        this.hero.right(mod, this.width);
     };
     World.prototype.collidableSprites = function () {
         var result = [];
