@@ -12,6 +12,7 @@ class Sprite {
     destinationHeight: number = 0;
     x: number = 0;
     y: number = 0;
+    angle: number = 0;
     image: SpriteImage = new SpriteImage;
     collidable: boolean = false;
 
