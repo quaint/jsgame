@@ -9,7 +9,7 @@ class World {
     viewWidth: number = 400;
     viewHeight: number = 300;
     ctx: any;
-    sprites: Sprite[] = [];
+    sprites: Entity[] = [];
     hero: Hero;
 
     constructor() {

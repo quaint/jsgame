@@ -1,6 +1,7 @@
-/// <reference path="Sprite.ts" />
+/// <reference path="Entity.ts" />
 
-class Background extends Sprite {
+class Background extends Entity {
+    
     constructor(world: World) {
         super(world);
         this.destinationWidth = world.viewWidth;
