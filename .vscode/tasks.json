@@ -19,7 +19,7 @@
 
 	// Show the output window only if unrecognized errors occur.
 	"showOutput": "always",
-
+    
 	// args is the HelloWorld program to compile.
 	"args": ["--out", "./typescript/app.js", "./typescript/app.ts"],
 
