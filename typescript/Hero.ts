@@ -1,12 +1,12 @@
 /// <reference path="Entity.ts" />
 
 class Hero extends Entity {
-    sourceWidth: number = 71;
-    sourceHeight: number = 80;
-    destinationWidth: number = 71;
-    destinationHeight: number = 80;
-    sourceY: number = 578;
-    speed: number = 128;
+    sourceWidth: number = 32;
+    sourceHeight: number = 30;
+    destinationWidth: number = 32;
+    destinationHeight: number = 30;
+    sourceY: number = 513;
+    speed: number = 256;
     direction: number = 0;
 
     constructor(world: World) {

@@ -11,8 +11,8 @@ class Background extends Entity {
     }
 
     draw() {
-        var x = this.world.hero.x - this.world.heroViewOffsetX();
-        var y = this.world.hero.y - this.world.heroViewOffsetY();
+        var x = this.world.vehicle.x - this.world.heroViewOffsetX();
+        var y = this.world.vehicle.y - this.world.heroViewOffsetY();
         if (this.world.atViewLimitLeft()) {
             var x = 0;
         }

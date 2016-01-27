@@ -1,5 +1,6 @@
 /// <reference path="Background.ts" />
 /// <reference path="Hero.ts" />
+/// <reference path="Combine.ts" />
 
 declare var $;
 
@@ -10,13 +11,13 @@ class World {
     viewHeight: number = 300;
     ctx: any;
     sprites: Entity[] = [];
-    hero: Hero;
+    vehicle: Vehicle;
 
     constructor() {
         this.ctx = this.createCanvas();
-        this.hero = new Hero(this);
+        this.vehicle = new Combine(this);
         this.sprites.push(new Background(this));
-        this.sprites.push(this.hero);
+        this.sprites.push(this.vehicle);
     }
 
     createCanvas() {
@@ -29,11 +30,11 @@ class World {
     
     //Hero coordinates in view
     heroViewOffsetX(): number {
-        return this.hero.viewOffsetX(this.viewWidth);
+        return this.vehicle.viewOffsetX(this.viewWidth);
     }
 
     heroViewOffsetY(): number {
-        return this.hero.viewOffsetY(this.viewHeight);
+        return this.vehicle.viewOffsetY(this.viewHeight);
     }
     
     //Max scroll coordinates
@@ -47,19 +48,19 @@ class World {
     
     //Check hero limits
     atViewLimitLeft(): boolean {
-        return this.hero.x < this.heroViewOffsetX();
+        return this.vehicle.x < this.heroViewOffsetX();
     }
 
     atViewLimitTop(): boolean {
-        return this.hero.y < this.heroViewOffsetY();
+        return this.vehicle.y < this.heroViewOffsetY();
     }
 
     atViewLimitRight(): boolean {
-        return this.hero.x > this.viewWidthLimit() + this.heroViewOffsetX();
+        return this.vehicle.x > this.viewWidthLimit() + this.heroViewOffsetX();
     }
 
     atViewLimitBottom(): boolean {
-        return this.hero.y > this.viewHeightLimit() + this.heroViewOffsetY();
+        return this.vehicle.y > this.viewHeightLimit() + this.heroViewOffsetY();
     }
 
     render(lastUpdate: number, lastElapsed: number) {
@@ -69,23 +70,23 @@ class World {
     }
 
     reset() {
-        this.hero.reset(this.width, this.height);
+        this.vehicle.reset(this.width, this.height);
     }
     
     up(mod: number) {
-        this.hero.up(mod);
+        this.vehicle.up(mod);
     }
     
     down(mod: number) {
-        this.hero.down(mod, this.height);
+        this.vehicle.down(mod, this.height);
     }
     
     left(mod: number) {
-        this.hero.left(mod);
+        this.vehicle.left(mod);
     }
     
     right(mod: number) {
-        this.hero.right(mod, this.width);
+        this.vehicle.right(mod, this.width);
     }
     
     collidableSprites(): Sprite[] {
