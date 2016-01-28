@@ -7,6 +7,7 @@ class Combine extends Vehicle {
     destinationWidth: number = 71;
     destinationHeight: number = 80;
     sourceY: number = 577;
+    angle: number = 10;
 
     constructor(world: World) {
         super(world);
