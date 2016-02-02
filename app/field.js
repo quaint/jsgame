@@ -6,5 +6,5 @@ define(function () {
       height: 0,
       parts: []
     };
-  }
+  };
 });

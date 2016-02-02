@@ -10,14 +10,14 @@ class World {
     viewWidth: number = 400;
     viewHeight: number = 300;
     ctx: any;
-    sprites: Entity[] = [];
+    entities: Entity[] = [];
     vehicle: Vehicle;
 
     constructor() {
         this.ctx = this.createCanvas();
         this.vehicle = new Combine(this);
-        this.sprites.push(new Background(this));
-        this.sprites.push(this.vehicle);
+        this.entities.push(new Background(this));
+        this.entities.push(this.vehicle);
     }
 
     createCanvas() {
@@ -63,9 +63,9 @@ class World {
         return this.vehicle.y > this.viewHeightLimit() + this.heroViewOffsetY();
     }
 
-    render(lastUpdate: number, lastElapsed: number) {
-        this.sprites.forEach(sprite => {
-            sprite.draw();
+    render() {
+        this.entities.forEach(entity => {
+            entity.draw();
         });
     }
 
@@ -89,11 +89,15 @@ class World {
         this.vehicle.right(mod, this.width);
     }
     
+    update(mod: number) {
+        this.vehicle.update(mod);
+    }
+    
     collidableSprites(): Sprite[] {
         var result: Sprite[] = [];
-        this.sprites.forEach(sprite => {
-            if (sprite.collidable) {
-                result.push(sprite);
+        this.entities.forEach(entity => {
+            if (entity.collidable) {
+                result.push(entity);
             }
         });
         return result;

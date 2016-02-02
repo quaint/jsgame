@@ -8,5 +8,5 @@ define(function () {
             angle: 0,
             sprite: null
         };
-    }
+    };
 });

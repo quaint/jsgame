@@ -4,5 +4,5 @@ define(['./vehicle'], function (createVehicle) {
     trailer.grain = 0;
     trailer.maxGrain = maxGrain;
     return trailer;
-  }
+  };
 });

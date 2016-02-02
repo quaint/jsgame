@@ -42,10 +42,11 @@ class Game {
     }
 
     update(modifier: number) {
+        this.world.update(modifier);
         this.inputHandler.update(modifier);
     }
 
     render() {
-        this.world.render(this.lastUpdate, this.lastElapsed);
+        this.world.render();
     }
 }

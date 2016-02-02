@@ -23,9 +23,9 @@ class Sprite {
     drawImage(sx: number, sy: number, dx: number, dy: number) {
         if (this.image.ready) {
             this.world.ctx.save();
-            // this.world.ctx.translate(trailerObj.x, trailerObj.y);
+            this.world.ctx.translate(dx, dy);
             this.world.ctx.rotate(this.angle * Math.PI / 180);
-            this.world.ctx.drawImage(this.image.image, sx, sy, this.sourceWidth, this.sourceHeight, dx, dy, this.destinationWidth, this.destinationHeight);
+            this.world.ctx.drawImage(this.image.image, sx, sy, this.sourceWidth, this.sourceHeight, -this.destinationWidth + 30, -this.destinationHeight / 2, this.destinationWidth, this.destinationHeight);
             this.world.ctx.restore();
         }
     }

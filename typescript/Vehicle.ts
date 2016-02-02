@@ -6,7 +6,7 @@ class Vehicle extends Entity {
     load: number = 0;
     speed: number = 128;
     direction: number = 0;
-
+    linearSpeed: number = 50;
     
     viewOffsetX(width: number): number {
         return (width / 2) - (this.destinationWidth / 2);
@@ -52,17 +52,26 @@ class Vehicle extends Entity {
 
     left(mod: number) {
         this.direction = 128;
-        var x = this.x - this.velocity(mod);
-        if (x > 0 && !this.collision(x, this.y)) {
-            this.x -= this.velocity(mod); 
-        }
+        // var x = this.x - this.velocity(mod);
+        // if (x > 0 && !this.collision(x, this.y)) {
+        //     this.x -= this.velocity(mod); 
+        // }
     }
     
     right(mod: number, width: number) {
         this.direction = 192;
-        var x = this.x + this.velocity(mod);
-        if (x < width - this.destinationWidth && !this.collision(x, this.y)) {
-            this.x += this.velocity(mod);
+        // var x = this.x + this.velocity(mod);
+        // if (x < width - this.destinationWidth && !this.collision(x, this.y)) {
+        //     this.x += this.velocity(mod);
+        // }
+    }
+    
+    update(mod: number) {
+        var linearDistEachFrame = this.linearSpeed * mod;
+        if (this.direction == 128) {
+            this.angle -= linearDistEachFrame;
+        } else if (this.direction == 192) {
+            this.angle += linearDistEachFrame;
         }
     }
 

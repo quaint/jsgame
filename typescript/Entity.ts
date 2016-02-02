@@ -16,4 +16,8 @@ class Entity extends Sprite {
         }
         this.drawImage(this.sourceX, this.sourceY, this.destinationX, this.destinationY);
     }
+    
+    update(mod: number) {
+        
+    }
 }
