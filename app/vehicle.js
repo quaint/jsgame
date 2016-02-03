@@ -6,7 +6,8 @@ define(function () {
             width: width,
             height: height,
             angle: 0,
-            sprite: null
+            sprite: null,
+            linearSpeed: 10
         };
     };
 });

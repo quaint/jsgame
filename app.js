@@ -2,7 +2,8 @@ requirejs.config({
     baseUrl: 'lib',
     paths: {
         app: '../app'
-    }
+    },
+    urlArgs: "bust=" + (new Date()).getTime()
 });
 
 requirejs(['app/main'], function () {

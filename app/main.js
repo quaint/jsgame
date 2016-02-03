@@ -30,7 +30,6 @@ define(function (require) {
   var dx = 0;
   var dy = 0;
 
-  var linearSpeed = 50;
   var animationFrame = 0;
   var acDelta = 0;
   var msPerFrame = 100;
@@ -81,21 +80,21 @@ define(function (require) {
     }
   }
   
-  function updateFieldView(ctx, i, j, type) {
+  function updateFieldView(ctx, i, j, newType) {
     if (field.parts[i] === undefined || field.parts[i][j] === undefined) {
       return false;
     }
     var partOfField = field.parts[i][j];
-    if (partOfField.type === 0 && type === 1) {
-      partOfField.type = type;
+    if (partOfField.type === 0 && newType === 1) {
+      partOfField.type = newType;
       if (combine.grain < combine.maxGrain) {
         combine.grain += 1;
       }
       ctx.drawImage(spritesImage, 20, 60, field.grid, field.grid, i * field.grid, j * field.grid, field.grid, field.grid);
       workingTime = 1000;
       return true;
-    } else if (partOfField.type === 1 && type === 2) {
-      partOfField.type = type;
+    } else if (partOfField.type === 1 && newType === 2) {
+      partOfField.type = newType;
       ctx.drawImage(spritesImage, 40, 60, field.grid, field.grid, i * field.grid, j * field.grid, field.grid, field.grid);
       return false;
     }
@@ -106,7 +105,6 @@ define(function (require) {
     // update
     var time = Date.now();
     var timeDiff = time - lastTime;
-    var linearDistEachFrame = linearSpeed * timeDiff / 1000;
 
     if (combine.pouring) {
       var distance = calculateDistance(combine, trailer);
@@ -132,41 +130,7 @@ define(function (require) {
       acDelta += timeDiff;
     }
 
-    if (dy !== 0 || combine.pouring) {
-      if (combine.fuel > 0) {
-        combine.fuel -= timeDiff * 0.001;
-      } else {
-        combine.fuel = 0;
-      }
-      if (dy == 1) {
-        combine.angle += linearDistEachFrame * -dx;
-      } else {
-        combine.angle += linearDistEachFrame * dx;
-      }
-    }
-
-    combine.x -= dy * Math.cos(combine.angle * Math.PI / 180) * linearDistEachFrame;
-    combine.y -= dy * Math.sin(combine.angle * Math.PI / 180) * linearDistEachFrame;
-
-    var diagonalAngle1 = combine.angle + 60;//combine.diagonalAngleDeg;
-    var diagonalAngle2 = combine.angle - 60;//combine.diagonalAngleDeg;
-    var diagonalAngleRad1 = diagonalAngle1 * Math.PI / 180;
-    var diagonalAngleRad2 = diagonalAngle2 * Math.PI / 180;
-    combine.header.x1 = Math.cos(diagonalAngleRad1) * combine.diagonal + combine.x;
-    combine.header.y1 = Math.sin(diagonalAngleRad1) * combine.diagonal + combine.y;
-    combine.header.x2 = Math.cos(diagonalAngleRad2) * combine.diagonal + combine.x;
-    combine.header.y2 = Math.sin(diagonalAngleRad2) * combine.diagonal + combine.y;
-
-    var diagonalAngleBack1 = combine.angle + combine.diagonal2AngleDeg - 180;
-    var diagonalAngleBack2 = combine.angle - combine.diagonal2AngleDeg - 180;
-    var diagonalAngleBackRad1 = diagonalAngleBack1 * Math.PI / 180;
-    var diagonalAngleBackRad2 = diagonalAngleBack2 * Math.PI / 180;
-    combine.back.x1 = Math.cos(diagonalAngleBackRad1) * combine.diagonal2 + combine.x;
-    combine.back.y1 = Math.sin(diagonalAngleBackRad1) * combine.diagonal2 + combine.y;
-    combine.back.x2 = Math.cos(diagonalAngleBackRad2) * combine.diagonal2 + combine.x;
-    combine.back.y2 = Math.sin(diagonalAngleBackRad2) * combine.diagonal2 + combine.y;
-
-    // socket.emit('combine', {id:combine.id, x:combine.x, y:combine.y, angle:combine.angle});
+    combine.update(timeDiff * 0.001, dx, dy);
 
     bufferContext.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
 
