@@ -6,14 +6,14 @@ requirejs.config({
     urlArgs: "bust=" + (new Date()).getTime()
 });
 
-requirejs(['app/main'], function () {
-    window.requestAnimFrame = (function (callback) {
+requirejs(['app/main'], function() {
+    window.requestAnimFrame = (function(callback) {
         return window.requestAnimationFrame ||
             window.webkitRequestAnimationFrame ||
             window.mozRequestAnimationFrame ||
             window.oRequestAnimationFrame ||
             window.msRequestAnimationFrame ||
-            function (callback) {
+            function(callback) {
                 window.setTimeout(callback, 1000 / 60);
             };
     })();

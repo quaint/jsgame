@@ -1,6 +1,7 @@
-define(function () {
-    return function (x, y, width, height) {
-        return {
+define(function() {
+    return function(x, y, width, height) {
+
+        var vehicle = {
             x: x,
             y: y,
             width: width,
@@ -9,5 +10,11 @@ define(function () {
             sprite: null,
             linearSpeed: 10
         };
+
+        vehicle.distanceTo = function(otherObject) {
+            return Math.sqrt(Math.pow(vehicle.x - otherObject.x, 2) + Math.pow(vehicle.y - otherObject.y, 2));
+        };
+
+        return vehicle;
     };
 });
