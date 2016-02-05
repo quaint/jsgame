@@ -16,12 +16,14 @@ define(['./vehicle'], function(createVehicle) {
             x2: 0,
             y2: 0
         };
+        
         combine.back = {
             x1: 0,
             y1: 0,
             x2: 0,
             y2: 0
         };
+
         combine.radiusHeader = combine.height / 2;
         combine.angleHeader = 60;
         var backHeight = combine.height / 10;

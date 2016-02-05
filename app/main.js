@@ -119,19 +119,14 @@ define(function(require) {
         combine.update(timeDelta, dx, dy);
         combine.updateTrailer(timeDelta, trailer);
 
-        field.update();
+        if (dy < 0) {
+            field.updateCombine(combine, fieldContext, spritesImage);
+        }
 
         bufferContext.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
 
         renderer.renderCombine(bufferContext, combine, spritesImage, animationFrame);
         renderer.renderTrailer(bufferContext, trailer, spritesImage);
-
-        if (dy < 0) {
-            field.update(combine.header, combine.back);
-            // if (bline(combine.header.x1, combine.header.y1, combine.header.x2, combine.header.y2, 1)) {
-            //     bline(combine.back.x1, combine.back.y1, combine.back.x2, combine.back.y2, 2);
-            // }
-        }
 
         var grainLevel = combine.grain * 100 / combine.maxGrain;
         var trailerGrainLevel = trailer.grain * 100 / trailer.maxGrain;
