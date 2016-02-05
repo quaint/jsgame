@@ -105,8 +105,6 @@ define(function(require) {
         var time = Date.now();
         var timeDiff = time - lastTime;
 
-
-
         if (acDelta > msPerFrame) {
             acDelta = 0;
             animationFrame++;
@@ -121,15 +119,18 @@ define(function(require) {
         combine.update(timeDelta, dx, dy);
         combine.updateTrailer(timeDelta, trailer);
 
+        field.update();
+
         bufferContext.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
 
         renderer.renderCombine(bufferContext, combine, spritesImage, animationFrame);
         renderer.renderTrailer(bufferContext, trailer, spritesImage);
 
         if (dy < 0) {
-            if (bline(combine.header.x1, combine.header.y1, combine.header.x2, combine.header.y2, 1)) {
-                bline(combine.back.x1, combine.back.y1, combine.back.x2, combine.back.y2, 2);
-            }
+            field.update(combine.header, combine.back);
+            // if (bline(combine.header.x1, combine.header.y1, combine.header.x2, combine.header.y2, 1)) {
+            //     bline(combine.back.x1, combine.back.y1, combine.back.x2, combine.back.y2, 2);
+            // }
         }
 
         var grainLevel = combine.grain * 100 / combine.maxGrain;
@@ -153,37 +154,6 @@ define(function(require) {
         requestAnimFrame(function() {
             animate(lastTime);
         });
-    }
-
-    function bline(x0, y0, x1, y1, type) {
-        x0 = Math.floor(x0 / field.grid);
-        y0 = Math.floor(y0 / field.grid);
-        x1 = Math.floor(x1 / field.grid);
-        y1 = Math.floor(y1 / field.grid);
-        var dx = Math.abs(x1 - x0);
-        var sx = x0 < x1 ? 1 : -1;
-        var dy = Math.abs(y1 - y0);
-        var sy = y0 < y1 ? 1 : -1;
-        var err = (dx > dy ? dx : -dy) / 2;
-        var notEmptyField = false;
-        while (true) {
-            if (updateFieldView(fieldContext, x0, y0, type)) {
-                notEmptyField = true;
-            }
-            if (x0 === x1 && y0 === y1) {
-                break;
-            }
-            var e2 = err;
-            if (e2 > -dx) {
-                err -= dy;
-                x0 += sx;
-            }
-            if (e2 < dy) {
-                err += dx;
-                y0 += sy;
-            }
-        }
-        return notEmptyField;
     }
 
     function getRandomInt(min, max) {
