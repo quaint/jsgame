@@ -85,7 +85,7 @@ define(function() {
             return points;
         }
 
-        function update(combine, point, type, ctx, spritesImage) {
+        function update(combine, point, type) {
             if (field.parts[point.x] === undefined || field.parts[point.x][point.y] === undefined) {
                 return false;
             }
@@ -95,12 +95,12 @@ define(function() {
                 if (combine.grain < combine.maxGrain) {
                     combine.grain += 1;
                 }
-                ctx.drawImage(spritesImage, 20, 60, field.grid, field.grid, point.x * field.grid, point.y * field.grid, field.grid, field.grid);
+                field.ctx.drawImage(field.sprite, 20, 60, field.grid, field.grid, point.x * field.grid, point.y * field.grid, field.grid, field.grid);
                 combine.workingTime = 1000;
                 return true;
             } else if (partOfField.type === 1 && type === 2) {
                 partOfField.type = type;
-                ctx.drawImage(spritesImage, 40, 60, field.grid, field.grid, point.x * field.grid, point.y * field.grid, field.grid, field.grid);
+                field.ctx.drawImage(field.sprite, 40, 60, field.grid, field.grid, point.x * field.grid, point.y * field.grid, field.grid, field.grid);
                 return false;
             }
         }

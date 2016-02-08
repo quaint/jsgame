@@ -41,9 +41,9 @@ define(function(require) {
     var trailer = createTrailer(500, 500, 20, 20, 9000, spritesImage, bufferContext);
 
     var createBar = require('./bar');
-    var grainBar = createBar(10, 10, 80, false, bufferContext);
-    var trailerBar = createBar(40, 10, 80, false, bufferContext);
-    var fuelBar = createBar(70, 10, 20, true, bufferContext);
+    var grainBar = createBar(10, 10, 80, false, bufferContext, "grain");
+    var trailerBar = createBar(40, 10, 80, false, bufferContext, "trailer");
+    var fuelBar = createBar(70, 10, 20, true, bufferContext, "fuel");
 
     document.onkeydown = function(e) {
         var key = e.keyCode;
@@ -90,9 +90,6 @@ define(function(require) {
         fuelBar.draw();
 
         // bufferContext.fillText(Math.floor((fieldPartsCount-fieldPartsLeft)/fieldPartsCount * 100) + "% done", 80, 20);
-        bufferContext.fillText("grain", 9, 122);
-        bufferContext.fillText("trailer", 38, 122);
-        bufferContext.fillText("fuel", 72, 122);
 
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.drawImage(fieldCanvas, 0, 0);
