@@ -38,7 +38,7 @@ define(['./vehicle'], function(createVehicle) {
             return combine.workingTime > 0;
         };
 
-        combine.update = function(timeDiff, dx, dy) {
+        combine.update = function(timeDiff, keys) {
             var timeDelta = timeDiff * 0.001;
             var linearDistEachFrame = combine.linearSpeed * timeDelta;
 

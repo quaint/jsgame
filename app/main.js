@@ -26,9 +26,6 @@ define(function(require) {
         animate(time);
     };
 
-    var dx = 0;
-    var dy = 0;
-
     var createField = require('./field');
     var field = createField(10, spritesImage, fieldContext);
     var fieldData = require('./fielddata');
@@ -45,7 +42,13 @@ define(function(require) {
     var trailerBar = createBar(40, 10, 80, false, bufferContext, "trailer");
     var fuelBar = createBar(70, 10, 20, true, bufferContext, "fuel");
 
+    var dx = 0;
+    var dy = 0;
+    var keys = {};
+
     document.onkeydown = function(e) {
+        keys[e.keyCode] = true;
+        /*
         var key = e.keyCode;
         if (key == 37) dx = -1;
         else if (key == 38) dy = -1;
@@ -54,26 +57,28 @@ define(function(require) {
         else if (key == 49) combine.pouring = true;
         else return true;
         return false;
+        */
     };
 
     document.onkeyup = function(e) {
         var key = e.keyCode;
+        delete keys[e.keyCode];
+        /*
         if (key == 37 || key == 39) dx = 0;
         else if (key == 38 || key == 40) dy = 0;
         else if (key == 49) combine.pouring = false;
         else return true;
         return false;
+        */
     };
 
     function animate(lastTime) {
 
-        // update
         var time = Date.now();
         var timeDiff = time - lastTime;
 
-        combine.update(timeDiff, dx, dy);
+        combine.update(timeDiff, keys);
         combine.updateTrailer(timeDiff, trailer);
-
         if (dy < 0) {
             field.updateFromCombine(combine, fieldContext, spritesImage);
         }
