@@ -1,16 +1,55 @@
 define(function() {
-    return function(grid) {
+    return function(grid, sprite, ctx) {
         var field = {
             grid: grid,
             width: 0,
             height: 0,
-            parts: []
+            parts: [],
+            ctx: ctx,
+            sprite: sprite
         };
 
-        field.updateCombine = function(combine, ctx, spritesImage) {
+        field.updateFromCombine = function(combine, ctx, spritesImage) {
             var headerPoints = getArrayOfPointsForLine(combine.header);
             for (var i = 0; i < headerPoints.length; i++) {
                 update(combine, headerPoints[i], 1, ctx, spritesImage);
+            }
+            if (combine.isProcessing()) {
+                var backPoints = getArrayOfPointsForLine(combine.back);
+                for (var i = 0; i < backPoints.length; i++) {
+                    update(combine, backPoints[i], 2, ctx, spritesImage);
+                }
+            }
+        };
+
+        field.load = function(fieldData) {
+            field.width = fieldData[0].length;
+            field.height = fieldData.length;
+            for (var i = 0; i < fieldData.length; i++) {
+                var rowData = fieldData[i].split('');
+                for (var j = 0; j < rowData.length; j++) {
+                    if (!field.parts[j]) {
+                        field.parts[j] = [];
+                    }
+                    field.parts[j][i] = {
+                        type: parseInt(rowData[j])
+                    };
+                }
+            }
+        };
+
+        field.draw = function() {
+            for (var i = 0; i < field.width; i++) {
+                for (var j = 0; j < field.height; j++) {
+                    var partOfField = field.parts[i][j];
+                    if (partOfField.type === 0) {
+                        field.ctx.drawImage(field.sprite, 0, 60, field.grid, field.grid, i * field.grid, j * field.grid, field.grid, field.grid);
+                    } else if (partOfField.type === 3) {
+                        field.ctx.drawImage(field.sprite, 60, 60, field.grid, field.grid, i * field.grid, j * field.grid, field.grid, field.grid);
+                    } else if (partOfField.type === 4) {
+                        field.ctx.drawImage(field.sprite, 80, 60, field.grid, field.grid, i * field.grid, j * field.grid, field.grid, field.grid);
+                    }
+                }
             }
         };
 

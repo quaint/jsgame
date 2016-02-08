@@ -1,6 +1,6 @@
 define(['./vehicle'], function(createVehicle) {
-    return function(x, y, width, height, maxGrain, maxFuel) {
-        var combine = createVehicle(x, y, width, height);
+    return function(x, y, width, height, maxGrain, maxFuel, sprite, ctx) {
+        var combine = createVehicle(x, y, width, height, sprite, ctx);
         combine.linearSpeed = 50;
         combine.pouringSpeed = 100;
         combine.grain = 0;
@@ -16,7 +16,7 @@ define(['./vehicle'], function(createVehicle) {
             x2: 0,
             y2: 0
         };
-        
+
         combine.back = {
             x1: 0,
             y1: 0,
@@ -34,7 +34,12 @@ define(['./vehicle'], function(createVehicle) {
 
         combine.pouring = false;
 
-        combine.update = function(timeDelta, dx, dy) {
+        combine.isProcessing = function() {
+            return combine.workingTime > 0;
+        };
+
+        combine.update = function(timeDiff, dx, dy) {
+            var timeDelta = timeDiff * 0.001;
             var linearDistEachFrame = combine.linearSpeed * timeDelta;
 
             if (dy !== 0 || combine.pouring) {
@@ -59,9 +64,11 @@ define(['./vehicle'], function(createVehicle) {
 
             updateHeader();
             updateBack();
+            combine.updateAnimation(timeDiff);
         };
 
-        combine.updateTrailer = function(timeDelta, trailer) {
+        combine.updateTrailer = function(timeDiff, trailer) {
+            var timeDelta = timeDiff * 0.001;
             if (combine.pouring) {
                 var distance = combine.distanceTo(trailer);
                 if (combine.grain > 0 && distance < combine.width) {
@@ -71,6 +78,17 @@ define(['./vehicle'], function(createVehicle) {
                     }
                 }
             }
+        };
+
+        combine.draw = function() {
+            combine.ctx.save();
+            combine.ctx.translate(combine.x, combine.y);
+            combine.ctx.rotate(combine.angle * Math.PI / 180);
+            if (combine.isProcessing()) {
+                ctx.drawImage(combine.sprite, combine.animationFrame * 20, 80, 20, 20, -combine.width + 20, -combine.height / 2 + 31, 20, 20);
+            }
+            combine.ctx.drawImage(combine.sprite, 0, 100, combine.width, combine.height, -combine.width + 30, -combine.height / 2, combine.width, combine.height);
+            combine.ctx.restore();
         };
 
         function updateHeader() {
