@@ -1,5 +1,10 @@
 define(function(require) {
 
+    //collisions
+    //world
+    //world coordinates
+    //world scrolling
+
     var canvas = document.getElementById("canvas");
     var screenWidth = canvas.parentNode.clientWidth;
     var screenHeight = canvas.parentNode.clientHeight;
