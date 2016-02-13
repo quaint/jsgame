@@ -6,18 +6,23 @@ define(function() {
             height: 0,
             parts: [],
             ctx: ctx,
-            sprite: sprite
+            sprite: sprite,
+            typePlant: 0,
+            typeStubble: 1,
+            typeStraw: 2,
+            typeWater: 3,
+            typeGrass: 4,
         };
 
         field.updateFromCombine = function(combine, ctx, spritesImage) {
             var headerPoints = getArrayOfPointsForLine(combine.header);
             for (var i = 0; i < headerPoints.length; i++) {
-                update(combine, headerPoints[i], 1, ctx, spritesImage);
+                update(combine, headerPoints[i], field.typeStubble, ctx, spritesImage);
             }
             if (combine.isProcessing()) {
                 var backPoints = getArrayOfPointsForLine(combine.back);
                 for (var i = 0; i < backPoints.length; i++) {
-                    update(combine, backPoints[i], 2, ctx, spritesImage);
+                    update(combine, backPoints[i], field.typeStraw, ctx, spritesImage);
                 }
             }
         };
@@ -42,13 +47,7 @@ define(function() {
             for (var i = 0; i < field.width; i++) {
                 for (var j = 0; j < field.height; j++) {
                     var partOfField = field.parts[i][j];
-                    if (partOfField.type === 0) {
-                        field.ctx.drawImage(field.sprite, 0, 60, field.grid, field.grid, i * field.grid, j * field.grid, field.grid, field.grid);
-                    } else if (partOfField.type === 3) {
-                        field.ctx.drawImage(field.sprite, 60, 60, field.grid, field.grid, i * field.grid, j * field.grid, field.grid, field.grid);
-                    } else if (partOfField.type === 4) {
-                        field.ctx.drawImage(field.sprite, 80, 60, field.grid, field.grid, i * field.grid, j * field.grid, field.grid, field.grid);
-                    }
+                    drawPart({x: i, y: j}, partOfField.type);
                 }
             }
         };
@@ -87,22 +86,32 @@ define(function() {
 
         function update(combine, point, type) {
             if (field.parts[point.x] === undefined || field.parts[point.x][point.y] === undefined) {
-                return false;
+                return;
             }
             var partOfField = field.parts[point.x][point.y];
-            if (partOfField.type === 0 && type === 1) {
+            if (partOfField.type === field.typePlant && type === field.typeStubble) {
                 partOfField.type = type;
-                if (combine.grain < combine.maxGrain) {
-                    combine.grain += 1;
-                }
-                field.ctx.drawImage(field.sprite, 20, 60, field.grid, field.grid, point.x * field.grid, point.y * field.grid, field.grid, field.grid);
-                combine.workingTime = 1000;
-                return true;
-            } else if (partOfField.type === 1 && type === 2) {
+                combine.notifyShouldProcess();
+                drawPart(point, type);
+            } else if (partOfField.type === field.typeStubble && type === field.typeStraw) {
                 partOfField.type = type;
-                field.ctx.drawImage(field.sprite, 40, 60, field.grid, field.grid, point.x * field.grid, point.y * field.grid, field.grid, field.grid);
-                return false;
+                drawPart(point, type);
             }
+        }
+
+        function drawPart(point, type) {
+            if (type === field.typePlant) {
+                field.ctx.drawImage(field.sprite, 0, 60, field.grid, field.grid, point.x * field.grid, point.y * field.grid, field.grid, field.grid);
+            } else if (type === field.typeStubble) {
+                field.ctx.drawImage(field.sprite, 20, 60, field.grid, field.grid, point.x * field.grid, point.y * field.grid, field.grid, field.grid);
+            } else if (type === field.typeStraw) {
+                field.ctx.drawImage(field.sprite, 40, 60, field.grid, field.grid, point.x * field.grid, point.y * field.grid, field.grid, field.grid);
+            } else if (type === field.typeWater) {
+                field.ctx.drawImage(field.sprite, 60, 60, field.grid, field.grid, point.x * field.grid, point.y * field.grid, field.grid, field.grid);
+            } else if (type === field.typeGrass) {
+                field.ctx.drawImage(field.sprite, 80, 60, field.grid, field.grid, point.x * field.grid, point.y * field.grid, field.grid, field.grid);
+            }
+
         }
 
         return field;

@@ -8,6 +8,7 @@ define(['./vehicle'], function(createVehicle) {
         combine.fuel = maxFuel;
         combine.maxFuel = maxFuel;
         combine.workingTime = 0;
+        combine.defaultWorkingTime = 1000;
         combine.workingSpeed = 1000;
 
         combine.header = {
@@ -38,9 +39,11 @@ define(['./vehicle'], function(createVehicle) {
             return combine.workingTime > 0;
         };
 
-        combine.update = function(timeDiff, dx, dy) {
+        combine.update = function(timeDiff, dx, dy, command) {
             var timeDelta = timeDiff * 0.001;
             var linearDistEachFrame = combine.linearSpeed * timeDelta;
+
+            combine.pouring = command;
 
             if (dy !== 0 || combine.pouring) {
                 if (combine.fuel > 0) {
@@ -65,6 +68,13 @@ define(['./vehicle'], function(createVehicle) {
             updateHeader();
             updateBack();
             combine.updateAnimation(timeDiff);
+        };
+
+        combine.notifyShouldProcess = function() {
+            if (combine.grain < combine.maxGrain) {
+                combine.grain += 1;
+            }
+            combine.workingTime = combine.defaultWorkingTime;
         };
 
         combine.updateTrailer = function(timeDiff, trailer) {

@@ -28,6 +28,7 @@ define(function(require) {
 
     var dx = 0;
     var dy = 0;
+    var command1 = false;
 
     var createField = require('./field');
     var field = createField(10, spritesImage, fieldContext);
@@ -41,9 +42,9 @@ define(function(require) {
     var trailer = createTrailer(500, 500, 20, 20, 9000, spritesImage, bufferContext);
 
     var createBar = require('./bar');
-    var grainBar = createBar(10, 10, 80, false, bufferContext, "grain");
-    var trailerBar = createBar(40, 10, 80, false, bufferContext, "trailer");
-    var fuelBar = createBar(70, 10, 20, true, bufferContext, "fuel");
+    var grainBar = createBar(10, 10, combine.maxGrain, 80, false, bufferContext, "grain");
+    var trailerBar = createBar(40, 10, trailer.maxGrain, 80, false, bufferContext, "trailer");
+    var fuelBar = createBar(70, 10, combine.maxFuel, 20, true, bufferContext, "fuel");
 
     document.onkeydown = function(e) {
         var key = e.keyCode;
@@ -51,7 +52,7 @@ define(function(require) {
         else if (key == 38) dy = -1;
         else if (key == 39) dx = 1;
         else if (key == 40) dy = 1;
-        else if (key == 49) combine.pouring = true;
+        else if (key == 49) command1 = true;
         else return true;
         return false;
     };
@@ -60,7 +61,7 @@ define(function(require) {
         var key = e.keyCode;
         if (key == 37 || key == 39) dx = 0;
         else if (key == 38 || key == 40) dy = 0;
-        else if (key == 49) combine.pouring = false;
+        else if (key == 49) command1 = false;
         else return true;
         return false;
     };
@@ -71,15 +72,15 @@ define(function(require) {
         var time = Date.now();
         var timeDiff = time - lastTime;
 
-        combine.update(timeDiff, dx, dy);
+        combine.update(timeDiff, dx, dy, command1);
         combine.updateTrailer(timeDiff, trailer);
 
         if (dy < 0) {
             field.updateFromCombine(combine, fieldContext, spritesImage);
         }
-        grainBar.update(combine.grain * 100 / combine.maxGrain);
-        trailerBar.update(trailer.grain * 100 / trailer.maxGrain);
-        fuelBar.update(combine.fuel * 100 / combine.maxFuel);
+        grainBar.update(combine.grain);
+        trailerBar.update(trailer.grain);
+        fuelBar.update(combine.fuel);
 
         bufferContext.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
 

@@ -9,7 +9,7 @@ define(['./vehicle'], function(createVehicle) {
             trailer.ctx.translate(trailer.x, trailer.y);
             trailer.ctx.rotate(trailer.angle * Math.PI / 180);
             if (trailer.grain > 0) {
-                ctx.drawImage(trailer.sprite, 20, 20, 20, 20, -trailer.width, -trailer.height / 2, trailer.width, trailer.height);
+                trailer.ctx.drawImage(trailer.sprite, 20, 20, 20, 20, -trailer.width, -trailer.height / 2, trailer.width, trailer.height);
             } else {
                 trailer.ctx.drawImage(trailer.sprite, 0, 20, 20, 20, -trailer.width, -trailer.height / 2, trailer.width, trailer.height);
             }
