@@ -4,6 +4,8 @@ define(function() {
             grid: grid,
             width: 0,
             height: 0,
+            widthInPx: 0,
+            heightInPx: 0,
             parts: [],
             ctx: ctx,
             sprite: sprite,
@@ -19,6 +21,7 @@ define(function() {
             for (var i = 0; i < headerPoints.length; i++) {
                 update(combine, headerPoints[i], field.typeStubble, ctx, spritesImage);
             }
+
             if (combine.isProcessing()) {
                 var backPoints = getArrayOfPointsForLine(combine.back);
                 for (var i = 0; i < backPoints.length; i++) {
@@ -30,14 +33,17 @@ define(function() {
         field.load = function(fieldData) {
             field.width = fieldData[0].length;
             field.height = fieldData.length;
+            field.widthInPx = field.width * field.grid;
+            field.heightInPx = field.height * field.grid;
             for (var i = 0; i < fieldData.length; i++) {
                 var rowData = fieldData[i].split('');
                 for (var j = 0; j < rowData.length; j++) {
                     if (!field.parts[j]) {
                         field.parts[j] = [];
                     }
+                    var type = parseInt(rowData[j]);
                     field.parts[j][i] = {
-                        type: parseInt(rowData[j])
+                        type: type
                     };
                 }
             }
@@ -47,7 +53,10 @@ define(function() {
             for (var i = 0; i < field.width; i++) {
                 for (var j = 0; j < field.height; j++) {
                     var partOfField = field.parts[i][j];
-                    drawPart({x: i, y: j}, partOfField.type);
+                    drawPart({
+                        x: i,
+                        y: j
+                    }, partOfField.type);
                 }
             }
         };
