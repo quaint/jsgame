@@ -3,7 +3,6 @@ define(function(require) {
     //collisions
     //world
     //world coordinates
-    //world scrolling
 
     var canvas = document.getElementById("canvas");
     var screenWidth = 800; //canvas.parentNode.clientWidth;
@@ -47,15 +46,17 @@ define(function(require) {
     field.load(fieldData);
 
     var createCombine = require('./combine');
-    var combine = createCombine(150, 150, 71, 80, 3000, 300, spritesImage, bufferContext);
+    var combine1 = createCombine(150, 150, 71, 80, 3000, 300, spritesImage, bufferContext);
+    var combine2 = createCombine(150, 300, 71, 80, 3000, 300, spritesImage, bufferContext);
+    var activeMachine = combine1;
 
     var createTrailer = require('./trailer');
     var trailer = createTrailer(500, 500, 20, 20, 9000, spritesImage, bufferContext);
 
     var createBar = require('./bar');
-    var grainBar = createBar(10, 10, combine.maxGrain, 80, false, context, "grain");
+    var grainBar = createBar(10, 10, combine1.maxGrain, 80, false, context, "grain");
     var trailerBar = createBar(40, 10, trailer.maxGrain, 80, false, context, "trailer");
-    var fuelBar = createBar(70, 10, combine.maxFuel, 20, true, context, "fuel");
+    var fuelBar = createBar(70, 10, combine1.maxFuel, 20, true, context, "fuel");
 
     document.onkeydown = function(e) {
         var key = e.keyCode;
@@ -64,6 +65,7 @@ define(function(require) {
         else if (key == 39) dx = 1;
         else if (key == 40) dy = 1;
         else if (key == 49) command1 = true;
+//        else if (key == 50) command2 = true;
         else return true;
         return false;
     };
@@ -73,6 +75,7 @@ define(function(require) {
         if (key == 37 || key == 39) dx = 0;
         else if (key == 38 || key == 40) dy = 0;
         else if (key == 49) command1 = false;
+        else if (key == 50) command2 = !command2;
         else return true;
         return false;
     };
@@ -83,27 +86,34 @@ define(function(require) {
         var time = Date.now();
         var timeDiff = time - lastTime;
 
+        if (command2 && activeMachine !== combine2) {
+            activeMachine = combine2;
+        } else if (!command2 && activeMachine !== combine1) {
+            activeMachine = combine1;
+        }
+
         if (dy < 0) {
-            field.updateFromCombine(combine, fieldContext, spritesImage);
+            field.updateFromCombine(activeMachine, fieldContext, spritesImage);
         }
 
-        combine.update(timeDiff, dx, dy, command1);
-        combine.updateTrailer(timeDiff, trailer);
+        activeMachine.update(timeDiff, dx, dy, command1);
+        activeMachine.updateTrailer(timeDiff, trailer);
 
-        grainBar.update(combine.grain);
+        grainBar.update(combine1.grain);
         trailerBar.update(trailer.grain);
-        fuelBar.update(combine.fuel);
+        fuelBar.update(combine1.fuel);
 
-        if (combine.x > centerX && combine.x < field.widthInPx - centerX) {
-            worldX = -combine.x + centerX;
+        if (activeMachine.x > centerX && activeMachine.x < field.widthInPx - centerX) {
+            worldX = -activeMachine.x + centerX;
         }
-        if (combine.y > centerY && combine.y < field.heightInPx - centerY) {
-            worldY = -combine.y + centerY;
+        if (activeMachine.y > centerY && activeMachine.y < field.heightInPx - centerY) {
+            worldY = -activeMachine.y + centerY;
         }
 
         bufferContext.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
 
-        combine.draw();
+        combine1.draw();
+        combine2.draw();
         trailer.draw();
 
         // bufferContext.fillText(Math.floor((fieldPartsCount-fieldPartsLeft)/fieldPartsCount * 100) + "% done", 80, 20);
