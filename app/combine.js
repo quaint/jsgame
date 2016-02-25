@@ -51,15 +51,18 @@ define(['./vehicle'], function(createVehicle) {
                 } else {
                     combine.fuel = 0;
                 }
-                if (dy == 1) {
-                    combine.angle += linearDistEachFrame * -dx;
-                } else {
-                    combine.angle += linearDistEachFrame * dx;
-                }
             }
 
-            combine.x -= dy * Math.cos(combine.angle * Math.PI / 180) * linearDistEachFrame;
-            combine.y -= dy * Math.sin(combine.angle * Math.PI / 180) * linearDistEachFrame;
+            if (combine.fuel > 0) {
+                if (dy == 1) {
+                    combine.angle += linearDistEachFrame * -dx;
+                } else if (dy == -1) {
+                    combine.angle += linearDistEachFrame * dx;
+                }
+
+                combine.x -= dy * Math.cos(combine.angle * Math.PI / 180) * linearDistEachFrame;
+                combine.y -= dy * Math.sin(combine.angle * Math.PI / 180) * linearDistEachFrame;
+            }
 
             if (combine.workingTime > 0) {
                 combine.workingTime -= timeDelta * combine.workingSpeed;

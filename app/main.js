@@ -37,6 +37,7 @@ define(function(require) {
     var dx = 0;
     var dy = 0;
     var command1 = false;
+    var command2 = false;
     var worldX = 0;
     var worldY = 0;
 
