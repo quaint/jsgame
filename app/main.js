@@ -3,6 +3,8 @@ define(function(require) {
     //collisions
     //world
     //world coordinates
+    //add uchangable background
+    //place field in world
 
     var canvas = document.getElementById("canvas");
     var screenWidth = 800; //canvas.parentNode.clientWidth;
