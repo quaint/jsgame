@@ -12,7 +12,7 @@ define(function(require) {
     var centerX = screenWidth / 2;
     var centerY = screenHeight / 2;
     var bufferWidth = 3040;
-    var bufferHeight = 920;
+    var bufferHeight = 1920;
     canvas.width = screenWidth;
     canvas.height = screenHeight;
     var context = canvas.getContext("2d");
@@ -110,14 +110,14 @@ define(function(require) {
 
         if (activeMachine.x > centerX && activeMachine.x < field.widthInPx - centerX) {
             worldX = -activeMachine.x + centerX;
-        } else if (activeMachine.x < centerX) {
+        } else if (activeMachine.x <= centerX) {
             worldX = 0;
         } else if (activeMachine.x > field.widthInPx - centerX) {
             worldX = -field.widthInPx + centerX * 2;
         }
         if (activeMachine.y > centerY && activeMachine.y < field.heightInPx - centerY) {
             worldY = -activeMachine.y + centerY;
-        } else if (activeMachine.y < centerY) {
+        } else if (activeMachine.y <= centerY) {
             worldY = 0;
         } else if (activeMachine.y > field.heightInPx - centerY) {
             worldY = -field.heightInPx + centerY * 2;
