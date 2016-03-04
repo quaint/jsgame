@@ -9,8 +9,8 @@ define(function(require) {
     var screenHeight = 600; //canvas.parentNode.clientHeight;
     var centerX = screenWidth / 2;
     var centerY = screenHeight / 2;
-    var bufferWidth = 1610;
-    var bufferHeight = 960;
+    var bufferWidth = 3040;
+    var bufferHeight = 920;
     canvas.width = screenWidth;
     canvas.height = screenHeight;
     var context = canvas.getContext("2d");
@@ -42,7 +42,7 @@ define(function(require) {
     var worldY = 0;
 
     var createField = require('./field');
-    var field = createField(10, spritesImage, fieldContext);
+    var field = createField(20, spritesImage, fieldContext);
     var fieldData = require('./fielddata');
     field.load(fieldData);
 
@@ -66,7 +66,7 @@ define(function(require) {
         else if (key == 39) dx = 1;
         else if (key == 40) dy = 1;
         else if (key == 49) command1 = true;
-//        else if (key == 50) command2 = true;
+        //        else if (key == 50) command2 = true;
         else return true;
         return false;
     };
@@ -88,8 +88,10 @@ define(function(require) {
         var timeDiff = time - lastTime;
 
         if (command2 && activeMachine !== combine2) {
+            console.log("switching machine to 2, x: " + activeMachine.x + " y: " + activeMachine.y);
             activeMachine = combine2;
         } else if (!command2 && activeMachine !== combine1) {
+            console.log("switching machine to 1, x: " + activeMachine.x + " y: " + activeMachine.y);
             activeMachine = combine1;
         }
 
@@ -100,22 +102,30 @@ define(function(require) {
         activeMachine.update(timeDiff, dx, dy, command1);
         activeMachine.updateTrailer(timeDiff, trailer);
 
-        grainBar.update(combine1.grain);
+        grainBar.update(activeMachine.grain);
         trailerBar.update(trailer.grain);
-        fuelBar.update(combine1.fuel);
+        fuelBar.update(activeMachine.fuel);
 
         if (activeMachine.x > centerX && activeMachine.x < field.widthInPx - centerX) {
             worldX = -activeMachine.x + centerX;
+        } else if (activeMachine.x < centerX) {
+            worldX = 0;
+        } else if (activeMachine.x > field.widthInPx - centerX) {
+            worldX = -field.widthInPx + centerX * 2;
         }
         if (activeMachine.y > centerY && activeMachine.y < field.heightInPx - centerY) {
             worldY = -activeMachine.y + centerY;
+        } else if (activeMachine.y < centerY) {
+            worldY = 0;
+        } else if (activeMachine.y > field.heightInPx - centerY) {
+            worldY = -field.heightInPx + centerY * 2;
         }
 
         bufferContext.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
 
         combine1.draw();
         combine2.draw();
-        trailer.draw();
+        // trailer.draw();
 
         // bufferContext.fillText(Math.floor((fieldPartsCount-fieldPartsLeft)/fieldPartsCount * 100) + "% done", 80, 20);
 
