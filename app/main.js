@@ -54,7 +54,7 @@ define(function(require) {
     var activeMachine = combine1;
 
     var createTrailer = require('./trailer');
-    var trailer = createTrailer(500, 500, 20, 20, 9000, spritesImage, bufferContext);
+    var trailer = createTrailer(150, 450, 58, 24, 9000, spritesImage, bufferContext);
 
     var createBar = require('./bar');
     var grainBar = createBar(10, 10, combine1.maxGrain, 80, false, context, "grain");
@@ -104,6 +104,14 @@ define(function(require) {
         activeMachine.update(timeDiff, dx, dy, command1);
         activeMachine.updateTrailer(timeDiff, trailer);
 
+        var trailerDx = combine1.back.x1 - trailer.x,
+            trailerDy = combine1.back.y1 - trailer.y;
+        trailer.angle = Math.atan2(trailerDy, trailerDx);
+        var trailerW = trailer.getPin().x - trailer.x,
+            trailerH = trailer.getPin().y - trailer.y;
+        trailer.x = combine1.back.x1 - trailerW;
+        trailer.y = combine1.back.y1 - trailerH;
+
         grainBar.update(activeMachine.grain);
         trailerBar.update(trailer.grain);
         fuelBar.update(activeMachine.fuel);
@@ -127,7 +135,7 @@ define(function(require) {
 
         combine1.draw();
         combine2.draw();
-        // trailer.draw();
+        trailer.draw();
 
         // bufferContext.fillText(Math.floor((fieldPartsCount-fieldPartsLeft)/fieldPartsCount * 100) + "% done", 80, 20);
 
