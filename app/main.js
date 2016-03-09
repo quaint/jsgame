@@ -53,6 +53,9 @@ define(function(require) {
     var combine2 = createCombine(150, 300, 71, 80, 3000, 300, spritesImage, bufferContext);
     var activeMachine = combine1;
 
+    var createTractor = require('./tractor');
+    var tractor = createTractor(150, 450, 31, 19, 200, spritesImage, bufferContext);
+
     var createTrailer = require('./trailer');
     var trailer = createTrailer(150, 450, 58, 24, 9000, spritesImage, bufferContext);
 
@@ -68,7 +71,7 @@ define(function(require) {
         else if (key == 39) dx = 1;
         else if (key == 40) dy = 1;
         else if (key == 49) command1 = true;
-        //        else if (key == 50) command2 = true;
+               // else if (key == 50) command2 = true;
         else return true;
         return false;
     };
@@ -89,28 +92,36 @@ define(function(require) {
         var time = Date.now();
         var timeDiff = time - lastTime;
 
-        if (command2 && activeMachine !== combine2) {
+        if (command2 && activeMachine === combine1) {
             console.log("switching machine to 2, x: " + activeMachine.x + " y: " + activeMachine.y);
             activeMachine = combine2;
-        } else if (!command2 && activeMachine !== combine1) {
+            command2 = false;
+        } else if (command2 && activeMachine === combine2) {
+            console.log("switching machine to 3, x: " + activeMachine.x + " y: " + activeMachine.y);
+            activeMachine = tractor;
+            command2 = false;
+        } else if (command2 && activeMachine === tractor) {
             console.log("switching machine to 1, x: " + activeMachine.x + " y: " + activeMachine.y);
             activeMachine = combine1;
+            command2 = false;
         }
 
-        if (dy < 0) {
+        if (dy < 0 && activeMachine !== tractor) {
             field.updateFromCombine(activeMachine, fieldContext, spritesImage);
         }
 
         activeMachine.update(timeDiff, dx, dy, command1);
-        activeMachine.updateTrailer(timeDiff, trailer);
+        if (activeMachine !== tractor) {
+            activeMachine.updateTrailer(timeDiff, trailer);
+        }
 
-        var trailerDx = combine1.back.x1 - trailer.x,
-            trailerDy = combine1.back.y1 - trailer.y;
+        var trailerDx = tractor.x- trailer.x,
+            trailerDy = tractor.y - trailer.y;
         trailer.angle = Math.atan2(trailerDy, trailerDx);
         var trailerW = trailer.getPin().x - trailer.x,
             trailerH = trailer.getPin().y - trailer.y;
-        trailer.x = combine1.back.x1 - trailerW;
-        trailer.y = combine1.back.y1 - trailerH;
+        trailer.x = tractor.x - trailerW;
+        trailer.y = tractor.y - trailerH;
 
         grainBar.update(activeMachine.grain);
         trailerBar.update(trailer.grain);
@@ -136,6 +147,7 @@ define(function(require) {
         combine1.draw();
         combine2.draw();
         trailer.draw();
+        tractor.draw();
 
         // bufferContext.fillText(Math.floor((fieldPartsCount-fieldPartsLeft)/fieldPartsCount * 100) + "% done", 80, 20);
 
