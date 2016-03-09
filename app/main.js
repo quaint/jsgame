@@ -44,7 +44,7 @@ define(function(require) {
     var worldY = 0;
 
     var createField = require('./field');
-    var field = createField(20, spritesImage, fieldContext);
+    var field = createField(10, spritesImage, fieldContext);
     var fieldData = require('./fielddata');
     field.load(fieldData);
 
@@ -58,6 +58,7 @@ define(function(require) {
 
     var createTrailer = require('./trailer');
     var trailer = createTrailer(150, 450, 58, 24, 9000, spritesImage, bufferContext);
+    var trailer2 = createTrailer(150, 450, 56, 24, 9000, spritesImage, bufferContext);
 
     var createBar = require('./bar');
     var grainBar = createBar(10, 10, combine1.maxGrain, 80, false, context, "grain");
@@ -115,13 +116,8 @@ define(function(require) {
             activeMachine.updateTrailer(timeDiff, trailer);
         }
 
-        var trailerDx = tractor.x- trailer.x,
-            trailerDy = tractor.y - trailer.y;
-        trailer.angle = Math.atan2(trailerDy, trailerDx);
-        var trailerW = trailer.getPin().x - trailer.x,
-            trailerH = trailer.getPin().y - trailer.y;
-        trailer.x = tractor.x - trailerW;
-        trailer.y = tractor.y - trailerH;
+        drag(trailer, tractor);
+        drag(trailer2, trailer);
 
         grainBar.update(activeMachine.grain);
         trailerBar.update(trailer.grain);
@@ -146,8 +142,9 @@ define(function(require) {
 
         combine1.draw();
         combine2.draw();
-        trailer.draw();
         tractor.draw();
+        trailer.draw();
+        trailer2.draw();
 
         // bufferContext.fillText(Math.floor((fieldPartsCount-fieldPartsLeft)/fieldPartsCount * 100) + "% done", 80, 20);
 
@@ -163,6 +160,16 @@ define(function(require) {
         requestAnimFrame(function() {
             animate(lastTime);
         });
+    }
+
+    function drag(connectObject, connectTo) {
+        var trailerDx = connectTo.x- connectObject.x,
+            trailerDy = connectTo.y - connectObject.y;
+        connectObject.angle = Math.atan2(trailerDy, trailerDx);
+        var trailerW = connectObject.getPin().x - connectObject.x,
+            trailerH = connectObject.getPin().y - connectObject.y;
+        connectObject.x = connectTo.x - trailerW;
+        connectObject.y = connectTo.y - trailerH;
     }
 
     function getRandomInt(min, max) {
