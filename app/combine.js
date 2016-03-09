@@ -95,6 +95,7 @@ define(['./vehicle'], function(createVehicle) {
 
         combine.draw = function() {
             combine.ctx.save();
+            combine.ctx.fillRect(combine.x, combine.y, 20, 20);
             combine.ctx.translate(combine.x, combine.y);
             combine.ctx.rotate(combine.angle * Math.PI / 180);
             if (combine.isProcessing()) {

@@ -6,6 +6,7 @@ define(['./vehicle'], function(createVehicle) {
 
         trailer.draw = function() {
             trailer.ctx.save();
+            // trailer.ctx.fillRect(trailer.getPin().x, trailer.getPin().y, 10, 10);
             trailer.ctx.translate(trailer.x, trailer.y);
             trailer.ctx.rotate(trailer.angle); // * Math.PI / 180
             // if (trailer.grain > 0) {
