@@ -1,6 +1,8 @@
 define(function() {
-    return function(grid, sprite, ctx) {
+    return function(x, y, grid, sprite, ctx) {
         var field = {
+        	x: x,
+        	y: y,
             grid: grid,
             width: 0,
             height: 0,
@@ -62,10 +64,10 @@ define(function() {
         };
 
         function getArrayOfPointsForLine(line) {
-            var x0 = Math.floor(line.x1 / field.grid);
-            var y0 = Math.floor(line.y1 / field.grid);
-            var x1 = Math.floor(line.x2 / field.grid);
-            var y1 = Math.floor(line.y2 / field.grid);
+            var x0 = Math.floor((line.x1 - field.x) / field.grid);
+            var y0 = Math.floor((line.y1 - field.y) / field.grid);
+            var x1 = Math.floor((line.x2 - field.x) / field.grid);
+            var y1 = Math.floor((line.y2 - field.y) / field.grid);
             var dx = Math.abs(x1 - x0);
             var sx = x0 < x1 ? 1 : -1;
             var dy = Math.abs(y1 - y0);
@@ -110,15 +112,15 @@ define(function() {
 
         function drawPart(point, type) {
             if (type === field.typePlant) {
-                field.ctx.drawImage(field.sprite, 0, 60, field.grid, field.grid, point.x * field.grid, point.y * field.grid, field.grid, field.grid);
+                field.ctx.drawImage(field.sprite, 0, 60, field.grid, field.grid, point.x * field.grid + field.x, point.y * field.grid + field.y, field.grid, field.grid);
             } else if (type === field.typeStubble) {
-                field.ctx.drawImage(field.sprite, 20, 60, field.grid, field.grid, point.x * field.grid, point.y * field.grid, field.grid, field.grid);
+                field.ctx.drawImage(field.sprite, 20, 60, field.grid, field.grid, point.x * field.grid + field.x, point.y * field.grid + field.y, field.grid, field.grid);
             } else if (type === field.typeStraw) {
-                field.ctx.drawImage(field.sprite, 40, 60, field.grid, field.grid, point.x * field.grid, point.y * field.grid, field.grid, field.grid);
+                field.ctx.drawImage(field.sprite, 40, 60, field.grid, field.grid, point.x * field.grid + field.x, point.y * field.grid + field.y, field.grid, field.grid);
             } else if (type === field.typeWater) {
-                field.ctx.drawImage(field.sprite, 60, 60, field.grid, field.grid, point.x * field.grid, point.y * field.grid, field.grid, field.grid);
+                field.ctx.drawImage(field.sprite, 60, 60, field.grid, field.grid, point.x * field.grid + field.x, point.y * field.grid + field.y, field.grid, field.grid);
             } else if (type === field.typeGrass) {
-                field.ctx.drawImage(field.sprite, 80, 60, field.grid, field.grid, point.x * field.grid, point.y * field.grid, field.grid, field.grid);
+                field.ctx.drawImage(field.sprite, 80, 60, field.grid, field.grid, point.x * field.grid + field.x, point.y * field.grid + field.y, field.grid, field.grid);
             }
 
         }

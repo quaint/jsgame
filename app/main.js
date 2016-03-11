@@ -3,8 +3,7 @@ define(function(require) {
     //collisions
     //world
     //world coordinates
-    //add uchangable background
-    //place field in world
+    //forces
 
     var canvas = document.getElementById("canvas");
     var screenWidth = 800; //canvas.parentNode.clientWidth;
@@ -27,15 +26,6 @@ define(function(require) {
     fieldCanvas.height = bufferHeight;
     var fieldContext = fieldCanvas.getContext("2d");
 
-    var spritesImage = new Image();
-    spritesImage.src = 'assets/atlas.png';
-    spritesImage.onload = function() {
-        field.draw();
-        var date = new Date();
-        var time = date.getTime();
-        animate(time);
-    };
-
     var dx = 0;
     var dy = 0;
     var command1 = false;
@@ -43,10 +33,25 @@ define(function(require) {
     var worldX = 0;
     var worldY = 0;
 
+    var backgroundImage = new Image();
+    backgroundImage.src = 'assets/background.jpg';
+    backgroundImage.onload = function() {
+        fieldContext.drawImage(backgroundImage, 0, 0, 960, 480, 0, 0, 960 * 2, 480 * 2);
+    };
+
+    var spritesImage = new Image();
+    spritesImage.src = 'assets/atlas.png';
+    spritesImage.onload = function() {
+        field.load(fieldData);
+        field.draw();
+        var date = new Date();
+        var time = date.getTime();
+        animate(time);
+    };
+
     var createField = require('./field');
-    var field = createField(10, spritesImage, fieldContext);
+    var field = createField(100, 100, 10, spritesImage, fieldContext);
     var fieldData = require('./fielddata');
-    field.load(fieldData);
 
     var createCombine = require('./combine');
     var combine1 = createCombine(150, 150, 71, 80, 3000, 300, spritesImage, bufferContext);
@@ -72,7 +77,7 @@ define(function(require) {
         else if (key == 39) dx = 1;
         else if (key == 40) dy = 1;
         else if (key == 49) command1 = true;
-               // else if (key == 50) command2 = true;
+        // else if (key == 50) command2 = true;
         else return true;
         return false;
     };
@@ -111,13 +116,30 @@ define(function(require) {
             field.updateFromCombine(activeMachine, fieldContext, spritesImage);
         }
 
-        activeMachine.update(timeDiff, dx, dy, command1);
+        if (activeMachine == combine1) {
+            combine1.update(timeDiff, dx, dy, command1);
+        } else {
+            combine1.update(timeDiff, 0 ,0, false);
+        }
+        if (activeMachine == combine2) {
+            combine2.update(timeDiff, dx, dy, command1);
+        } else {
+            combine2.update(timeDiff, 0, 0, false);
+        }
+        if (activeMachine == tractor) {
+            tractor.update(timeDiff, dx, dy, command1);
+        } else {
+            tractor.update(timeDiff, 0, 0, false);
+        }
+
         if (activeMachine !== tractor) {
             activeMachine.updateTrailer(timeDiff, trailer);
         }
 
-        drag(trailer, tractor);
-        drag(trailer2, trailer);
+        if (activeMachine === tractor) {
+            drag(trailer, tractor);
+            drag(trailer2, trailer);
+        }
 
         grainBar.update(activeMachine.grain);
         trailerBar.update(trailer.grain);
@@ -163,7 +185,7 @@ define(function(require) {
     }
 
     function drag(connectObject, connectTo) {
-        var trailerDx = connectTo.x- connectObject.x,
+        var trailerDx = connectTo.x - connectObject.x,
             trailerDy = connectTo.y - connectObject.y;
         connectObject.angle = Math.atan2(trailerDy, trailerDx);
         var trailerW = connectObject.getPin().x - connectObject.x,
