@@ -1,3 +1,3 @@
 # jsgame
 
-Nothing interesting here
+Simple game in javascript.

@@ -1,4 +1,4 @@
-define(function(require) {
+define(function (require) {
 
     //collisions
     //world
@@ -35,13 +35,13 @@ define(function(require) {
 
     var backgroundImage = new Image();
     backgroundImage.src = 'assets/background.jpg';
-    backgroundImage.onload = function() {
+    backgroundImage.onload = function () {
         fieldContext.drawImage(backgroundImage, 0, 0, 960, 480, 0, 0, 960 * 2, 480 * 2);
     };
 
     var spritesImage = new Image();
     spritesImage.src = 'assets/atlas.png';
-    spritesImage.onload = function() {
+    spritesImage.onload = function () {
         field.load(fieldData);
         field.draw();
         var date = new Date();
@@ -70,26 +70,52 @@ define(function(require) {
     var trailerBar = createBar(40, 10, trailer.maxGrain, 80, false, context, "trailer");
     var fuelBar = createBar(70, 10, combine1.maxFuel, 20, true, context, "fuel");
 
-    document.onkeydown = function(e) {
-        var key = e.keyCode;
-        if (key == 37) dx = -1;
-        else if (key == 38) dy = -1;
-        else if (key == 39) dx = 1;
-        else if (key == 40) dy = 1;
-        else if (key == 49) command1 = true;
-        // else if (key == 50) command2 = true;
-        else return true;
-        return false;
+    var keycode = require('./keycode');
+
+    document.onkeydown = function (event) {
+        switch (event.keyCode) {
+            case keycode.LEFT:
+                dx = -1;
+                break;
+            case keycode.UP:
+                dy = -1;
+                break;
+            case keycode.RIGHT:
+                dx = 1;
+                break;
+            case keycode.DOWN:
+                dy = 1;
+                break;
+            case keycode.NUMBER_1:
+                command1 = true;
+                break;
+            // case keycode.NUMBER_2:
+            //     command2 = true;
+            //     break;
+            default:
+                return true;
+        }
     };
 
-    document.onkeyup = function(e) {
-        var key = e.keyCode;
-        if (key == 37 || key == 39) dx = 0;
-        else if (key == 38 || key == 40) dy = 0;
-        else if (key == 49) command1 = false;
-        else if (key == 50) command2 = !command2;
-        else return true;
-        return false;
+    document.onkeyup = function (e) {
+        switch (event.keyCode) {
+            case keycode.LEFT:
+            case keycode.RIGHT:
+                dx = 0;
+                break;
+            case keycode.UP:
+            case keycode.DOWN:
+                dy = 0;
+                break;
+            case keycode.NUMBER_1:
+                command1 = false;
+                break;
+            case keycode.NUMBER_2:
+                command2 = !command2;
+                break;
+            default:
+                return true;
+        }
     };
 
     function animate(lastTime) {
@@ -119,7 +145,7 @@ define(function(require) {
         if (activeMachine == combine1) {
             combine1.update(timeDiff, dx, dy, command1);
         } else {
-            combine1.update(timeDiff, 0 ,0, false);
+            combine1.update(timeDiff, 0, 0, false);
         }
         if (activeMachine == combine2) {
             combine2.update(timeDiff, dx, dy, command1);
@@ -179,7 +205,7 @@ define(function(require) {
         fuelBar.draw();
 
         lastTime = time;
-        requestAnimFrame(function() {
+        requestAnimFrame(function () {
             animate(lastTime);
         });
     }
