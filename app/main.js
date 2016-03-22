@@ -33,11 +33,11 @@ define(function (require) {
     var worldX = 0;
     var worldY = 0;
 
-    var backgroundImage = new Image();
-    backgroundImage.src = 'assets/background.jpg';
-    backgroundImage.onload = function () {
-        fieldContext.drawImage(backgroundImage, 0, 0, 960, 480, 0, 0, 960 * 2, 480 * 2);
-    };
+    // var backgroundImage = new Image();
+    // backgroundImage.src = 'assets/grass.jpg';
+    // backgroundImage.onload = function () {
+    //     fieldContext.drawImage(backgroundImage, 0, 0, 3150, 2100, 0, 0, 3150/4, 2100/4);
+    // };
 
     var spritesImage = new Image();
     spritesImage.src = 'assets/atlas.png';
@@ -59,11 +59,11 @@ define(function (require) {
     var activeMachine = combine1;
 
     var createTractor = require('./tractor');
-    var tractor = createTractor(150, 450, 31, 19, 200, spritesImage, bufferContext);
+    var tractor = createTractor(220, 450, 31, 19, 200, spritesImage, bufferContext);
 
     var createTrailer = require('./trailer');
-    var trailer = createTrailer(150, 450, 58, 24, 9000, spritesImage, bufferContext);
-    var trailer2 = createTrailer(150, 450, 56, 24, 9000, spritesImage, bufferContext);
+    var trailer = createTrailer(160, 450, 58, 24, 9000, spritesImage, bufferContext);
+    var trailer2 = createTrailer(100, 450, 56, 24, 9000, spritesImage, bufferContext);
 
     var createBar = require('./bar');
     var grainBar = createBar(10, 10, combine1.maxGrain, 80, false, context, "grain");
