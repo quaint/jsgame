@@ -33,11 +33,11 @@ define(function (require) {
     var worldX = 0;
     var worldY = 0;
 
-    // var backgroundImage = new Image();
-    // backgroundImage.src = 'assets/grass.jpg';
-    // backgroundImage.onload = function () {
-    //     fieldContext.drawImage(backgroundImage, 0, 0, 3150, 2100, 0, 0, 3150/4, 2100/4);
-    // };
+    var backgroundImage = new Image();
+    backgroundImage.src = 'assets/grass.jpg';
+    backgroundImage.onload = function () {
+        fieldContext.drawImage(backgroundImage, 0, 0, 3150, 2100, 0, 0, 3150, 2100);
+    };
 
     var spritesImage = new Image();
     spritesImage.src = 'assets/atlas.png';
@@ -211,13 +211,21 @@ define(function (require) {
     }
 
     function drag(connectObject, connectTo) {
-        var trailerDx = connectTo.x - connectObject.x,
-            trailerDy = connectTo.y - connectObject.y;
-        connectObject.angle = Math.atan2(trailerDy, trailerDx);
-        var trailerW = connectObject.getPin().x - connectObject.x,
-            trailerH = connectObject.getPin().y - connectObject.y;
-        connectObject.x = connectTo.x - trailerW;
-        connectObject.y = connectTo.y - trailerH;
+        var objectDx = connectTo.x - connectObject.x,
+            objectDy = connectTo.y - connectObject.y,
+            angle = Math.atan2(objectDy, objectDx);
+        var delta = (angle - connectTo.angle) * (180 / Math.PI);
+        if (delta <= 45 && delta >= -45) {
+            connectObject.angle = angle;
+        } else if (delta > 45) {
+            connectObject.angle = angle - ((delta - 45) * Math.PI / 180);
+        } else if (delta < -45) {
+            connectObject.angle = angle - ((delta + 45) * Math.PI / 180);
+        }
+        var objectWidth = connectObject.getPin().x - connectObject.x,
+            objectHeight = connectObject.getPin().y - connectObject.y;
+        connectObject.x = connectTo.x - objectWidth;
+        connectObject.y = connectTo.y - objectHeight;
     }
 
     function getRandomInt(min, max) {
