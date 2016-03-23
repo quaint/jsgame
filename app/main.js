@@ -213,17 +213,19 @@ define(function (require) {
     function drag(connectObject, connectTo) {
         var objectDx = connectTo.x - connectObject.x,
             objectDy = connectTo.y - connectObject.y,
-            angle = Math.atan2(objectDy, objectDx);
+            angle = Math.atan2(objectDy, objectDx),
+            maxAngle = 30;
+
         var delta = (angle - connectTo.angle) * (180 / Math.PI);
-        if (delta <= 45 && delta >= -45) {
+        if (delta <= maxAngle && delta >= -maxAngle) {
             connectObject.angle = angle;
-        } else if (delta > 45) {
-            connectObject.angle = angle - ((delta - 45) * Math.PI / 180);
-        } else if (delta < -45) {
-            connectObject.angle = angle - ((delta + 45) * Math.PI / 180);
+        } else if (delta > maxAngle) {
+            connectObject.angle = angle - ((delta - maxAngle) * Math.PI / 180);
+        } else if (delta < -maxAngle) {
+            connectObject.angle = angle - ((delta + maxAngle) * Math.PI / 180);
         }
-        var objectWidth = connectObject.getPin().x - connectObject.x,
-            objectHeight = connectObject.getPin().y - connectObject.y;
+        var objectWidth = connectObject.getPin().x - connectObject.x;
+        var objectHeight = connectObject.getPin().y - connectObject.y;
         connectObject.x = connectTo.x - objectWidth;
         connectObject.y = connectTo.y - objectHeight;
     }
