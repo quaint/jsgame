@@ -33,11 +33,11 @@ define(function (require) {
     var worldX = 0;
     var worldY = 0;
 
-    var backgroundImage = new Image();
-    backgroundImage.src = 'assets/grass.jpg';
-    backgroundImage.onload = function () {
-        fieldContext.drawImage(backgroundImage, 0, 0, 3150, 2100, 0, 0, 3150, 2100);
-    };
+    // var backgroundImage = new Image();
+    // backgroundImage.src = 'assets/grass.jpg';
+    // backgroundImage.onload = function () {
+    //     fieldContext.drawImage(backgroundImage, 0, 0, 3150, 2100, 0, 0, 3150, 2100);
+    // };
 
     var spritesImage = new Image();
     spritesImage.src = 'assets/atlas.png';
@@ -216,7 +216,7 @@ define(function (require) {
             angle = Math.atan2(objectDy, objectDx),
             maxAngle = 30;
 
-        var delta = (angle - connectTo.angle) * (180 / Math.PI);
+        var delta = (connectObject.angle - connectTo.angle) * (180 / Math.PI);
         if (delta <= maxAngle && delta >= -maxAngle) {
             connectObject.angle = angle;
         } else if (delta > maxAngle) {
