@@ -4,6 +4,7 @@ define(function (require) {
     //world
     //world coordinates
     //forces
+    //limit vehicles angle
 
     var canvas = document.getElementById("canvas");
     var screenWidth = 800; //canvas.parentNode.clientWidth;
@@ -162,10 +163,6 @@ define(function (require) {
             activeMachine.updateTrailer(timeDiff, trailer);
         }
 
-        if (activeMachine === tractor) {
-            drag(trailer, tractor);
-            drag(trailer2, trailer);
-        }
 
         grainBar.update(activeMachine.grain);
         trailerBar.update(trailer.grain);
@@ -200,6 +197,11 @@ define(function (require) {
         context.drawImage(fieldCanvas, worldX, worldY);
         context.drawImage(bufferCanvas, worldX, worldY);
 
+        if (activeMachine === tractor) {
+            drag(trailer, tractor);
+            drag2(trailer2, trailer);
+        }
+
         grainBar.draw();
         trailerBar.draw();
         fuelBar.draw();
@@ -214,20 +216,69 @@ define(function (require) {
         var objectDx = connectTo.x - connectObject.x,
             objectDy = connectTo.y - connectObject.y,
             angle = Math.atan2(objectDy, objectDx),
-            maxAngle = 30;
-
-        var delta = (connectObject.angle - connectTo.angle) * (180 / Math.PI);
+            maxAngle = 30 * (Math.PI / 180.0);
+        var delta = connectObject.angle - connectTo.angle;
+        delta = normalizeAngle(delta);
+        var deltaDeg = delta * (180.0 / Math.PI);
+        context.save();
+        context.fillStyle = "#000000";
+        context.fillText(connectObject.angle * (180.0 / Math.PI), 100, 30);
+        context.fillText(connectTo.angle * (180.0 / Math.PI), 100, 40);
+        context.fillText(delta * (180.0 / Math.PI), 100, 50);
+        context.fillText(angle * (180.0 / Math.PI), 100, 60);
+        context.restore();
         if (delta <= maxAngle && delta >= -maxAngle) {
             connectObject.angle = angle;
         } else if (delta > maxAngle) {
-            connectObject.angle = angle - ((delta - maxAngle) * Math.PI / 180);
+            connectObject.angle = angle - delta + maxAngle;
         } else if (delta < -maxAngle) {
-            connectObject.angle = angle - ((delta + maxAngle) * Math.PI / 180);
+            connectObject.angle = angle - delta - maxAngle;
         }
         var objectWidth = connectObject.getPin().x - connectObject.x;
         var objectHeight = connectObject.getPin().y - connectObject.y;
         connectObject.x = connectTo.x - objectWidth;
         connectObject.y = connectTo.y - objectHeight;
+    }
+
+    function drag2(connectObject, connectTo) {
+        var objectDx = connectTo.x - connectObject.x,
+            objectDy = connectTo.y - connectObject.y,
+            angle = Math.atan2(objectDy, objectDx),
+            maxAngle = 30 * (Math.PI / 180.0);
+        var delta = connectObject.angle - connectTo.angle;
+        delta = normalizeAngle(delta);
+        context.save();
+        context.fillStyle = "#000000";
+        context.fillText(connectObject.angle * (180.0 / Math.PI), 250, 30);
+        context.fillText(connectTo.angle * (180.0 / Math.PI), 250, 40);
+        context.fillText(delta * (180.0 / Math.PI), 250, 50);
+        context.fillText(angle * (180.0 / Math.PI), 250, 60);
+        context.restore();
+        if (delta <= maxAngle && delta >= -maxAngle) {
+            connectObject.angle = angle;
+        } else if (delta > maxAngle) {
+            connectObject.angle = angle - delta + maxAngle;
+        } else if (delta < -maxAngle) {
+            connectObject.angle = angle - delta - maxAngle;
+        }
+        var objectWidth = connectObject.getPin().x - connectObject.x;
+        var objectHeight = connectObject.getPin().y - connectObject.y;
+        connectObject.x = connectTo.x - objectWidth;
+        connectObject.y = connectTo.y - objectHeight;
+    }
+
+    function normalizeAngle(delta) {
+        if (delta > Math.PI) {
+            delta -= 2 * Math.PI;
+        }
+        if (delta < -Math.PI) {
+            delta += 2 * Math.PI;
+        }
+        if (delta > Math.PI || delta < -Math.PI) {
+            return normalizeAngle(delta);
+        } else {
+            return delta;
+        }
     }
 
     function getRandomInt(min, max) {
