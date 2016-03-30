@@ -1,4 +1,4 @@
-define(['./vehicle'], function(createVehicle) {
+define(['./vehicle', './utils'], function(createVehicle, utils) {
     return function(x, y, width, height, maxGrain, maxFuel, sprite, ctx) {
         var combine = createVehicle(x, y, width, height, sprite, ctx);
         combine.linearSpeed = 50;
@@ -59,6 +59,8 @@ define(['./vehicle'], function(createVehicle) {
                 } else if (dy == -1) {
                     combine.angle += linearDistEachFrame * dx;
                 }
+
+                combine.angle = utils.normalizeAngle(combine.angle);
 
                 combine.x -= dy * Math.cos(combine.angle * Math.PI / 180) * linearDistEachFrame;
                 combine.y -= dy * Math.sin(combine.angle * Math.PI / 180) * linearDistEachFrame;

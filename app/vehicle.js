@@ -1,7 +1,6 @@
-define(function() {
-    return function(x, y, width, height, sprite, ctx) {
-
-        var vehicle = {
+define(function () {
+    return function (x, y, width, height, sprite, ctx) {
+        return {
             x: x,
             y: y,
             width: width,
@@ -12,25 +11,21 @@ define(function() {
             linearSpeed: 10,
             animationFrame: 0,
             animationDelta: 0,
-            msPerFrame: 100
-        };
-
-        vehicle.updateAnimation = function(timeDiff) {
-            if (vehicle.animationDelta > vehicle.msPerFrame) {
-                vehicle.animationDelta = 0;
-                vehicle.animationFrame++;
-                if (vehicle.animationFrame > 1) {
-                    vehicle.animationFrame = 0;
+            msPerFrame: 100,
+            updateAnimation: function (timeDiff) {
+                if (this.animationDelta > this.msPerFrame) {
+                    this.animationDelta = 0;
+                    this.animationFrame++;
+                    if (this.animationFrame > 1) {
+                        this.animationFrame = 0;
+                    }
+                } else {
+                    this.animationDelta += timeDiff;
                 }
-            } else {
-                vehicle.animationDelta += timeDiff;
+            },
+            distanceTo: function (otherObject) {
+                return Math.sqrt(Math.pow(this.x - otherObject.x, 2) + Math.pow(this.y - otherObject.y, 2));
             }
-        };
-
-        vehicle.distanceTo = function(otherObject) {
-            return Math.sqrt(Math.pow(vehicle.x - otherObject.x, 2) + Math.pow(vehicle.y - otherObject.y, 2));
-        };
-
-        return vehicle;
+        }
     };
 });

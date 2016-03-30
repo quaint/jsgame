@@ -1,7 +1,6 @@
-define(function() {
-    return function(x, y, maxValue, warningLevel, warningBelow, ctx, title) {
-
-        var bar = {
+define(function () {
+    return function (x, y, maxValue, warningLevel, warningBelow, ctx, title) {
+        return {
             x: x,
             y: y,
             width: 20,
@@ -12,30 +11,26 @@ define(function() {
             warningLevel: warningLevel,
             warningBelow: warningBelow,
             ctx: ctx,
-            title: title
-        };
-
-        bar.update = function(level) {
-            bar.level = level / bar.maxValue * bar.height;
-        };
-
-        bar.draw = function() {
-            bar.ctx.save();
-            bar.ctx.fillStyle = "#ffffff";
-            bar.ctx.fillRect(bar.x, bar.y, bar.width, bar.height);
-            if ((bar.warningBelow && bar.level < bar.warningLevel) || (!bar.warningBelow && bar.level > bar.warningLevel)) {
-                bar.ctx.fillStyle = "#ff0000";
-            } else {
-                bar.ctx.fillStyle = "#68c1e7";
+            title: title,
+            update: function (level) {
+                this.level = level / this.maxValue * this.height;
+            },
+            draw: function () {
+                this.ctx.save();
+                this.ctx.fillStyle = "#ffffff";
+                this.ctx.fillRect(this.x, this.y, this.width, this.height);
+                if ((this.warningBelow && this.level < this.warningLevel) || (!this.warningBelow && this.level > this.warningLevel)) {
+                    this.ctx.fillStyle = "#ff0000";
+                } else {
+                    this.ctx.fillStyle = "#68c1e7";
+                }
+                this.ctx.fillRect(this.x, this.height + this.y - this.level, this.width, this.level);
+                this.ctx.strokeStyle = "#000000";
+                this.ctx.strokeRect(this.x, this.y, this.width, this.height);
+                this.ctx.fillStyle = "#000000";
+                this.ctx.fillText(this.title, this.x, this.y + this.height + this.textMargin);
+                this.ctx.restore();
             }
-            bar.ctx.fillRect(bar.x, bar.height + bar.y - bar.level, bar.width, bar.level);
-            bar.ctx.strokeStyle = "#000000";
-            bar.ctx.strokeRect(bar.x, bar.y, bar.width, bar.height);
-            bar.ctx.fillStyle = "#000000";
-            bar.ctx.fillText(bar.title, bar.x, bar.y + bar.height + bar.textMargin);
-            bar.ctx.restore();
-        };
-
-        return bar;
+        }
     };
 });

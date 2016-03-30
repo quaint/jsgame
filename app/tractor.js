@@ -1,4 +1,4 @@
-define(['./vehicle'], function (createVehicle) {
+define(['./vehicle', './utils'], function (createVehicle, utils) {
     return function (x, y, width, height, maxFuel, sprite, ctx) {
         var tractor = createVehicle(x, y, width, height, sprite, ctx);
         tractor.linearSpeed = 70;
@@ -23,6 +23,8 @@ define(['./vehicle'], function (createVehicle) {
                 } else if (dy == -1) {
                     tractor.angle += (linearDistEachFrame * dx) * Math.PI / 180;
                 }
+                
+                tractor.angle = utils.normalizeAngle(tractor.angle);
 
                 tractor.x -= dy * Math.cos(tractor.angle) * linearDistEachFrame;
                 tractor.y -= dy * Math.sin(tractor.angle) * linearDistEachFrame;
