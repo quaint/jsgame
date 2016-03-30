@@ -1,5 +1,5 @@
-define(['./vehicle', './utils'], function(createVehicle, utils) {
-    return function(x, y, width, height, maxGrain, maxFuel, sprite, ctx) {
+define(['./vehicle', './utils'], function (createVehicle, utils) {
+    return function (x, y, width, height, maxGrain, maxFuel, sprite, ctx) {
         var combine = createVehicle(x, y, width, height, sprite, ctx);
         combine.linearSpeed = 50;
         combine.pouringSpeed = 100;
@@ -26,20 +26,19 @@ define(['./vehicle', './utils'], function(createVehicle, utils) {
         };
 
         combine.radiusHeader = combine.height / 2;
-        combine.angleHeader = 60;
+        combine.angleHeader = 60 * Math.PI / 180;
         var backHeight = combine.height / 10;
         var centerToBack = combine.width - 30;
         combine.radiusBack = Math.sqrt(Math.pow(backHeight, 2) + Math.pow(centerToBack, 2));
-        var angleBackRad = Math.atan2(backHeight, centerToBack);
-        combine.angleBack = angleBackRad * 180 / Math.PI;
+        combine.angleBack = Math.atan2(backHeight, centerToBack);
 
         combine.pouring = false;
 
-        combine.isProcessing = function() {
+        combine.isProcessing = function () {
             return combine.workingTime > 0;
         };
 
-        combine.update = function(timeDiff, dx, dy, command) {
+        combine.update = function (timeDiff, dx, dy, command) {
             var timeDelta = timeDiff * 0.001;
             var linearDistEachFrame = combine.linearSpeed * timeDelta;
 
@@ -55,15 +54,15 @@ define(['./vehicle', './utils'], function(createVehicle, utils) {
 
             if (combine.fuel > 0) {
                 if (dy == 1) {
-                    combine.angle += linearDistEachFrame * -dx;
+                    combine.angle += (linearDistEachFrame * -dx) * Math.PI / 180;
                 } else if (dy == -1) {
-                    combine.angle += linearDistEachFrame * dx;
+                    combine.angle += (linearDistEachFrame * dx) * Math.PI / 180;
                 }
 
                 combine.angle = utils.normalizeAngle(combine.angle);
 
-                combine.x -= dy * Math.cos(combine.angle * Math.PI / 180) * linearDistEachFrame;
-                combine.y -= dy * Math.sin(combine.angle * Math.PI / 180) * linearDistEachFrame;
+                combine.x -= dy * Math.cos(combine.angle) * linearDistEachFrame;
+                combine.y -= dy * Math.sin(combine.angle) * linearDistEachFrame;
             }
 
             if (combine.workingTime > 0) {
@@ -75,14 +74,14 @@ define(['./vehicle', './utils'], function(createVehicle, utils) {
             combine.updateAnimation(timeDiff);
         };
 
-        combine.notifyShouldProcess = function() {
+        combine.notifyShouldProcess = function () {
             if (combine.grain < combine.maxGrain) {
                 combine.grain += 1;
             }
             combine.workingTime = combine.defaultWorkingTime;
         };
 
-        combine.updateTrailer = function(timeDiff, trailer) {
+        combine.updateTrailer = function (timeDiff, trailer) {
             var timeDelta = timeDiff * 0.001;
             if (combine.pouring) {
                 var distance = combine.distanceTo(trailer);
@@ -95,11 +94,11 @@ define(['./vehicle', './utils'], function(createVehicle, utils) {
             }
         };
 
-        combine.draw = function() {
+        combine.draw = function () {
             combine.ctx.save();
             // combine.ctx.fillRect(combine.x, combine.y, 20, 20);
             combine.ctx.translate(combine.x, combine.y);
-            combine.ctx.rotate(combine.angle * Math.PI / 180);
+            combine.ctx.rotate(combine.angle);
             if (combine.isProcessing()) {
                 ctx.drawImage(combine.sprite, combine.animationFrame * 20, 80, 20, 20, -combine.width + 20, -combine.height / 2 + 31, 20, 20);
             }
@@ -110,23 +109,19 @@ define(['./vehicle', './utils'], function(createVehicle, utils) {
         function updateHeader() {
             var diagonalAngle1 = combine.angle + combine.angleHeader;
             var diagonalAngle2 = combine.angle - combine.angleHeader;
-            var diagonalAngleRad1 = diagonalAngle1 * Math.PI / 180;
-            var diagonalAngleRad2 = diagonalAngle2 * Math.PI / 180;
-            combine.header.x1 = Math.cos(diagonalAngleRad1) * combine.radiusHeader + combine.x;
-            combine.header.y1 = Math.sin(diagonalAngleRad1) * combine.radiusHeader + combine.y;
-            combine.header.x2 = Math.cos(diagonalAngleRad2) * combine.radiusHeader + combine.x;
-            combine.header.y2 = Math.sin(diagonalAngleRad2) * combine.radiusHeader + combine.y;
+            combine.header.x1 = Math.cos(diagonalAngle1) * combine.radiusHeader + combine.x;
+            combine.header.y1 = Math.sin(diagonalAngle1) * combine.radiusHeader + combine.y;
+            combine.header.x2 = Math.cos(diagonalAngle2) * combine.radiusHeader + combine.x;
+            combine.header.y2 = Math.sin(diagonalAngle2) * combine.radiusHeader + combine.y;
         }
 
         function updateBack() {
-            var diagonalAngleBack1 = combine.angle + combine.angleBack - 180; //flip to back of combine
-            var diagonalAngleBack2 = combine.angle - combine.angleBack - 180; //flip to back of combine
-            var diagonalAngleBackRad1 = diagonalAngleBack1 * Math.PI / 180;
-            var diagonalAngleBackRad2 = diagonalAngleBack2 * Math.PI / 180;
-            combine.back.x1 = Math.cos(diagonalAngleBackRad1) * combine.radiusBack + combine.x;
-            combine.back.y1 = Math.sin(diagonalAngleBackRad1) * combine.radiusBack + combine.y;
-            combine.back.x2 = Math.cos(diagonalAngleBackRad2) * combine.radiusBack + combine.x;
-            combine.back.y2 = Math.sin(diagonalAngleBackRad2) * combine.radiusBack + combine.y;
+            var diagonalAngleBack1 = combine.angle + combine.angleBack - 180 * Math.PI / 180; //flip to back of combine
+            var diagonalAngleBack2 = combine.angle - combine.angleBack - 180 * Math.PI / 180; //flip to back of combine
+            combine.back.x1 = Math.cos(diagonalAngleBack1) * combine.radiusBack + combine.x;
+            combine.back.y1 = Math.sin(diagonalAngleBack1) * combine.radiusBack + combine.y;
+            combine.back.x2 = Math.cos(diagonalAngleBack2) * combine.radiusBack + combine.x;
+            combine.back.y2 = Math.sin(diagonalAngleBack2) * combine.radiusBack + combine.y;
         }
 
         return combine;

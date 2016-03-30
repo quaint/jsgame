@@ -87,7 +87,7 @@ define(['./field', './fielddata', './combine', './tractor', './trailer', './bar'
         }
     };
 
-    document.onkeyup = function (e) {
+    document.onkeyup = function (event) {
         switch (event.keyCode) {
             case keycode.LEFT:
             case keycode.RIGHT:

@@ -35,7 +35,7 @@ define(['./vehicle', './utils'], function (createVehicle, utils) {
             tractor.ctx.save();
             // trailer.ctx.fillRect(trailer.getPin().x, trailer.getPin().y, 10, 10);
             tractor.ctx.translate(tractor.x, tractor.y);
-            tractor.ctx.rotate(tractor.angle);// * Math.PI / 180);
+            tractor.ctx.rotate(tractor.angle);
             tractor.ctx.drawImage(tractor.sprite, 0, 205, tractor.width, tractor.height, -2, -tractor.height / 2, tractor.width, tractor.height);
             tractor.ctx.restore();
         };
