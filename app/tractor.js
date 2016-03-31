@@ -5,12 +5,12 @@ define(['./vehicle', './utils', './configuration'], function (createVehicle, uti
         tractor.fuel = maxFuel;
         tractor.maxFuel = maxFuel;
 
-        tractor.update = function (timeDiff, moveDirection, rotateDirection, command, isActive) {
+        tractor.update = function (timeDiff, rotateDirection, moveDirection, command, isActive, otherObjects) {
             if (isActive) {
                 var timeDelta = timeDiff * 0.001;
                 var linearDistEachFrame = tractor.linearSpeed * timeDelta;
 
-                if (rotateDirection !== 0) {
+                if (moveDirection !== 0) {
                     if (tractor.fuel > 0) {
                         tractor.fuel -= timeDelta;
                     } else {
@@ -19,16 +19,29 @@ define(['./vehicle', './utils', './configuration'], function (createVehicle, uti
                 }
 
                 if (tractor.fuel > 0) {
-                    if (rotateDirection == 1) {
-                        tractor.angle += utils.toRadians(linearDistEachFrame * -moveDirection);
-                    } else if (rotateDirection == -1) {
-                        tractor.angle += utils.toRadians(linearDistEachFrame * moveDirection);
+                    if (moveDirection == 1) {
+                        tractor.angle += utils.toRadians(linearDistEachFrame * -rotateDirection);
+                    } else if (moveDirection == -1) {
+                        tractor.angle += utils.toRadians(linearDistEachFrame * rotateDirection);
                     }
 
                     tractor.angle = utils.normalizeAngle(tractor.angle);
 
-                    tractor.x -= rotateDirection * Math.cos(tractor.angle) * linearDistEachFrame;
-                    tractor.y -= rotateDirection * Math.sin(tractor.angle) * linearDistEachFrame;
+                    var newX = tractor.x - moveDirection * Math.cos(tractor.angle) * linearDistEachFrame;
+                    var newY = tractor.y - moveDirection * Math.sin(tractor.angle) * linearDistEachFrame;
+
+                    var collision = false;
+                    for (var i = 0; i < otherObjects.length; i++) {
+                        if (utils.checkCollision(otherObjects[i], {x: newX, y: newY, radius: tractor.radius})) {
+                            collision = true;
+                            break;
+                        }
+                    }
+
+                    if (!collision) {
+                        tractor.x = newX;
+                        tractor.y = newY;
+                    }
                 }
             }
         };

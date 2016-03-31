@@ -55,10 +55,10 @@ define(['./field', './fielddata', './combine', './tractor', './trailer', './bar'
         var combine2 = createCombine(150, 300, 71, 80, 3000, 300, spritesImage, bufferContext);
         var activeMachine = combine1;
         var tractor = createTractor(220, 450, 31, 19, 200, spritesImage, bufferContext);
-        var trailer = createTrailer(160, 450, 58, 24, 9000, spritesImage, bufferContext);
+        var trailer1 = createTrailer(160, 450, 58, 24, 9000, spritesImage, bufferContext);
         var trailer2 = createTrailer(100, 450, 56, 24, 9000, spritesImage, bufferContext);
         var grainBar = createBar(10, 10, combine1.maxGrain, 80, false, context, "grain");
-        var trailerBar = createBar(40, 10, trailer.maxGrain, 80, false, context, "trailer");
+        var trailerBar = createBar(40, 10, trailer1.maxGrain, 80, false, context, "trailer");
         var fuelBar = createBar(70, 10, combine1.maxFuel, 20, true, context, "fuel");
 
         document.onkeydown = function (event) {
@@ -127,22 +127,22 @@ define(['./field', './fielddata', './combine', './tractor', './trailer', './bar'
                 command2 = false;
             }
 
-            combine1.update(timeDiff, rotateDirection, moveDirection, command1, activeMachine === combine1, utils.checkCollision(combine1, combine2));
-            combine2.update(timeDiff, rotateDirection, moveDirection, command1, activeMachine === combine2, utils.checkCollision(combine2, combine1));
-            tractor.update(timeDiff, rotateDirection, moveDirection, command1, activeMachine === tractor);
+            combine1.update(timeDiff, rotateDirection, moveDirection, command1, activeMachine === combine1, [combine2, tractor, trailer1, trailer2]);
+            combine2.update(timeDiff, rotateDirection, moveDirection, command1, activeMachine === combine2, [combine1, tractor, trailer1, trailer2]);
+            tractor.update(timeDiff, rotateDirection, moveDirection, command1, activeMachine === tractor, [combine1, combine2]);
 
             if (activeMachine === tractor) {
-                utils.drag(trailer, tractor);
-                utils.drag(trailer2, trailer);
+                utils.drag(trailer1, tractor, [combine1, combine2]);
+                utils.drag(trailer2, trailer1, [combine1, combine2]);
             } else {
-                activeMachine.updateTrailer(timeDiff, trailer);
+                activeMachine.updateTrailer(timeDiff, trailer1);
                 if (moveDirection < 0) {
                     field.updateFromCombine(activeMachine, fieldContext, spritesImage);
                 }
             }
 
             grainBar.update(activeMachine.grain);
-            trailerBar.update(trailer.grain);
+            trailerBar.update(trailer1.grain);
             fuelBar.update(activeMachine.fuel);
 
             if (activeMachine.x > centerX && activeMachine.x < field.widthInPx - centerX) {
@@ -165,7 +165,7 @@ define(['./field', './fielddata', './combine', './tractor', './trailer', './bar'
             combine1.draw();
             combine2.draw();
             tractor.draw();
-            trailer.draw();
+            trailer1.draw();
             trailer2.draw();
 
             // bufferContext.fillText(Math.floor((fieldPartsCount-fieldPartsLeft)/fieldPartsCount * 100) + "% done", 80, 20);

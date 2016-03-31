@@ -10,6 +10,7 @@ define(['./vehicle', './utils'], function (createVehicle, utils) {
         combine.workingTime = 0;
         combine.defaultWorkingTime = 1000;
         combine.workingSpeed = 1000;
+        combine.radius = 50;
 
         combine.header = {
             x1: 0,
@@ -38,13 +39,12 @@ define(['./vehicle', './utils'], function (createVehicle, utils) {
             return combine.workingTime > 0;
         };
 
-        combine.update = function (timeDiff, rotateDirection, moveDirection, command, isActive, isColliding) {
+        combine.update = function (timeDiff, rotateDirection, moveDirection, command, isActive, otherObjects) {
             var timeDelta = timeDiff * 0.001;
 
             if (isActive) {
 
                 var linearDistEachFrame = combine.linearSpeed * timeDelta;
-
                 combine.pouring = command;
 
                 if (moveDirection !== 0 || combine.pouring) {
@@ -61,15 +61,26 @@ define(['./vehicle', './utils'], function (createVehicle, utils) {
                     } else if (moveDirection == -1) {
                         combine.angle += (linearDistEachFrame * rotateDirection) * Math.PI / 180;
                     }
-
                     combine.angle = utils.normalizeAngle(combine.angle);
 
-                    combine.x -= moveDirection * Math.cos(combine.angle) * linearDistEachFrame;
-                    combine.y -= moveDirection * Math.sin(combine.angle) * linearDistEachFrame;
-                }
+                    var newX = combine.x - moveDirection * Math.cos(combine.angle) * linearDistEachFrame;
+                    var newY = combine.y - moveDirection * Math.sin(combine.angle) * linearDistEachFrame;
 
-                updateHeader();
-                updateBack();
+                    var collision = false;
+                    for (var i = 0; i < otherObjects.length; i++) {
+                        if (utils.checkCollision(otherObjects[i], {x: newX, y: newY, radius: combine.radius})) {
+                            collision = true;
+                            break;
+                        }
+                    }
+
+                    if (!collision) {
+                        combine.x = newX;
+                        combine.y = newY;
+                        updateHeader();
+                        updateBack();
+                    }
+                }
             }
 
             if (combine.workingTime > 0) {

@@ -16,7 +16,7 @@ define(function () {
         getRandomInt: function (min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         },
-        drag: function (connectObject, connectTo) {
+        drag: function (connectObject, connectTo, otherObjects) {
             var objectDx = connectTo.x - connectObject.x,
                 objectDy = connectTo.y - connectObject.y,
                 angle = Math.atan2(objectDy, objectDx),
@@ -32,8 +32,23 @@ define(function () {
             }
             var objectWidth = connectObject.getPin().x - connectObject.x;
             var objectHeight = connectObject.getPin().y - connectObject.y;
-            connectObject.x = connectTo.x - objectWidth;
-            connectObject.y = connectTo.y - objectHeight;
+
+            var newX = connectTo.x - objectWidth;
+            var newY = connectTo.y - objectHeight;
+
+            var collision = false;
+            for (var i = 0; i < otherObjects.length; i++) {
+                if (this.checkCollision(otherObjects[i], {x: newX, y: newY, radius: connectObject.radius})) {
+                    collision = true;
+                    break;
+                }
+            }
+
+            if (!collision) {
+                connectObject.x = newX;
+                connectObject.y = newY;
+            }
+
         },
         /**
          * Determine if two rectangles overlap.
@@ -54,7 +69,9 @@ define(function () {
          * @returns {boolean} result
          */
         checkCollision: function (firstObject, secondObject) {
-            var dist = firstObject.distanceTo(secondObject)
+            var dx = secondObject.x - firstObject.x;
+            var dy = secondObject.y - firstObject.y;
+            var dist = Math.sqrt(dx * dx + dy * dy);
             var minDist = firstObject.radius + secondObject.radius;
             return dist < minDist;
         },

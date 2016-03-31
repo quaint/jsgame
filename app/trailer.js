@@ -3,6 +3,7 @@ define(['./vehicle'], function (createVehicle) {
         var trailer = createVehicle(x, y, width, height, sprite, ctx);
         trailer.grain = 0;
         trailer.maxGrain = maxGrain;
+        trailer.radius = 20;
 
         trailer.draw = function () {
             trailer.ctx.save();
