@@ -12,6 +12,7 @@ define(function () {
             animationFrame: 0,
             animationDelta: 0,
             msPerFrame: 100,
+            radius: width / 2,
             updateAnimation: function (timeDiff) {
                 if (this.animationDelta > this.msPerFrame) {
                     this.animationDelta = 0;
@@ -22,9 +23,12 @@ define(function () {
                 } else {
                     this.animationDelta += timeDiff;
                 }
-            },
+            }
+            ,
             distanceTo: function (otherObject) {
-                return Math.sqrt(Math.pow(this.x - otherObject.x, 2) + Math.pow(this.y - otherObject.y, 2));
+                var dx = this.x - otherObject.x;
+                var dy = this.y - otherObject.y;
+                return Math.sqrt(dx * dx + dy * dy);
             }
         }
     };

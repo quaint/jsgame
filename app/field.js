@@ -1,8 +1,8 @@
-define(function() {
-    return function(x, y, grid, sprite, ctx) {
+define(function () {
+    return function (x, y, grid, sprite, ctx) {
         var field = {
-        	x: x,
-        	y: y,
+            x: x,
+            y: y,
             grid: grid,
             width: 0,
             height: 0,
@@ -18,7 +18,7 @@ define(function() {
             typeGrass: 4,
         };
 
-        field.updateFromCombine = function(combine, ctx, spritesImage) {
+        field.updateFromCombine = function (combine, ctx, spritesImage) {
             var headerPoints = getArrayOfPointsForLine(combine.header);
             for (var i = 0; i < headerPoints.length; i++) {
                 update(combine, headerPoints[i], field.typeStubble, ctx, spritesImage);
@@ -32,7 +32,7 @@ define(function() {
             }
         };
 
-        field.load = function(fieldData) {
+        field.load = function (fieldData) {
             field.width = fieldData[0].length;
             field.height = fieldData.length;
             field.widthInPx = field.width * field.grid;
@@ -51,7 +51,7 @@ define(function() {
             }
         };
 
-        field.draw = function() {
+        field.draw = function () {
             for (var i = 0; i < field.width; i++) {
                 for (var j = 0; j < field.height; j++) {
                     var partOfField = field.parts[i][j];

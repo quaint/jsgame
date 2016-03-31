@@ -34,6 +34,35 @@ define(function () {
             var objectHeight = connectObject.getPin().y - connectObject.y;
             connectObject.x = connectTo.x - objectWidth;
             connectObject.y = connectTo.y - objectHeight;
+        },
+        /**
+         * Determine if two rectangles overlap.
+         * @param {object}  rectA Object with properties: x, y, width, height.
+         * @param {object}  rectB Object with properties: x, y, width, height.
+         * @return {boolean}
+         */
+        intersects: function (rectA, rectB) {
+            return !(rectA.x + rectA.width < rectB.x ||
+            rectB.x + rectB.width < rectA.x ||
+            rectA.y + rectA.height < rectB.y ||
+            rectB.y + rectB.height < rectA.y);
+        },
+        /**
+         * Check distance between objects.
+         * @param {object} firstObject to check
+         * @param {object} secondObject to check
+         * @returns {boolean} result
+         */
+        checkCollision: function (firstObject, secondObject) {
+            var dist = firstObject.distanceTo(secondObject)
+            var minDist = firstObject.radius + secondObject.radius;
+            return dist < minDist;
+        },
+        toRadians: function (degrees) {
+            return degrees * Math.PI / 180;
+        },
+        toDegrees: function (radians) {
+            return radians * 180 / Math.PI;
         }
     };
 });

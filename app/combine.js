@@ -38,39 +38,44 @@ define(['./vehicle', './utils'], function (createVehicle, utils) {
             return combine.workingTime > 0;
         };
 
-        combine.update = function (timeDiff, dx, dy, command) {
+        combine.update = function (timeDiff, rotateDirection, moveDirection, command, isActive, isColliding) {
             var timeDelta = timeDiff * 0.001;
-            var linearDistEachFrame = combine.linearSpeed * timeDelta;
 
-            combine.pouring = command;
+            if (isActive) {
 
-            if (dy !== 0 || combine.pouring) {
+                var linearDistEachFrame = combine.linearSpeed * timeDelta;
+
+                combine.pouring = command;
+
+                if (moveDirection !== 0 || combine.pouring) {
+                    if (combine.fuel > 0) {
+                        combine.fuel -= timeDelta;
+                    } else {
+                        combine.fuel = 0;
+                    }
+                }
+
                 if (combine.fuel > 0) {
-                    combine.fuel -= timeDelta;
-                } else {
-                    combine.fuel = 0;
+                    if (moveDirection == 1) {
+                        combine.angle += (linearDistEachFrame * -rotateDirection) * Math.PI / 180;
+                    } else if (moveDirection == -1) {
+                        combine.angle += (linearDistEachFrame * rotateDirection) * Math.PI / 180;
+                    }
+
+                    combine.angle = utils.normalizeAngle(combine.angle);
+
+                    combine.x -= moveDirection * Math.cos(combine.angle) * linearDistEachFrame;
+                    combine.y -= moveDirection * Math.sin(combine.angle) * linearDistEachFrame;
                 }
-            }
 
-            if (combine.fuel > 0) {
-                if (dy == 1) {
-                    combine.angle += (linearDistEachFrame * -dx) * Math.PI / 180;
-                } else if (dy == -1) {
-                    combine.angle += (linearDistEachFrame * dx) * Math.PI / 180;
-                }
-
-                combine.angle = utils.normalizeAngle(combine.angle);
-
-                combine.x -= dy * Math.cos(combine.angle) * linearDistEachFrame;
-                combine.y -= dy * Math.sin(combine.angle) * linearDistEachFrame;
+                updateHeader();
+                updateBack();
             }
 
             if (combine.workingTime > 0) {
                 combine.workingTime -= timeDelta * combine.workingSpeed;
             }
 
-            updateHeader();
-            updateBack();
             combine.updateAnimation(timeDiff);
         };
 
@@ -103,6 +108,9 @@ define(['./vehicle', './utils'], function (createVehicle, utils) {
                 ctx.drawImage(combine.sprite, combine.animationFrame * 20, 80, 20, 20, -combine.width + 20, -combine.height / 2 + 31, 20, 20);
             }
             combine.ctx.drawImage(combine.sprite, 0, 100, combine.width, combine.height, -combine.width + 30, -combine.height / 2, combine.width, combine.height);
+            combine.ctx.beginPath();
+            combine.ctx.arc(0, 0, combine.radius, 0, 2 * Math.PI, false);
+            combine.ctx.stroke();
             combine.ctx.restore();
         };
 
