@@ -12,7 +12,6 @@ define(function () {
             animationFrame: 0,
             animationDelta: 0,
             msPerFrame: 100,
-            radius: width / 2,
             connectedObject: null,
 
             updateAnimation: function (timeDiff) {

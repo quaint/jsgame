@@ -10,7 +10,6 @@ define(['./vehicle', './utils'], function (createVehicle, utils) {
         combine.workingTime = 0;
         combine.defaultWorkingTime = 1000;
         combine.workingSpeed = 1000;
-        combine.radius = 50;
 
         combine.header = {
             x1: 0,
@@ -68,7 +67,7 @@ define(['./vehicle', './utils'], function (createVehicle, utils) {
 
                     var collision = false;
                     for (var i = 0; i < otherObjects.length; i++) {
-                        if (utils.checkCollision(otherObjects[i], {x: newX, y: newY, radius: combine.radius})) {
+                        if (utils.checkCollision(otherObjects[i], {x: newX, y: newY, radius: combine.getBoundingSphere().radius})) {
                             collision = true;
                             break;
                         }
@@ -119,10 +118,18 @@ define(['./vehicle', './utils'], function (createVehicle, utils) {
                 ctx.drawImage(combine.sprite, combine.animationFrame * 20, 80, 20, 20, -combine.width + 20, -combine.height / 2 + 31, 20, 20);
             }
             combine.ctx.drawImage(combine.sprite, 0, 100, combine.width, combine.height, -combine.width + 30, -combine.height / 2, combine.width, combine.height);
-            combine.ctx.beginPath();
-            combine.ctx.arc(0, 0, combine.radius, 0, 2 * Math.PI, false);
-            combine.ctx.stroke();
             combine.ctx.restore();
+            combine.ctx.beginPath();
+            combine.ctx.arc(combine.getBoundingSphere().x, combine.getBoundingSphere().y, combine.getBoundingSphere().radius, 0, 2 * Math.PI, false);
+            combine.ctx.stroke();
+        };
+
+        combine.getBoundingSphere = function () {
+            return {
+                x: combine.x,
+                y: combine.y,
+                radius: combine.width / 2
+            }
         };
 
         function updateHeader() {

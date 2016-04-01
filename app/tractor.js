@@ -38,6 +38,7 @@ define(['./vehicle', './utils', './configuration'], function (createVehicle, uti
                         }
                     }
 
+                    //TODO: remove redundancy
                     if (!collision) {
                         if (this.connectedObject) {
                             var moveCheckObject = {
@@ -96,10 +97,18 @@ define(['./vehicle', './utils', './configuration'], function (createVehicle, uti
             tractor.ctx.translate(tractor.x, tractor.y);
             tractor.ctx.rotate(tractor.angle);
             tractor.ctx.drawImage(tractor.sprite, 0, 205, tractor.width, tractor.height, -2, -tractor.height / 2, tractor.width, tractor.height);
-            tractor.ctx.beginPath();
-            tractor.ctx.arc(0, 0, tractor.radius, 0, 2 * Math.PI, false);
-            tractor.ctx.stroke();
             tractor.ctx.restore();
+            tractor.ctx.beginPath();
+            tractor.ctx.arc(tractor.getBoundingSphere().x, tractor.getBoundingSphere().y, tractor.getBoundingSphere().radius, 0, 2 * Math.PI, false);
+            tractor.ctx.stroke();
+        };
+
+        tractor.getBoundingSphere = function () {
+            return {
+                x: tractor.x + Math.cos(tractor.angle) * tractor.width / 2,
+                y: tractor.y + Math.sin(tractor.angle) * tractor.width / 2,
+                radius: tractor.width / 2
+            }
         };
 
         return tractor;
