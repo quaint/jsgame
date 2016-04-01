@@ -57,6 +57,10 @@ define(['./field', './fielddata', './combine', './tractor', './trailer', './bar'
         var tractor = createTractor(220, 450, 31, 19, 200, spritesImage, bufferContext);
         var trailer1 = createTrailer(160, 450, 58, 24, 9000, spritesImage, bufferContext);
         var trailer2 = createTrailer(100, 450, 56, 24, 9000, spritesImage, bufferContext);
+
+        tractor.connectedObject = trailer1;
+        trailer1.connectedObject = trailer2;
+
         var grainBar = createBar(10, 10, combine1.maxGrain, 80, false, context, "grain");
         var trailerBar = createBar(40, 10, trailer1.maxGrain, 80, false, context, "trailer");
         var fuelBar = createBar(70, 10, combine1.maxFuel, 20, true, context, "fuel");
@@ -131,10 +135,7 @@ define(['./field', './fielddata', './combine', './tractor', './trailer', './bar'
             combine2.update(timeDiff, rotateDirection, moveDirection, command1, activeMachine === combine2, [combine1, tractor, trailer1, trailer2]);
             tractor.update(timeDiff, rotateDirection, moveDirection, command1, activeMachine === tractor, [combine1, combine2]);
 
-            if (activeMachine === tractor) {
-                utils.drag(trailer1, tractor, [combine1, combine2]);
-                utils.drag(trailer2, trailer1, [combine1, combine2]);
-            } else {
+            if (activeMachine !== tractor) {
                 activeMachine.updateTrailer(timeDiff, trailer1);
                 if (moveDirection < 0) {
                     field.updateFromCombine(activeMachine, fieldContext, spritesImage);

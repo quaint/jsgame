@@ -39,9 +39,53 @@ define(['./vehicle', './utils', './configuration'], function (createVehicle, uti
                     }
 
                     if (!collision) {
-                        tractor.x = newX;
-                        tractor.y = newY;
+                        if (this.connectedObject) {
+                            var moveCheckObject = {
+                                radius: this.connectedObject.radius,
+                                width: this.connectedObject.width,
+                                x: this.connectedObject.x,
+                                y: this.connectedObject.y,
+                                angle: this.connectedObject.angle,
+                                getPin: function () {
+                                    return {
+                                        x: this.x + Math.cos(this.angle) * this.width,
+                                        y: this.y + Math.sin(this.angle) * this.width
+                                    };
+                                }
+                            };
+                            var canDrag = utils.drag(moveCheckObject, {x: newX, y: newY, angle: this.angle}, otherObjects);
+                            if (canDrag) {
+                                if (this.connectedObject.connectedObject) {
+                                    var moveAlsoCheckObject = {
+                                        radius: this.connectedObject.connectedObject.radius,
+                                        width: this.connectedObject.connectedObject.width,
+                                        x: this.connectedObject.connectedObject.x,
+                                        y: this.connectedObject.connectedObject.y,
+                                        angle: this.connectedObject.connectedObject.angle,
+                                        getPin: function () {
+                                            return {
+                                                x: this.x + Math.cos(this.angle) * this.width,
+                                                y: this.y + Math.sin(this.angle) * this.width
+                                            };
+                                        }
+                                    };
+                                    var canAlsoDrag = utils.drag(moveAlsoCheckObject, moveCheckObject, otherObjects);
+                                    if (canAlsoDrag) {
+                                        this.connectedObject.x = moveCheckObject.x;
+                                        this.connectedObject.y = moveCheckObject.y;
+                                        this.connectedObject.angle = moveCheckObject.angle;
+                                        this.connectedObject.connectedObject.x = moveAlsoCheckObject.x;
+                                        this.connectedObject.connectedObject.y = moveAlsoCheckObject.y;
+                                        this.connectedObject.connectedObject.angle = moveAlsoCheckObject.angle;
+                                        tractor.x = newX;
+                                        tractor.y = newY;
+
+                                    }
+                                }
+                            }
+                        }
                     }
+
                 }
             }
         };

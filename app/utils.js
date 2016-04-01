@@ -48,7 +48,7 @@ define(function () {
                 connectObject.x = newX;
                 connectObject.y = newY;
             }
-
+            return !collision;
         },
         /**
          * Determine if two rectangles overlap.
