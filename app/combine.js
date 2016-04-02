@@ -67,7 +67,11 @@ define(['./vehicle', './utils'], function (createVehicle, utils) {
 
                     var collision = false;
                     for (var i = 0; i < otherObjects.length; i++) {
-                        if (utils.checkCollision(otherObjects[i], {x: newX, y: newY, radius: combine.getBoundingSphere().radius})) {
+                        if (utils.checkCollision(otherObjects[i], {
+                                x: newX,
+                                y: newY,
+                                radius: combine.radius
+                            })) {
                             collision = true;
                             break;
                         }

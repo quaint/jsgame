@@ -13,6 +13,7 @@ define(function () {
             animationDelta: 0,
             msPerFrame: 100,
             connectedObject: null,
+            radius: width / 2,
 
             updateAnimation: function (timeDiff) {
                 if (this.animationDelta > this.msPerFrame) {
