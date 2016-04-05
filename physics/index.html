@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="matter.js"></script>
+    <script src="pixi.js"></script>
+</head>
+
+<body>
+</body>
+
+<script>
+    var Engine = Matter.Engine,
+            World = Matter.World,
+            Bodies = Matter.Bodies;
+    var engine = Engine.create({
+        render: {
+            element: document.body,
+//            controller: Matter.RenderPixi,
+            options: {
+                width: 800,
+                height: 600,
+                background: '#fafafa',
+                wireframeBackground: '#222',
+                hasBounds: false,
+                enabled: true,
+                wireframes: true,
+                showSleeping: true,
+                showDebug: true,
+                showBroadphase: true,
+                showBounds: true,
+                showVelocity: true,
+                showCollisions: true,
+                showAxes: true,
+                showPositions: true,
+                showAngleIndicator: true,
+                showIds: true,
+                showShadows: true
+            }
+        }
+    });
+    var boxA = Bodies.rectangle(400, 200, 80, 80);
+    var boxB = Bodies.rectangle(450, 50, 80, 80);
+    var ground = Bodies.rectangle(400, 610, 810, 60, {isStatic: true});
+    World.add(engine.world, [boxA, boxB, ground]);
+    Engine.run(engine);
+</script>
+
+</html>
