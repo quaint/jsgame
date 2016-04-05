@@ -12,6 +12,7 @@
 <script>
     var Engine = Matter.Engine,
             World = Matter.World,
+            MouseConstraint = Matter.MouseConstraint,
             Bodies = Matter.Bodies;
     var engine = Engine.create({
         render: {
@@ -24,7 +25,7 @@
                 wireframeBackground: '#222',
                 hasBounds: false,
                 enabled: true,
-                wireframes: true,
+                wireframes: false,
                 showSleeping: true,
                 showDebug: true,
                 showBroadphase: true,
@@ -39,10 +40,18 @@
             }
         }
     });
-    var boxA = Bodies.rectangle(400, 200, 80, 80);
-    var boxB = Bodies.rectangle(450, 50, 80, 80);
-    var ground = Bodies.rectangle(400, 610, 810, 60, {isStatic: true});
-    World.add(engine.world, [boxA, boxB, ground]);
+    var boxA = Bodies.rectangle(400, 200, 80, 80, {frictionAir: 0.5});
+    var boxB = Bodies.rectangle(450, 50, 80, 80, {frictionAir: 0.5});
+    var ground1 = Bodies.rectangle(400, 610, 800, 60, {isStatic: true});
+    var ground2 = Bodies.rectangle(400, -10, 800, 60, {isStatic: true});
+    var ground3 = Bodies.rectangle(0, 300, 60, 570, {isStatic: true});
+    var ground4 = Bodies.rectangle(800, 300, 60, 570, {isStatic: true});
+    engine.world.gravity.y = 0;
+    World.add(engine.world, [boxA, boxB, ground1, ground2, ground3, ground4]);
+
+    var mouseConstraint = MouseConstraint.create(engine);
+    World.add(engine.world, mouseConstraint);
+
     Engine.run(engine);
 </script>
 
