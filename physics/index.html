@@ -15,44 +15,15 @@
             MouseConstraint = Matter.MouseConstraint,
             Body = Matter.Body,
             Bodies = Matter.Bodies;
-    var engine = Engine.create({
-        render: {
-            element: document.body,
-            controller: Matter.RenderPixi,
-            options: {
-                width: 800,
-                height: 600,
-                background: '#fafafa',
-                wireframeBackground: '#222',
-                hasBounds: false,
-                enabled: true,
-                wireframes: false,
-                showSleeping: true,
-                showDebug: true,
-                showBroadphase: true,
-                showBounds: true,
-                showVelocity: true,
-                showCollisions: true,
-                showAxes: true,
-                showPositions: true,
-                showAngleIndicator: true,
-                showIds: true,
-                showShadows: true
-            }
-        }
-    });
-    var boxA = Bodies.rectangle(400, 200, 80, 80, {frictionAir: 0.2});
-    var boxB = Bodies.rectangle(550, 450, 80, 80, {frictionAir: 0.2});
+    var engine = Engine.create();
+    var boxA = Bodies.rectangle(400, 200, 80, 80);
+    var boxB = Bodies.rectangle(550, 450, 80, 80);
     var ground1 = Bodies.rectangle(400, 610, 800, 60, {isStatic: true});
     var ground2 = Bodies.rectangle(400, -10, 800, 60, {isStatic: true});
     var ground3 = Bodies.rectangle(0, 300, 60, 570, {isStatic: true});
     var ground4 = Bodies.rectangle(800, 300, 60, 570, {isStatic: true});
     engine.world.gravity.y = 0;
     World.add(engine.world, [boxA, boxB, ground1, ground2, ground3, ground4]);
-
-    var mouseConstraint = MouseConstraint.create(engine);
-    World.add(engine.world, mouseConstraint);
-
     Engine.run(engine);
 
     document.onkeydown = function (event) {
@@ -78,8 +49,20 @@
         Body.setVelocity(boxA, {x: 0, y: 0});
     };
 
+    var renderer = PIXI.autoDetectRenderer(800, 600, {backgroundColor: 0x1099bb});
+    document.body.appendChild(renderer.view);
 
-    //    Body.applyForce(boxA, boxA.position, {x: 0.1, y: 0.1});
+    // create the root of the scene graph
+    var stage = new PIXI.Container();
+
+    // start animating
+    animate();
+    function animate() {
+        requestAnimationFrame(animate);
+
+        // render the container
+        renderer.render(stage);
+    }
 
 </script>
 
