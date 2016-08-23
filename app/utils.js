@@ -20,7 +20,7 @@ define(function () {
             var objectDx = connectTo.x - connectObject.x,
                 objectDy = connectTo.y - connectObject.y,
                 angle = Math.atan2(objectDy, objectDx),
-                maxAngle = 30 * (Math.PI / 180.0);
+                maxAngle = 70 * (Math.PI / 180.0);
             var delta = connectObject.angle - connectTo.angle;
             delta = this.normalizeAngle(delta);
             if (delta <= maxAngle && delta >= -maxAngle) {

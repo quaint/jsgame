@@ -19,16 +19,16 @@ define(['./vehicle', './utils', './configuration'], function (createVehicle, uti
                 }
 
                 if (tractor.fuel > 0) {
+                    var newAngle = tractor.angle;
                     if (moveDirection == 1) {
-                        tractor.angle += utils.toRadians(linearDistEachFrame * -rotateDirection);
+                        newAngle += utils.toRadians(linearDistEachFrame * -rotateDirection);
                     } else if (moveDirection == -1) {
-                        tractor.angle += utils.toRadians(linearDistEachFrame * rotateDirection);
+                        newAngle += utils.toRadians(linearDistEachFrame * rotateDirection);
                     }
+                    newAngle = utils.normalizeAngle(newAngle);
 
-                    tractor.angle = utils.normalizeAngle(tractor.angle);
-
-                    var newX = tractor.x - moveDirection * Math.cos(tractor.angle) * linearDistEachFrame;
-                    var newY = tractor.y - moveDirection * Math.sin(tractor.angle) * linearDistEachFrame;
+                    var newX = tractor.x - moveDirection * Math.cos(newAngle) * linearDistEachFrame;
+                    var newY = tractor.y - moveDirection * Math.sin(newAngle) * linearDistEachFrame;
 
                     var collision = false;
                     for (var i = 0; i < otherObjects.length; i++) {
@@ -80,7 +80,7 @@ define(['./vehicle', './utils', './configuration'], function (createVehicle, uti
                                         this.connectedObject.connectedObject.angle = moveAlsoCheckObject.angle;
                                         tractor.x = newX;
                                         tractor.y = newY;
-
+                                        tractor.angle = newAngle;
                                     }
                                 }
                             }
