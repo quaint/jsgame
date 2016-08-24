@@ -13,7 +13,9 @@ define(function () {
             animationDelta: 0,
             msPerFrame: 100,
             connectedObject: null,
-            radius: width / 2,
+            radius: width * 0.5,
+            anchorX: 0.5,
+            anchorY: 0.5,
 
             updateAnimation: function (timeDiff) {
                 if (this.animationDelta > this.msPerFrame) {
@@ -25,8 +27,8 @@ define(function () {
                 } else {
                     this.animationDelta += timeDiff;
                 }
-            }
-            ,
+            },
+
             distanceTo: function (otherObject) {
                 var dx = this.x - otherObject.x;
                 var dy = this.y - otherObject.y;

@@ -13,14 +13,16 @@ define(function () {
                 return delta;
             }
         },
+
         getRandomInt: function (min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         },
+
         drag: function (connectObject, connectTo, otherObjects) {
             var objectDx = connectTo.x - connectObject.x,
                 objectDy = connectTo.y - connectObject.y,
                 angle = Math.atan2(objectDy, objectDx),
-                maxAngle = 70 * (Math.PI / 180.0);
+                maxAngle = this.toRadians(70);
             var delta = connectObject.angle - connectTo.angle;
             delta = this.normalizeAngle(delta);
             if (delta <= maxAngle && delta >= -maxAngle) {
@@ -38,7 +40,11 @@ define(function () {
 
             var collision = false;
             for (var i = 0; i < otherObjects.length; i++) {
-                if (this.checkCollision(otherObjects[i], {x: newX, y: newY, radius: connectObject.radius})) {
+                if (this.checkCollision(otherObjects[i], {
+                        x: newX + Math.cos(connectObject.angle) * connectObject.radius,
+                        y: newY + Math.sin(connectObject.angle) * connectObject.radius,
+                        radius: connectObject.radius
+                    })) {
                     collision = true;
                     break;
                 }
@@ -50,6 +56,7 @@ define(function () {
             }
             return !collision;
         },
+
         /**
          * Determine if two rectangles overlap.
          * @param {object}  rectA Object with properties: x, y, width, height.
@@ -62,6 +69,7 @@ define(function () {
             rectA.y + rectA.height < rectB.y ||
             rectB.y + rectB.height < rectA.y);
         },
+
         /**
          * Check distance between objects.
          * @param {object} firstObject to check
@@ -75,9 +83,11 @@ define(function () {
             var minDist = firstObject.radius + secondObject.radius;
             return dist < minDist;
         },
+
         toRadians: function (degrees) {
             return degrees * Math.PI / 180;
         },
+
         toDegrees: function (radians) {
             return radians * 180 / Math.PI;
         }

@@ -12,9 +12,11 @@ define(function () {
             warningBelow: warningBelow,
             ctx: ctx,
             title: title,
+
             update: function (level) {
                 this.level = level / this.maxValue * this.height;
             },
+
             draw: function () {
                 this.ctx.save();
                 this.ctx.fillStyle = "#ffffff";

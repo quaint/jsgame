@@ -1,4 +1,4 @@
-define(['./vehicle', './utils'], function (createVehicle, utils) {
+define(['./vehicle', './utils', './configuration'], function (createVehicle, utils, configuration) {
     return function (x, y, width, height, maxGrain, maxFuel, sprite, ctx) {
         var combine = createVehicle(x, y, width, height, sprite, ctx);
         combine.linearSpeed = 50;
@@ -123,9 +123,11 @@ define(['./vehicle', './utils'], function (createVehicle, utils) {
             }
             combine.ctx.drawImage(combine.sprite, 0, 100, combine.width, combine.height, -combine.width + 30, -combine.height / 2, combine.width, combine.height);
             combine.ctx.restore();
-            combine.ctx.beginPath();
-            combine.ctx.arc(combine.getBoundingSphere().x, combine.getBoundingSphere().y, combine.getBoundingSphere().radius, 0, 2 * Math.PI, false);
-            combine.ctx.stroke();
+            if (configuration.debug) {
+                combine.ctx.beginPath();
+                combine.ctx.arc(combine.getBoundingSphere().x, combine.getBoundingSphere().y, combine.getBoundingSphere().radius, 0, 2 * Math.PI, false);
+                combine.ctx.stroke();
+            }
         };
 
         combine.getBoundingSphere = function () {

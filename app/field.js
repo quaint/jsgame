@@ -122,7 +122,6 @@ define(function () {
             } else if (type === field.typeGrass) {
                 field.ctx.drawImage(field.sprite, 80, 60, field.grid, field.grid, point.x * field.grid + field.x, point.y * field.grid + field.y, field.grid, field.grid);
             }
-
         }
 
         return field;

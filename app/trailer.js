@@ -1,8 +1,9 @@
-define(['./vehicle'], function (createVehicle) {
+define(['./vehicle', './configuration'], function (createVehicle, configuration) {
     return function (x, y, width, height, maxGrain, sprite, ctx) {
         var trailer = createVehicle(x, y, width, height, sprite, ctx);
         trailer.grain = 0;
         trailer.maxGrain = maxGrain;
+        trailer.radius = trailer.width * 0.3;
 
         trailer.draw = function () {
             trailer.ctx.save();
@@ -14,9 +15,11 @@ define(['./vehicle'], function (createVehicle) {
             trailer.ctx.drawImage(trailer.sprite, 0, 180, trailer.width, trailer.height, 0, -trailer.height / 2, trailer.width, trailer.height);
             // }
             trailer.ctx.restore();
-            trailer.ctx.beginPath();
-            trailer.ctx.arc(trailer.getBoundingSphere().x, trailer.getBoundingSphere().y, trailer.getBoundingSphere().radius, 0, 2 * Math.PI, false);
-            trailer.ctx.stroke();
+            if (configuration.debug) {
+                trailer.ctx.beginPath();
+                trailer.ctx.arc(trailer.getBoundingSphere().x, trailer.getBoundingSphere().y, trailer.getBoundingSphere().radius, 0, 2 * Math.PI, false);
+                trailer.ctx.stroke();
+            }
             // trailer.ctx.fillRect(trailer.getPin().x, trailer.getPin().y, 10, 10);
             // trailer.ctx.fillRect(trailer.getBoundingSphere().x, trailer.getBoundingSphere().y, 10, 10);
             // trailer.ctx.fillRect(trailer.x, trailer.y, 5, 5);
@@ -31,9 +34,9 @@ define(['./vehicle'], function (createVehicle) {
 
         trailer.getBoundingSphere = function () {
             return {
-                x: trailer.x + Math.cos(trailer.angle) * trailer.width / 2,
-                y: trailer.y + Math.sin(trailer.angle) * trailer.width / 2,
-                radius: trailer.width / 2
+                x: trailer.x + Math.cos(trailer.angle) * trailer.radius,
+                y: trailer.y + Math.sin(trailer.angle) * trailer.radius,
+                radius: trailer.radius
             }
         };
 
