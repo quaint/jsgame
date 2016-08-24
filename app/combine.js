@@ -55,12 +55,13 @@ define(['./vehicle', './utils', './configuration'], function (createVehicle, uti
                 }
 
                 if (combine.fuel > 0) {
+                    var newAngle = combine.angle;
                     if (moveDirection == 1) {
-                        combine.angle += (linearDistEachFrame * -rotateDirection) * Math.PI / 180;
+                        newAngle += (linearDistEachFrame * -rotateDirection) * Math.PI / 180;
                     } else if (moveDirection == -1) {
-                        combine.angle += (linearDistEachFrame * rotateDirection) * Math.PI / 180;
+                        newAngle += (linearDistEachFrame * rotateDirection) * Math.PI / 180;
                     }
-                    combine.angle = utils.normalizeAngle(combine.angle);
+                    newAngle = utils.normalizeAngle(newAngle);
 
                     var newX = combine.x - moveDirection * Math.cos(combine.angle) * linearDistEachFrame;
                     var newY = combine.y - moveDirection * Math.sin(combine.angle) * linearDistEachFrame;
@@ -80,6 +81,7 @@ define(['./vehicle', './utils', './configuration'], function (createVehicle, uti
                     if (!collision) {
                         combine.x = newX;
                         combine.y = newY;
+                        combine.angle = newAngle;
                         updateHeader();
                         updateBack();
                     }
