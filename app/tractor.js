@@ -1,4 +1,4 @@
-define(['./vehicle', './utils', './configuration'], function (createVehicle, utils, configuration) {
+define(["./vehicle", "./utils", "./configuration"], function (createVehicle, utils, configuration) {
     return function (x, y, width, height, maxFuel, sprite, ctx) {
         var tractor = createVehicle(x, y, width, height, sprite, ctx);
         tractor.linearSpeed = configuration.tractorLinearSpeed;
@@ -23,9 +23,9 @@ define(['./vehicle', './utils', './configuration'], function (createVehicle, uti
 
                 if (tractor.fuel > 0) {
                     var newAngle = tractor.angle;
-                    if (moveDirection == 1) {
+                    if (moveDirection === 1) {
                         newAngle += utils.toRadians(linearDistEachFrame * -rotateDirection);
-                    } else if (moveDirection == -1) {
+                    } else if (moveDirection === -1) {
                         newAngle += utils.toRadians(linearDistEachFrame * rotateDirection);
                     }
                     newAngle = utils.normalizeAngle(newAngle);
@@ -88,7 +88,7 @@ define(['./vehicle', './utils', './configuration'], function (createVehicle, uti
                     };
                 }
             };
-        };
+        }
 
         tractor.draw = function () {
             tractor.ctx.save();
@@ -109,7 +109,7 @@ define(['./vehicle', './utils', './configuration'], function (createVehicle, uti
                 x: tractor.x + Math.cos(tractor.angle) * tractor.radius,
                 y: tractor.y + Math.sin(tractor.angle) * tractor.radius,
                 radius: tractor.radius
-            }
+            };
         };
 
         return tractor;

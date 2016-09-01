@@ -1,4 +1,4 @@
-define(['./vehicle', './utils', './configuration'], function (createVehicle, utils, configuration) {
+define(["./vehicle", "./utils", "./configuration"], function (createVehicle, utils, configuration) {
     return function (x, y, width, height, maxGrain, maxFuel, sprite, ctx) {
         var combine = createVehicle(x, y, width, height, sprite, ctx);
         combine.linearSpeed = 50;
@@ -56,9 +56,9 @@ define(['./vehicle', './utils', './configuration'], function (createVehicle, uti
 
                 if (combine.fuel > 0) {
                     var newAngle = combine.angle;
-                    if (moveDirection == 1) {
+                    if (moveDirection === 1) {
                         newAngle += (linearDistEachFrame * -rotateDirection) * Math.PI / 180;
-                    } else if (moveDirection == -1) {
+                    } else if (moveDirection === -1) {
                         newAngle += (linearDistEachFrame * rotateDirection) * Math.PI / 180;
                     }
                     newAngle = utils.normalizeAngle(newAngle);
@@ -137,7 +137,7 @@ define(['./vehicle', './utils', './configuration'], function (createVehicle, uti
                 x: combine.x,
                 y: combine.y,
                 radius: combine.width / 2
-            }
+            };
         };
 
         function updateHeader() {
