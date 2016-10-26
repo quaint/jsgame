@@ -1,4 +1,5 @@
 define(function () {
+    'use strict';
     return function (x, y, width, height, sprite, ctx) {
         return {
             x: x,
@@ -34,6 +35,6 @@ define(function () {
                 var dy = this.y - otherObject.y;
                 return Math.sqrt(dx * dx + dy * dy);
             }
-        }
+        };
     };
 });

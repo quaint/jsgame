@@ -1,4 +1,5 @@
 define(["./vehicle", "./utils", "./configuration"], function (createVehicle, utils, configuration) {
+    'use strict';
     return function (x, y, width, height, maxFuel, sprite, ctx) {
         var tractor = createVehicle(x, y, width, height, sprite, ctx);
         tractor.linearSpeed = configuration.tractorLinearSpeed;

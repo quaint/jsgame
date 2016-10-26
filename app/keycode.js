@@ -4,6 +4,7 @@
  */
 
 define(function() {
+    'use strict';
     return {
         BACKSPACE: 8,
         TAB: 9,

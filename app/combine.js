@@ -1,4 +1,5 @@
 define(["./vehicle", "./utils", "./configuration"], function (createVehicle, utils, configuration) {
+    'use strict';
     return function (x, y, width, height, maxGrain, maxFuel, sprite, ctx) {
         var combine = createVehicle(x, y, width, height, sprite, ctx);
         combine.linearSpeed = 50;

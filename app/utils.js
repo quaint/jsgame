@@ -1,4 +1,5 @@
 define(function () {
+    'use strict';
     return {
         normalizeAngle: function (delta) {
             if (delta > Math.PI) {

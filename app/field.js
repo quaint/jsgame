@@ -1,4 +1,5 @@
 define(function () {
+    'use strict';
     return function (x, y, grid, sprite, ctx) {
         var field = {
             x: x,
@@ -15,7 +16,7 @@ define(function () {
             typeStubble: 1,
             typeStraw: 2,
             typeWater: 3,
-            typeGrass: 4,
+            typeGrass: 4
         };
 
         field.updateFromCombine = function (combine, ctx, spritesImage) {
@@ -26,8 +27,8 @@ define(function () {
 
             if (combine.isProcessing()) {
                 var backPoints = getArrayOfPointsForLine(combine.back);
-                for (var i = 0; i < backPoints.length; i++) {
-                    update(combine, backPoints[i], field.typeStraw, ctx, spritesImage);
+                for (var j = 0; j < backPoints.length; j++) {
+                    update(combine, backPoints[j], field.typeStraw, ctx, spritesImage);
                 }
             }
         };

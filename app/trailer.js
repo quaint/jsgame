@@ -1,4 +1,5 @@
 define(['./vehicle', './configuration'], function (createVehicle, configuration) {
+    'use strict';
     return function (x, y, width, height, maxGrain, sprite, ctx) {
         var trailer = createVehicle(x, y, width, height, sprite, ctx);
         trailer.grain = 0;
@@ -37,7 +38,7 @@ define(['./vehicle', './configuration'], function (createVehicle, configuration)
                 x: trailer.x + Math.cos(trailer.angle) * trailer.radius,
                 y: trailer.y + Math.sin(trailer.angle) * trailer.radius,
                 radius: trailer.radius
-            }
+            };
         };
 
         return trailer;

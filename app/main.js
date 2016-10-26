@@ -1,5 +1,6 @@
 define(['./field', './fielddata', './combine', './tractor', './trailer', './bar', './keycode', './utils'],
     function (createField, fieldData, createCombine, createTractor, createTrailer, createBar, keycode, utils) {
+        'use strict';
 
         //collisions
         //world

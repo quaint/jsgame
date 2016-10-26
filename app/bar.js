@@ -1,4 +1,5 @@
 define(function () {
+    'use strict';
     return function (x, y, maxValue, warningLevel, warningBelow, ctx, title) {
         return {
             x: x,
@@ -33,6 +34,6 @@ define(function () {
                 this.ctx.fillText(this.title, this.x, this.y + this.height + this.textMargin);
                 this.ctx.restore();
             }
-        }
+        };
     };
 });
