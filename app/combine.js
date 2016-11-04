@@ -2,7 +2,7 @@ define(["./vehicle", "./utils", "./configuration"], function (createVehicle, uti
     'use strict';
     return function (x, y, width, height, maxGrain, maxFuel, sprite, ctx) {
         var combine = createVehicle(x, y, width, height, sprite, ctx);
-        combine.linearSpeed = 50;
+        combine.linearSpeed = 20;
         combine.pouringSpeed = 100;
         combine.grain = 0;
         combine.maxGrain = maxGrain;

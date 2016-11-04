@@ -112,18 +112,28 @@ define(function () {
         }
 
         function drawPart(point, type) {
-            if (type === field.typePlant) {
-                field.ctx.drawImage(field.sprite, 0, 60, field.grid, field.grid, point.x * field.grid + field.x, point.y * field.grid + field.y, field.grid, field.grid);
-            } else if (type === field.typeStubble) {
-                field.ctx.drawImage(field.sprite, 20, 60, field.grid, field.grid, point.x * field.grid + field.x, point.y * field.grid + field.y, field.grid, field.grid);
-            } else if (type === field.typeStraw) {
-                field.ctx.drawImage(field.sprite, 40, 60, field.grid, field.grid, point.x * field.grid + field.x, point.y * field.grid + field.y, field.grid, field.grid);
-            } else if (type === field.typeWater) {
-                field.ctx.drawImage(field.sprite, 60, 60, field.grid, field.grid, point.x * field.grid + field.x, point.y * field.grid + field.y, field.grid, field.grid);
-            } else if (type === field.typeGrass) {
-                field.ctx.drawImage(field.sprite, 80, 60, field.grid, field.grid, point.x * field.grid + field.x, point.y * field.grid + field.y, field.grid, field.grid);
+            switch(type) {
+                case field.typePlant:
+                    drawFieldPartAt(point, 0);
+                    break;
+                case field.typeStubble:
+                    drawFieldPartAt(point, 20);
+                    break;
+                case field.typeStraw:
+                    drawFieldPartAt(point, 40);
+                    break;
+                case field.typeWater:
+                    drawFieldPartAt(point, 60);
+                    break;
+                case field.typeGrass:
+                    drawFieldPartAt(point, 80);
+                    break;
             }
-        }
+       }
+
+       function drawFieldPartAt(point, x) {
+           field.ctx.drawImage(field.sprite, x, 60, field.grid, field.grid, point.x * field.grid + field.x, point.y * field.grid + field.y, field.grid, field.grid);
+       }
 
         return field;
     };

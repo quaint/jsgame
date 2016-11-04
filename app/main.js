@@ -7,13 +7,14 @@ define(['./field', './fielddata', './combine', './tractor', './trailer', './bar'
         //world coordinates
         //forces
 
-        var canvas = document.getElementById("canvas");
         var screenWidth = 800; //canvas.parentNode.clientWidth;
         var screenHeight = 600; //canvas.parentNode.clientHeight;
         var centerX = screenWidth / 2;
         var centerY = screenHeight / 2;
         var bufferWidth = 3040;
         var bufferHeight = 1920;
+
+        var canvas = document.getElementById("canvas");
         canvas.width = screenWidth;
         canvas.height = screenHeight;
         var context = canvas.getContext("2d");
@@ -54,7 +55,6 @@ define(['./field', './fielddata', './combine', './tractor', './trailer', './bar'
         var field = createField(100, 100, 10, spritesImage, fieldContext);
         var combine1 = createCombine(150, 150, 71, 80, 3000, 300, spritesImage, bufferContext);
         var combine2 = createCombine(150, 300, 71, 80, 3000, 300, spritesImage, bufferContext);
-        var activeMachine = combine1;
         var tractor = createTractor(220, 450, 31, 19, 200, spritesImage, bufferContext);
         var trailer1 = createTrailer(160, 450, 58, 24, 9000, spritesImage, bufferContext);
         var trailer2 = createTrailer(100, 450, 56, 24, 9000, spritesImage, bufferContext);
@@ -62,9 +62,11 @@ define(['./field', './fielddata', './combine', './tractor', './trailer', './bar'
         tractor.connectedObject = trailer1;
         trailer1.connectedObject = trailer2;
 
-        var grainBar = createBar(10, 10, combine1.maxGrain, 80, false, context, "grain");
-        var trailerBar = createBar(40, 10, trailer1.maxGrain, 80, false, context, "trailer");
-        var fuelBar = createBar(70, 10, combine1.maxFuel, 20, true, context, "fuel");
+        var activeMachine = combine1;
+
+        var grainBar = createBar(10, 10, combine1.maxGrain, 80, false, bufferContext, "grain");
+        var trailerBar = createBar(40, 10, trailer1.maxGrain, 80, false, bufferContext, "trailer");
+        var fuelBar = createBar(70, 10, combine1.maxFuel, 20, true, bufferContext, "fuel");
 
         document.onkeydown = function (event) {
             switch (event.keyCode) {
@@ -169,16 +171,15 @@ define(['./field', './fielddata', './combine', './tractor', './trailer', './bar'
             tractor.draw();
             trailer1.draw();
             trailer2.draw();
+            grainBar.draw();
+            trailerBar.draw();
+            fuelBar.draw();
 
             // bufferContext.fillText(Math.floor((fieldPartsCount-fieldPartsLeft)/fieldPartsCount * 100) + "% done", 80, 20);
 
             context.clearRect(0, 0, canvas.width, canvas.height);
             context.drawImage(fieldCanvas, worldX, worldY);
             context.drawImage(bufferCanvas, worldX, worldY);
-
-            grainBar.draw();
-            trailerBar.draw();
-            fuelBar.draw();
 
             lastTime = time;
             requestAnimFrame(function () {
