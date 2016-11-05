@@ -6,12 +6,15 @@ define(["./vehicle", "./utils", "./configuration"], function (createVehicle, uti
         tractor.fuel = maxFuel;
         tractor.maxFuel = maxFuel;
         tractor.anchorY = 0.5;
-        tractor.anchorX = 0.1;
+        tractor.anchorX = 0.0;
         tractor.radius = tractor.width * 0.4;
 
         tractor.update = function (timeDiff, rotateDirection, moveDirection, command, isActive, otherObjects) {
             if (isActive) {
                 var timeDelta = timeDiff * 0.001;
+                if (tractor.connectedObject.workSpeed) {
+                    tractor.linearSpeed = tractor.connectedObject.workSpeed;
+                }
                 var linearDistEachFrame = tractor.linearSpeed * timeDelta;
 
                 if (moveDirection !== 0) {
@@ -52,7 +55,8 @@ define(["./vehicle", "./utils", "./configuration"], function (createVehicle, uti
                             var canDragFirst = utils.drag(firstConnectedObj, {
                                 x: newX,
                                 y: newY,
-                                angle: this.angle
+                                angle: this.angle,
+                                maxAngle: this.maxAngle
                             }, otherObjects);
                             if (canDragFirst && this.connectedObject.connectedObject) {
                                 var secondConnectedObj = createCheckObject(this.connectedObject.connectedObject);
@@ -62,7 +66,12 @@ define(["./vehicle", "./utils", "./configuration"], function (createVehicle, uti
                                     updateObjectsPosition(this.connectedObject.connectedObject, secondConnectedObj);
                                     updateObjectsPosition(tractor, {x: newX, y: newY, angle: newAngle});
                                 }
+                            } else if (canDragFirst) {
+                                updateObjectsPosition(this.connectedObject, firstConnectedObj);
+                                updateObjectsPosition(tractor, {x: newX, y: newY, angle: newAngle});
                             }
+                        } else {
+                            updateObjectsPosition(tractor, {x: newX, y: newY, angle: newAngle});
                         }
                     }
                 }
@@ -82,27 +91,32 @@ define(["./vehicle", "./utils", "./configuration"], function (createVehicle, uti
                 x: obj.x,
                 y: obj.y,
                 angle: obj.angle,
+                maxAngle: obj.maxAngle,
                 getPin: function () {
-                    return {
-                        x: this.x + Math.cos(this.angle) * this.width,
-                        y: this.y + Math.sin(this.angle) * this.width
+                    var result = {
+                        x: this.x + Math.cos(this.angle) * (this.width - 0),
+                        y: this.y + Math.sin(this.angle) * (this.width - 0)
                     };
+                    return result;
                 }
             };
         }
 
         tractor.draw = function () {
-            tractor.ctx.save();
-            // trailer.ctx.fillRect(trailer.getPin().x, trailer.getPin().y, 10, 10);
+            tractor.ctx.save();   
             tractor.ctx.translate(tractor.x, tractor.y);
             tractor.ctx.rotate(tractor.angle);
-            tractor.ctx.drawImage(tractor.sprite, 0, 205, tractor.width, tractor.height, tractor.anchorX * -tractor.width, tractor.anchorY * -tractor.height, tractor.width, tractor.height);
+            // tractor.ctx.strokeRect(tractor.anchorX * -tractor.width, tractor.anchorY * -tractor.height, tractor.width,
+            //     tractor.height);
+            tractor.ctx.drawImage(tractor.sprite, 0, 205, tractor.width, tractor.height,
+                tractor.anchorX * -tractor.width, tractor.anchorY * -tractor.height, tractor.width, tractor.height);
             tractor.ctx.restore();
             if (configuration.debug) {
                 tractor.ctx.beginPath();
                 tractor.ctx.arc(tractor.getBoundingSphere().x, tractor.getBoundingSphere().y, tractor.getBoundingSphere().radius, 0, 2 * Math.PI, false);
                 tractor.ctx.stroke();
             }
+            // tractor.ctx.fillRect(tractor.x, tractor.y, 5, 5);
         };
 
         tractor.getBoundingSphere = function () {

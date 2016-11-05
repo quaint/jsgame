@@ -16,7 +16,8 @@ define(function () {
             typeStubble: 1,
             typeStraw: 2,
             typeWater: 3,
-            typeGrass: 4
+            typeGrass: 4,
+            typeGround: 5
         };
 
         field.updateFromCombine = function (combine, ctx, spritesImage) {
@@ -30,6 +31,13 @@ define(function () {
                 for (var j = 0; j < backPoints.length; j++) {
                     update(combine, backPoints[j], field.typeStraw, ctx, spritesImage);
                 }
+            }
+        };
+
+        field.updateFromMachine = function (machine, ctx, spritesImage) {
+            var backPoints = getArrayOfPointsForLine(machine.back);
+            for (var j = 0; j < backPoints.length; j++) {
+                update(machine, backPoints[j], field.typeGround, ctx, spritesImage);
             }
         };
 
@@ -103,9 +111,12 @@ define(function () {
             var partOfField = field.parts[point.x][point.y];
             if (partOfField.type === field.typePlant && type === field.typeStubble) {
                 partOfField.type = type;
-                combine.notifyShouldProcess();
+                if (combine.notifyShouldProcess) {
+                    combine.notifyShouldProcess();
+                }
                 drawPart(point, type);
-            } else if (partOfField.type === field.typeStubble && type === field.typeStraw) {
+            } else if ((partOfField.type === field.typeStubble && type === field.typeStraw) || 
+            type === field.typeGround) {
                 partOfField.type = type;
                 drawPart(point, type);
             }
@@ -127,6 +138,9 @@ define(function () {
                     break;
                 case field.typeGrass:
                     drawFieldPartAt(point, 80);
+                    break;
+                case field.typeGround:
+                    drawFieldPartAt(point, 100);
                     break;
             }
        }

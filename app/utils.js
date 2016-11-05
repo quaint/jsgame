@@ -1,4 +1,4 @@
-define(function () {
+define(["./configuration"], function (configuration) {
     'use strict';
     return {
         normalizeAngle: function (delta) {
@@ -19,32 +19,33 @@ define(function () {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         },
 
-        drag: function (connectObject, connectTo, otherObjects) {
-            var objectDx = connectTo.x - connectObject.x,
-                objectDy = connectTo.y - connectObject.y,
+        drag: function (connectedObject, movingObject, otherObjects) {
+            var objectDx = movingObject.x - connectedObject.x,
+                objectDy = movingObject.y - connectedObject.y,
                 angle = Math.atan2(objectDy, objectDx),
-                maxAngle = this.toRadians(70);
-            var delta = connectObject.angle - connectTo.angle;
+                maxAngle = this.toRadians(connectedObject.maxAngle),
+                delta = connectedObject.angle - movingObject.angle;
+
             delta = this.normalizeAngle(delta);
             if (delta <= maxAngle && delta >= -maxAngle) {
-                connectObject.angle = angle;
+                connectedObject.angle = angle;
             } else if (delta > maxAngle) {
-                connectObject.angle = angle - delta + maxAngle;
+                connectedObject.angle = angle - delta + maxAngle;
             } else if (delta < -maxAngle) {
-                connectObject.angle = angle - delta - maxAngle;
+                connectedObject.angle = angle - delta - maxAngle;
             }
-            var objectWidth = connectObject.getPin().x - connectObject.x;
-            var objectHeight = connectObject.getPin().y - connectObject.y;
+            var objectWidth = connectedObject.getPin().x - connectedObject.x;
+            var objectHeight = connectedObject.getPin().y - connectedObject.y;
 
-            var newX = connectTo.x - objectWidth;
-            var newY = connectTo.y - objectHeight;
+            var newX = movingObject.x - objectWidth;
+            var newY = movingObject.y - objectHeight;
 
             var collision = false;
             for (var i = 0; i < otherObjects.length; i++) {
                 if (this.checkCollision(otherObjects[i], {
-                        x: newX + Math.cos(connectObject.angle) * connectObject.radius,
-                        y: newY + Math.sin(connectObject.angle) * connectObject.radius,
-                        radius: connectObject.radius
+                        x: newX + Math.cos(connectedObject.angle) * connectedObject.radius,
+                        y: newY + Math.sin(connectedObject.angle) * connectedObject.radius,
+                        radius: connectedObject.radius
                     })) {
                     collision = true;
                     break;
@@ -52,8 +53,8 @@ define(function () {
             }
 
             if (!collision) {
-                connectObject.x = newX;
-                connectObject.y = newY;
+                connectedObject.x = newX;
+                connectedObject.y = newY;
             }
             return !collision;
         },

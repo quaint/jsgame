@@ -2,7 +2,7 @@ define(["./vehicle", "./utils", "./configuration"], function (createVehicle, uti
     'use strict';
     return function (x, y, width, height, maxGrain, maxFuel, sprite, ctx) {
         var combine = createVehicle(x, y, width, height, sprite, ctx);
-        combine.linearSpeed = 20;
+        combine.linearSpeed = configuration.combineLinearSpeed;
         combine.pouringSpeed = 100;
         combine.grain = 0;
         combine.maxGrain = maxGrain;
@@ -27,7 +27,7 @@ define(["./vehicle", "./utils", "./configuration"], function (createVehicle, uti
         };
 
         combine.radiusHeader = combine.height / 2;
-        combine.angleHeader = 60 * Math.PI / 180;
+        combine.angleHeader = utils.toRadians(60);
         var backHeight = combine.height / 10;
         var centerToBack = combine.width - 30;
         combine.radiusBack = Math.sqrt(Math.pow(backHeight, 2) + Math.pow(centerToBack, 2));
@@ -58,9 +58,9 @@ define(["./vehicle", "./utils", "./configuration"], function (createVehicle, uti
                 if (combine.fuel > 0) {
                     var newAngle = combine.angle;
                     if (moveDirection === 1) {
-                        newAngle += (linearDistEachFrame * -rotateDirection) * Math.PI / 180;
+                        newAngle += utils.toRadians(linearDistEachFrame * -rotateDirection);
                     } else if (moveDirection === -1) {
-                        newAngle += (linearDistEachFrame * rotateDirection) * Math.PI / 180;
+                        newAngle += utils.toRadians(linearDistEachFrame * rotateDirection);
                     }
                     newAngle = utils.normalizeAngle(newAngle);
 
@@ -151,8 +151,8 @@ define(["./vehicle", "./utils", "./configuration"], function (createVehicle, uti
         }
 
         function updateBack() {
-            var diagonalAngleBack1 = combine.angle + combine.angleBack - 180 * Math.PI / 180; //flip to back of combine
-            var diagonalAngleBack2 = combine.angle - combine.angleBack - 180 * Math.PI / 180; //flip to back of combine
+            var diagonalAngleBack1 = combine.angle + combine.angleBack - utils.toRadians(180); //flip to back of combine
+            var diagonalAngleBack2 = combine.angle - combine.angleBack - utils.toRadians(180); //flip to back of combine
             combine.back.x1 = Math.cos(diagonalAngleBack1) * combine.radiusBack + combine.x;
             combine.back.y1 = Math.sin(diagonalAngleBack1) * combine.radiusBack + combine.y;
             combine.back.x2 = Math.cos(diagonalAngleBack2) * combine.radiusBack + combine.x;

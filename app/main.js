@@ -1,5 +1,5 @@
-define(['./field', './fielddata', './combine', './tractor', './trailer', './bar', './keycode', './utils'],
-    function (createField, fieldData, createCombine, createTractor, createTrailer, createBar, keycode, utils) {
+define(['./field', './fielddata', './combine', './tractor', './trailer', './bar', './keycode', './utils', './machine'],
+    function (createField, fieldData, createCombine, createTractor, createTrailer, createBar, keycode, utils, createMachine) {
         'use strict';
 
         //collisions
@@ -53,14 +53,19 @@ define(['./field', './fielddata', './combine', './tractor', './trailer', './bar'
         };
 
         var field = createField(100, 100, 10, spritesImage, fieldContext);
+
         var combine1 = createCombine(150, 150, 71, 80, 3000, 300, spritesImage, bufferContext);
         var combine2 = createCombine(150, 300, 71, 80, 3000, 300, spritesImage, bufferContext);
-        var tractor = createTractor(220, 450, 31, 19, 200, spritesImage, bufferContext);
-        var trailer1 = createTrailer(160, 450, 58, 24, 9000, spritesImage, bufferContext);
-        var trailer2 = createTrailer(100, 450, 56, 24, 9000, spritesImage, bufferContext);
 
-        tractor.connectedObject = trailer1;
+        var tractor1 = createTractor(220, 450, 31, 20, 200, spritesImage, bufferContext);
+        var trailer1 = createTrailer(160, 450, 56, 24, 9000, spritesImage, bufferContext);
+        var trailer2 = createTrailer(100, 450, 56, 24, 9000, spritesImage, bufferContext);
+        tractor1.connectedObject = trailer1;
         trailer1.connectedObject = trailer2;
+
+        var tractor2 = createTractor(220, 550, 31, 20, 200, spritesImage, bufferContext);
+        var machine1 = createMachine(150, 550, 16, 40, spritesImage, bufferContext);
+        tractor2.connectedObject = machine1;
 
         var activeMachine = combine1;
 
@@ -126,22 +131,37 @@ define(['./field', './fielddata', './combine', './tractor', './trailer', './bar'
                 command2 = false;
             } else if (command2 && activeMachine === combine2) {
                 console.log("switching machine to 3, x: " + activeMachine.x + " y: " + activeMachine.y);
-                activeMachine = tractor;
+                activeMachine = tractor1;
                 command2 = false;
-            } else if (command2 && activeMachine === tractor) {
+            } else if (command2 && activeMachine === tractor1) {
+                console.log("switching machine to 4, x: " + activeMachine.x + " y: " + activeMachine.y);
+                activeMachine = tractor2;
+                command2 = false;
+            } else if (command2 && activeMachine === tractor2) {
                 console.log("switching machine to 1, x: " + activeMachine.x + " y: " + activeMachine.y);
                 activeMachine = combine1;
                 command2 = false;
             }
 
-            combine1.update(timeDiff, rotateDirection, moveDirection, command1, activeMachine === combine1, [combine2, tractor, trailer1, trailer2]);
-            combine2.update(timeDiff, rotateDirection, moveDirection, command1, activeMachine === combine2, [combine1, tractor, trailer1, trailer2]);
-            tractor.update(timeDiff, rotateDirection, moveDirection, command1, activeMachine === tractor, [combine1, combine2]);
+            combine1.update(timeDiff, rotateDirection, moveDirection, command1, activeMachine === combine1,
+                [combine2, tractor1, tractor2, trailer1, trailer2, machine1]);
+            combine2.update(timeDiff, rotateDirection, moveDirection, command1, activeMachine === combine2,
+                [combine1, tractor1, tractor2, trailer1, trailer2, machine1]);
+            tractor1.update(timeDiff, rotateDirection, moveDirection, command1, activeMachine === tractor1,
+                [combine1, combine2, tractor2, machine1]);
+            tractor2.update(timeDiff, rotateDirection, moveDirection, command1, activeMachine === tractor2,
+                [combine1, combine2, tractor1, trailer1, trailer2]);
+            machine1.updateBack();
 
-            if (activeMachine !== tractor) {
+            if (activeMachine !== tractor1 && activeMachine !== tractor2) {
                 activeMachine.updateTrailer(timeDiff, trailer1);
                 if (moveDirection < 0) {
                     field.updateFromCombine(activeMachine, fieldContext, spritesImage);
+                }
+            }
+            if (activeMachine === tractor2) {
+                if (moveDirection < 0) {
+                    field.updateFromMachine(activeMachine.connectedObject, fieldContext, spritesImage);
                 }
             }
 
@@ -168,9 +188,11 @@ define(['./field', './fielddata', './combine', './tractor', './trailer', './bar'
 
             combine1.draw();
             combine2.draw();
-            tractor.draw();
+            tractor1.draw();
+            tractor2.draw();
             trailer1.draw();
             trailer2.draw();
+            machine1.draw();
             grainBar.draw();
             trailerBar.draw();
             fuelBar.draw();
