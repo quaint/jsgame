@@ -1,8 +1,9 @@
-import Size from './size'
-import Point from './point'
-import Circle from './circle'
+import Size from './basic/size'
+import Point from './basic/point'
+import Circle from './basic/circle'
+import Collidable from './basic/collidable'
 
-export default abstract class Vehicle implements Circle {
+export default abstract class Vehicle implements Collidable {
 
     origin: Point
     size: Size

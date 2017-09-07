@@ -1,9 +1,10 @@
 import Vehicle from './vehicle'
-import Size from './size'
-import Circle from './circle'
+import Size from './basic/size'
+import Circle from './basic/circle'
+import Collidable from './basic/collidable'
 import configuration from './configuration'
 
-namespace utils {
+export namespace utils {
         export function normalizeAngle(delta: number): number {
             if (delta > Math.PI) {
                 delta -= 2 * Math.PI;
@@ -22,7 +23,7 @@ namespace utils {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
-        export function drag(connectedObject: Vehicle, movingObject: Vehicle, otherObjects: Vehicle[]): boolean {
+        export function drag(connectedObject: Collidable, movingObject: Collidable, otherObjects: Collidable[]): boolean {
             let objectDx = movingObject.origin.x - connectedObject.origin.x
             let objectDy = movingObject.origin.y - connectedObject.origin.y
             let angle = Math.atan2(objectDy, objectDx)

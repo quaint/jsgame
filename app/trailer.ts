@@ -1,7 +1,7 @@
 import Vehicle from './vehicle'
-import Point from './point'
-import Circle from './circle'
-import Size from './size'
+import Point from './basic/point'
+import Circle from './basic/circle'
+import Size from './basic/size'
 import configuration from './configuration'
 
 export default class Trailer extends Vehicle {

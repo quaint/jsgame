@@ -1,57 +1,68 @@
-define(['./vehicle', './configuration', './utils'], function (createVehicle, configuration, utils) {
-    'use strict';
-    return function (x, y, width, height, sprite, ctx) {
-        var machine = createVehicle(x, y, width, height, sprite, ctx);
-        machine.radius = machine.width * 0.3;
-        machine.anchorY = 0.5;
-        machine.anchorX = 0.0;
-        machine.maxAngle = 0;
-        machine.workSpeed = 30;
-        machine.back = {
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var vehicle_1 = require("./vehicle");
+var Machine = (function (_super) {
+    __extends(Machine, _super);
+    function Machine(origin, size, sprite, ctx) {
+        var _this = _super.call(this, origin, size, sprite, ctx) || this;
+        var ;
+        _this = createVehicle(x, y, width, height, sprite, ctx);
+        _this.radius = _this.width * 0.3;
+        _this.anchorY = 0.5;
+        _this.anchorX = 0.0;
+        _this.maxAngle = 0;
+        _this.workSpeed = 30;
+        _this.back = {
             x1: 0,
             y1: 0,
             x2: 0,
             y2: 0
         };
-
-        var backHeight = machine.height-20;
-        var centerToBack = machine.width-15;
-        machine.radiusBack = Math.sqrt(Math.pow(backHeight, 2) + Math.pow(centerToBack, 2));
-        machine.angleBack = Math.atan2(backHeight, centerToBack);
-
-        machine.updateBack = function () {
-            var diagonalAngleBack1 = machine.angle + machine.angleBack - utils.toRadians(180); //flip to back of machine
-            var diagonalAngleBack2 = machine.angle - machine.angleBack - utils.toRadians(180); //flip to back of machine
-            machine.back.x1 = Math.cos(diagonalAngleBack1) * machine.radiusBack + machine.x;
-            machine.back.y1 = Math.sin(diagonalAngleBack1) * machine.radiusBack + machine.y;
-            machine.back.x2 = Math.cos(diagonalAngleBack2) * machine.radiusBack + machine.x;
-            machine.back.y2 = Math.sin(diagonalAngleBack2) * machine.radiusBack + machine.y;
-        }
-
-        machine.draw = function () {
-            machine.ctx.save();
-            machine.ctx.translate(machine.x, machine.y);
-            machine.ctx.rotate(machine.angle); // * Math.PI / 180
-            // machine.ctx.strokeRect(machine.anchorX * -machine.width, machine.anchorY * -machine.height, machine.width,
-            //     machine.height);
-            machine.ctx.drawImage(machine.sprite, 0, 230, machine.width, machine.height,
-                machine.anchorX * -machine.width, machine.anchorY * -machine.height, machine.width, machine.height);
-            machine.ctx.restore();
-            // machine.ctx.beginPath();
-            // machine.ctx.moveTo(machine.back.x1, machine.back.y1);
-            // machine.ctx.lineTo(machine.back.x2, machine.back.y2);
-            // machine.ctx.stroke();
-            // machine.ctx.fillRect(machine.getPin().x, machine.getPin().y, 4, 4);
-            // machine.ctx.fillRect(machine.x, machine.y, 5, 5);
-        };
-
-        machine.getPin = function () {
-            return {
-                x: machine.x + Math.cos(machine.angle) * machine.width,
-                y: machine.y + Math.sin(machine.angle) * machine.width
-            };
-        };
-
-        return machine;
+        var backHeight = _this.height - 20;
+        var centerToBack = _this.width - 15;
+        _this.radiusBack = Math.sqrt(Math.pow(backHeight, 2) + Math.pow(centerToBack, 2));
+        _this.angleBack = Math.atan2(backHeight, centerToBack);
+        return _this;
+    }
+    Machine.prototype.updateBack = function () {
+        var diagonalAngleBack1 = this.angle + this.angleBack - utils.toRadians(180); //flip to back of this
+        var diagonalAngleBack2 = this.angle - this.angleBack - utils.toRadians(180); //flip to back of this
+        this.back.x1 = Math.cos(diagonalAngleBack1) * this.radiusBack + this.x;
+        this.back.y1 = Math.sin(diagonalAngleBack1) * this.radiusBack + this.y;
+        this.back.x2 = Math.cos(diagonalAngleBack2) * this.radiusBack + this.x;
+        this.back.y2 = Math.sin(diagonalAngleBack2) * this.radiusBack + this.y;
     };
-});
+    Machine.prototype.draw = function () {
+        this.ctx.save();
+        this.ctx.translate(this.x, this.y);
+        this.ctx.rotate(this.angle); // * Math.PI / 180
+        // this.ctx.strokeRect(this.anchorX * -this.width, this.anchorY * -this.height, this.width,
+        //     this.height);
+        this.ctx.drawImage(this.sprite, 0, 230, this.width, this.height, this.anchorX * -this.width, this.anchorY * -this.height, this.width, this.height);
+        this.ctx.restore();
+        // this.ctx.beginPath();
+        // this.ctx.moveTo(this.back.x1, this.back.y1);
+        // this.ctx.lineTo(this.back.x2, this.back.y2);
+        // this.ctx.stroke();
+        // this.ctx.fillRect(this.getPin().x, this.getPin().y, 4, 4);
+        // this.ctx.fillRect(this.x, this.y, 5, 5);
+    };
+    Machine.prototype.getPin = function () {
+        return {
+            x: this.x + Math.cos(this.angle) * this.width,
+            y: this.y + Math.sin(this.angle) * this.width
+        };
+    };
+    return Machine;
+}(vehicle_1.default));
+exports.default = Machine;

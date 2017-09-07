@@ -3,9 +3,7 @@
  * From 'Foundation HTML5 Animation with JavaScript': http://amzn.com/1430236655?tag=html5anim-20
  */
 
-define(function() {
-    'use strict';
-    return {
+const keyCode = {
         BACKSPACE: 8,
         TAB: 9,
         ENTER: 13,
@@ -126,5 +124,6 @@ define(function() {
         BACKSLASH: 220,
         RIGHTBRACKET: 221,
         QUOTE: 222
-    };
-});
+}
+
+export default keyCode;
