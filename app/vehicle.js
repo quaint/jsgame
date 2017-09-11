@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Vehicle = (function () {
+var Vehicle = /** @class */ (function () {
     function Vehicle(origin, size, sprite, ctx) {
         this.angle = 0;
         this.maxAngle = 0;

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Bar = (function () {
+var Bar = /** @class */ (function () {
     function Bar(x, y, maxValue, warningLevel, warningBelow, ctx, title) {
         this.x = x;
         this.y = y;

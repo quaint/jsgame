@@ -96,4 +96,4 @@ var utils;
         return radians * 180 / Math.PI;
     }
     utils.toDegrees = toDegrees;
-})(utils || (utils = {}));
+})(utils = exports.utils || (exports.utils = {}));

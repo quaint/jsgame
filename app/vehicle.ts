@@ -1,6 +1,7 @@
 import Size from './basic/size'
 import Point from './basic/point'
 import Circle from './basic/circle'
+import Machine from './machine'
 import Collidable from './basic/collidable'
 
 export default abstract class Vehicle implements Collidable {
@@ -15,7 +16,7 @@ export default abstract class Vehicle implements Collidable {
     animationFrame = 0
     animationDelta = 0
     msPerFrame = 100
-    connectedObject: Vehicle
+    connectedObject: Machine
     radius: number
     anchorX = 0.5
     anchorY = 0.5

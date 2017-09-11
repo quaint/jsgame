@@ -12,7 +12,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var vehicle_1 = require("./vehicle");
 var configuration_1 = require("./configuration");
-var Trailer = (function (_super) {
+var Trailer = /** @class */ (function (_super) {
     __extends(Trailer, _super);
     function Trailer(origin, size, maxGrain, sprite, ctx) {
         var _this = _super.call(this, origin, size, sprite, ctx) || this;
@@ -38,7 +38,7 @@ var Trailer = (function (_super) {
         this.ctx.restore();
         if (configuration_1.default.debug) {
             this.ctx.beginPath();
-            this.ctx.arc(this.getBoundingSphere().center.x, this.getBoundingSphere().center.y, this.getBoundingSphere().radius, 0, 2 * Math.PI, false);
+            this.ctx.arc(this.getBoundingSphere().origin.x, this.getBoundingSphere().origin.y, this.getBoundingSphere().radius, 0, 2 * Math.PI, false);
             this.ctx.stroke();
         }
         // this.ctx.fillStyle = "rgb(0,0,0)";
@@ -56,7 +56,7 @@ var Trailer = (function (_super) {
     };
     Trailer.prototype.getBoundingSphere = function () {
         return {
-            center: {
+            origin: {
                 x: this.origin.x + Math.cos(this.angle) * this.radius,
                 y: this.origin.y + Math.sin(this.angle) * this.radius,
             },

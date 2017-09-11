@@ -4,7 +4,6 @@ import Circle from './basic/circle'
 import Collidable from './basic/collidable'
 import configuration from './configuration'
 
-export namespace utils {
         export function normalizeAngle(delta: number): number {
             if (delta > Math.PI) {
                 delta -= 2 * Math.PI;
@@ -101,5 +100,4 @@ export namespace utils {
         export function toDegrees(radians: number): number {
             return radians * 180 / Math.PI;
         }
-}
 

@@ -12,7 +12,7 @@ export default class Bar {
     ctx: CanvasRenderingContext2D
     title: string
 
-    constructor(x, y, maxValue, warningLevel, warningBelow, ctx, title) {
+    constructor(x: number, y: number, maxValue: number, warningLevel: number, warningBelow: number, ctx: CanvasRenderingContext2D, title: string) {
         this.x = x
         this.y = y
         this.width = 20
@@ -26,7 +26,7 @@ export default class Bar {
         this.title = title
     }
 
-    update(level): void {
+    update(level: number): void {
         this.level = level / this.maxValue * this.height;
     }
 

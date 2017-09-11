@@ -34,7 +34,7 @@ export default class Trailer extends Vehicle {
         this.ctx.restore();
         if (configuration.debug) {
             this.ctx.beginPath();
-            this.ctx.arc(this.getBoundingSphere().center.x, this.getBoundingSphere().center.y, 
+            this.ctx.arc(this.getBoundingSphere().origin.x, this.getBoundingSphere().origin.y, 
                 this.getBoundingSphere().radius, 0, 2 * Math.PI, false);
             this.ctx.stroke();
         }
@@ -54,7 +54,7 @@ export default class Trailer extends Vehicle {
 
     getBoundingSphere(): Circle {
         return {
-            center: {
+            origin: {
                 x: this.origin.x + Math.cos(this.angle) * this.radius,
                 y: this.origin.y + Math.sin(this.angle) * this.radius,
             },
