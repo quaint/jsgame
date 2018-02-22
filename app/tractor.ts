@@ -25,7 +25,7 @@ export default class Tractor extends Machine {
     update(timeDiff: number, rotateDirection: number, moveDirection: number, isActive: boolean, otherObjects: Collidable[]) {
         if (isActive) {
             var timeDelta = timeDiff * 0.001;
-            if (this.connectedObject.workSpeed) {
+            if (this.connectedObject && this.connectedObject.workSpeed) {
                 this.linearSpeed = this.connectedObject.workSpeed;
             }
             var linearDistEachFrame = this.linearSpeed * timeDelta;
@@ -126,10 +126,13 @@ export default class Tractor extends Machine {
             angle: obj.angle,
             maxAngle: obj.maxAngle,
             getPin: function () {
-                var result = {
-                    x: this.origin.x + Math.cos(this.angle) * (this.size.width - 0),
-                    y: this.origin.y + Math.sin(this.angle) * (this.size.width - 0)
-                };
+                var result = {x: 0, y: 0};
+                if (this.size) {
+                    result = {
+                        x: this.origin.x + Math.cos(this.angle) * (this.size.width - 0),
+                        y: this.origin.y + Math.sin(this.angle) * (this.size.width - 0)
+                    };
+                }
                 return result;
             }
         };

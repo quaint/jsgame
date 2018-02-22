@@ -16,7 +16,7 @@ export default abstract class Vehicle implements Collidable {
     animationFrame = 0
     animationDelta = 0
     msPerFrame = 100
-    connectedObject: Machine
+    connectedObject?: Machine
     radius: number
     anchorX = 0.5
     anchorY = 0.5
