@@ -1,40 +1,39 @@
-define(function () {
-    'use strict';
-    return function (x, y, width, height, sprite, ctx) {
-        return {
-            x: x,
-            y: y,
-            width: width,
-            height: height,
-            angle: 0,
-            sprite: sprite,
-            ctx: ctx,
-            linearSpeed: 10,
-            animationFrame: 0,
-            animationDelta: 0,
-            msPerFrame: 100,
-            connectedObject: null,
-            radius: width * 0.5,
-            anchorX: 0.5,
-            anchorY: 0.5,
+class Vehicle {
 
-            updateAnimation: function (timeDiff) {
-                if (this.animationDelta > this.msPerFrame) {
-                    this.animationDelta = 0;
-                    this.animationFrame++;
-                    if (this.animationFrame > 1) {
-                        this.animationFrame = 0;
-                    }
-                } else {
-                    this.animationDelta += timeDiff;
-                }
-            },
+    constructor(x, y, width, height, sprite, ctx) {
+        this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            this.angle = 0;
+            this.sprite = sprite;
+            this.ctx = ctx;
+            this.linearSpeed = 10;
+            this.animationFrame = 0;
+            this.animationDelta = 0;
+            this.msPerFrame = 100;
+            this.connectedObject = null;
+            this.radius = width * 0.5;
+            this.anchorX = 0.5;
+            this.anchorY = 0.5;
+    }
 
-            distanceTo: function (otherObject) {
-                var dx = this.x - otherObject.x;
-                var dy = this.y - otherObject.y;
-                return Math.sqrt(dx * dx + dy * dy);
+    updateAnimation(timeDiff) {
+        if (this.animationDelta > this.msPerFrame) {
+            this.animationDelta = 0;
+            this.animationFrame++;
+            if (this.animationFrame > 1) {
+                this.animationFrame = 0;
             }
-        };
-    };
-});
+        } else {
+            this.animationDelta += timeDiff;
+        }
+    }
+
+    distanceTo(otherObject) {
+        let dx = this.x - otherObject.x;
+        let dy = this.y - otherObject.y;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+}
