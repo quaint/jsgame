@@ -1,97 +1,107 @@
-define(["./configuration"], function (configuration) {
-    'use strict';
-    return {
-        normalizeAngle: function (delta) {
-            if (delta > Math.PI) {
-                delta -= 2 * Math.PI;
-            }
-            if (delta < -Math.PI) {
-                delta += 2 * Math.PI;
-            }
-            if (delta > Math.PI || delta < -Math.PI) {
-                return this.normalizeAngle(delta);
-            } else {
-                return delta;
-            }
-        },
+/*
+ * @param {Number} delta
+ * @returns {Number} delta
+ */
+import Sphere from "./sphere";
+import Point from "./point";
 
-        getRandomInt: function (min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        },
+function normalizeAngle(delta) {
+    if (delta > Math.PI) {
+        delta -= 2 * Math.PI;
+    }
+    if (delta < -Math.PI) {
+        delta += 2 * Math.PI;
+    }
+    if (delta > Math.PI || delta < -Math.PI) {
+        return this.normalizeAngle(delta);
+    } else {
+        return delta;
+    }
+}
 
-        drag: function (connectedObject, movingObject, otherObjects) {
-            var objectDx = movingObject.x - connectedObject.x,
-                objectDy = movingObject.y - connectedObject.y,
-                angle = Math.atan2(objectDy, objectDx),
-                maxAngle = this.toRadians(connectedObject.maxAngle),
-                delta = connectedObject.angle - movingObject.angle;
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
-            delta = this.normalizeAngle(delta);
-            if (delta <= maxAngle && delta >= -maxAngle) {
-                connectedObject.angle = angle;
-            } else if (delta > maxAngle) {
-                connectedObject.angle = angle - delta + maxAngle;
-            } else if (delta < -maxAngle) {
-                connectedObject.angle = angle - delta - maxAngle;
-            }
-            var objectWidth = connectedObject.getPin().x - connectedObject.x;
-            var objectHeight = connectedObject.getPin().y - connectedObject.y;
+/*
+ * @param {Vehicle} connectedObject
+ * @param {Vehicle} movingObject
+ * @param {[Vehicle]} otherObjects
+ * @returns {boolean} result
+ */
+function drag(connectedObject, movingObject, otherObjects) {
+    let objectDx = movingObject.position.x - connectedObject.position.x;
+    let objectDy = movingObject.position.y - connectedObject.position.y;
+    let angle = Math.atan2(objectDy, objectDx);
+    let maxAngle = toRadians(connectedObject.maxAngle);
+    let delta = connectedObject.angle - movingObject.angle;
 
-            var newX = movingObject.x - objectWidth;
-            var newY = movingObject.y - objectHeight;
+    delta = normalizeAngle(delta);
+    if (delta <= maxAngle && delta >= -maxAngle) {
+        connectedObject.angle = angle;
+    } else if (delta > maxAngle) {
+        connectedObject.angle = angle - delta + maxAngle;
+    } else if (delta < -maxAngle) {
+        connectedObject.angle = angle - delta - maxAngle;
+    }
 
-            var collision = false;
-            for (var i = 0; i < otherObjects.length; i++) {
-                if (this.checkCollision(otherObjects[i], {
-                        x: newX + Math.cos(connectedObject.angle) * connectedObject.radius,
-                        y: newY + Math.sin(connectedObject.angle) * connectedObject.radius,
-                        radius: connectedObject.radius
-                    })) {
-                    collision = true;
-                    break;
-                }
-            }
+    let objectWidth = connectedObject.getPin().x - connectedObject.position.x;
+    let objectHeight = connectedObject.getPin().y - connectedObject.position.y;
 
-            if (!collision) {
-                connectedObject.x = newX;
-                connectedObject.y = newY;
-            }
-            return !collision;
-        },
+    let newX = movingObject.position.x - objectWidth;
+    let newY = movingObject.position.y - objectHeight;
 
-        /**
-         * Determine if two rectangles overlap.
-         * @param {object}  rectA Object with properties: x, y, width, height.
-         * @param {object}  rectB Object with properties: x, y, width, height.
-         * @return {boolean}
-         */
-        intersects: function (rectA, rectB) {
-            return !(rectA.x + rectA.width < rectB.x ||
-            rectB.x + rectB.width < rectA.x ||
-            rectA.y + rectA.height < rectB.y ||
-            rectB.y + rectB.height < rectA.y);
-        },
-
-        /**
-         * Check distance between objects.
-         * @param {object} firstObject to check
-         * @param {object} secondObject to check
-         * @returns {boolean} result
-         */
-        checkCollision: function (firstObject, secondObject) {
-            var dx = secondObject.x - firstObject.x;
-            var dy = secondObject.y - firstObject.y;
-            var dist = Math.sqrt(dx * dx + dy * dy);
-            var minDist = firstObject.radius + secondObject.radius;
-            return dist < minDist;
-        },
-
-        toRadians: function (degrees) {
-            return degrees * Math.PI / 180;
-        },
-
-        toDegrees: function (radians) {
-            return radians * 180 / Math.PI;
+    let collision = false;
+    for (let i = 0; i < otherObjects.length; i++) {
+        let point = new Point(
+            newX + Math.cos(connectedObject.angle) * connectedObject.radius,
+            newY + Math.sin(connectedObject.angle) * connectedObject.radius);
+        let sphere = new Sphere(point, connectedObject.radius);
+        if (checkCollision(otherObjects[i], sphere)) {
+            collision = true;
+            break;
         }
-    };
-});
+    }
+
+    if (!collision) {
+        connectedObject.position = new Point(newX, newY);
+    }
+    return !collision;
+}
+
+/**
+ * Determine if two rectangles overlap.
+ * @param {object}  rectA Object with properties: x, y, width, height.
+ * @param {object}  rectB Object with properties: x, y, width, height.
+ * @return {boolean}
+ */
+function intersects(rectA, rectB) {
+    return !(rectA.x + rectA.width < rectB.x ||
+        rectB.x + rectB.width < rectA.x ||
+        rectA.y + rectA.height < rectB.y ||
+        rectB.y + rectB.height < rectA.y);
+}
+
+/**
+ * Check distance between objects.
+ * @param {Sphere} firstSphere to check
+ * @param {Sphere} secondSphere to check
+ * @returns {boolean} result
+ */
+function checkCollision(firstSphere, secondSphere) {
+    let dx = secondSphere.position.x - firstSphere.position.x;
+    let dy = secondSphere.position.y - firstSphere.position.y;
+    let dist = Math.sqrt(dx * dx + dy * dy);
+    let minDist = firstSphere.radius + secondSphere.radius;
+    return dist < minDist;
+}
+
+function toRadians(degrees) {
+    return degrees * Math.PI / 180;
+}
+
+function toDegrees(radians) {
+    return radians * 180 / Math.PI;
+}
+
+export {checkCollision, drag, getRandomInt, intersects, normalizeAngle, toDegrees, toRadians}

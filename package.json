@@ -1,9 +1,8 @@
 {
-    "name": "jsgame",
-    "version": "0.0.1",
-    "description": "jsgame",
-    "dependencies": {
-        "express": "^4.13.3",
-        "socket.io": "^1.3.7"
-    }
+  "name": "jsgame",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/quaint/jsgame.git",
+  "author": "Tomasz Wiśniewski <twisnia@gmail.com>",
+  "license": "MIT"
 }

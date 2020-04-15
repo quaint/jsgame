@@ -1,54 +1,51 @@
-define(['./vehicle', './configuration'], function (createVehicle, configuration) {
-    'use strict';
-    return function (x, y, width, height, maxGrain, sprite, ctx) {
-        var trailer = createVehicle(x, y, width, height, sprite, ctx);
-        trailer.grain = 0;
-        trailer.maxGrain = maxGrain;
-        trailer.radius = trailer.width * 0.3;
-        trailer.anchorY = 0.5;
-        trailer.anchorX = 0.0;
-        trailer.maxAngle = 55;
+import configuration from "./configuration";
+import Vehicle from "./vehicle";
+import Point from "./point";
+import Sphere from "./sphere";
 
-        trailer.draw = function () {
-            trailer.ctx.save();
-            trailer.ctx.translate(trailer.x, trailer.y);
-            trailer.ctx.rotate(trailer.angle); // * Math.PI / 180
-            // trailer.ctx.strokeRect(trailer.anchorX * -trailer.width, trailer.anchorY * -trailer.height, trailer.width,
-            //     trailer.height);
-            // if (trailer.grain > 0) {
-            //     trailer.ctx.drawImage(trailer.sprite, 20, 20, 20, 20, -trailer.width, -trailer.height / 2, trailer.width, trailer.height);
-            // } else {
-            trailer.ctx.drawImage(trailer.sprite, 0, 180, trailer.width, trailer.height,
-                trailer.anchorX * -trailer.width, trailer.anchorY * -trailer.height, trailer.width, trailer.height);
-            // }
-            trailer.ctx.restore();
-            if (configuration.debug) {
-                trailer.ctx.beginPath();
-                trailer.ctx.arc(trailer.getBoundingSphere().x, trailer.getBoundingSphere().y, trailer.getBoundingSphere().radius, 0, 2 * Math.PI, false);
-                trailer.ctx.stroke();
-            }
-            // trailer.ctx.fillStyle = "rgb(0,0,0)";
-            // trailer.ctx.fillRect(trailer.getPin().x, trailer.getPin().y, 6, 6);
-            // trailer.ctx.fillRect(trailer.getBoundingSphere().x, trailer.getBoundingSphere().y, 10, 10);
-            // trailer.ctx.fillStyle = "rgb(200,0,0)";
-            // trailer.ctx.fillRect(trailer.x, trailer.y, 4, 4);
-        };
+export default class Trailer extends Vehicle {
+    constructor(position, size, maxGrain, sprite, ctx) {
+        super(position, size, sprite, ctx);
+        this.grain = 0;
+        this.maxGrain = maxGrain;
+        this.radius = this.size.width * 0.3;
+        this.anchor = new Point(0.0, 0.5);
+        this.maxAngle = configuration.maxAngle;
+    }
 
-        trailer.getPin = function () {
-            return {
-                x: trailer.x + Math.cos(trailer.angle) * trailer.width,
-                y: trailer.y + Math.sin(trailer.angle) * trailer.width
-            };
-        };
+    draw() {
+        this.ctx.save();
+        this.ctx.translate(this.position.x, this.position.y);
+        this.ctx.rotate(this.angle); // * Math.PI / 180
+        // this.ctx.strokeRect(this.anchor.x * -this.size.width, this.anchor.y * -this.size.height, this.size.width,
+        //     this.size.height);
+        // if (this.grain > 0) {
+        //     this.ctx.drawImage(this.sprite, 20, 20, 20, 20, -this.size.width, -this.size.height / 2, this.size.width, this.size.height);
+        // } else {
+        this.ctx.drawImage(this.sprite, 0, 180, this.size.width, this.size.height,
+            this.anchor.x * -this.size.width, this.anchor.y * -this.size.height, this.size.width, this.size.height);
+        // }
+        this.ctx.restore();
+        if (configuration.debug) {
+            this.ctx.beginPath();
+            this.ctx.arc(this.getBoundingSphere().position.x, this.getBoundingSphere().position.y, this.getBoundingSphere().radius, 0, 2 * Math.PI, false);
+            this.ctx.stroke();
+        }
+        // this.ctx.fillStyle = "rgb(0,0,0)";
+        // this.ctx.fillRect(this.getPin().x, this.getPin().y, 6, 6);
+        // this.ctx.fillRect(this.getBoundingSphere().x, this.getBoundingSphere().y, 10, 10);
+        // this.ctx.fillStyle = "rgb(200,0,0)";
+        // this.ctx.fillRect(this.position.x, this.position.y, 4, 4);
+    }
 
-        trailer.getBoundingSphere = function () {
-            return {
-                x: trailer.x + Math.cos(trailer.angle) * trailer.radius,
-                y: trailer.y + Math.sin(trailer.angle) * trailer.radius,
-                radius: trailer.radius
-            };
-        };
+    getPin() {
+        return new Point(
+            this.position.x + Math.cos(this.angle) * this.size.width,
+            this.position.y + Math.sin(this.angle) * this.size.width);
+    }
 
-        return trailer;
-    };
-});
+    getBoundingSphere() {
+        let position = new Point(this.position.x + Math.cos(this.angle) * this.radius, this.position.y + Math.sin(this.angle) * this.radius);
+        return new Sphere(position, this.radius);
+    }
+}

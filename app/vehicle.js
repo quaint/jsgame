@@ -1,21 +1,20 @@
-class Vehicle {
+import Point from "./point";
 
-    constructor(x, y, width, height, sprite, ctx) {
-        this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
-            this.angle = 0;
-            this.sprite = sprite;
-            this.ctx = ctx;
-            this.linearSpeed = 10;
-            this.animationFrame = 0;
-            this.animationDelta = 0;
-            this.msPerFrame = 100;
-            this.connectedObject = null;
-            this.radius = width * 0.5;
-            this.anchorX = 0.5;
-            this.anchorY = 0.5;
+export default class Vehicle {
+
+    constructor(position, size, sprite, ctx) {
+        this.position = position;
+        this.size = size;
+        this.angle = 0;
+        this.sprite = sprite;
+        this.ctx = ctx;
+        this.linearSpeed = 10;
+        this.animationFrame = 0;
+        this.animationDelta = 0;
+        this.msPerFrame = 100;
+        this.connectedObject = null;
+        this.radius = size.width * 0.5;
+        this.anchor = new Point(0.5, 0.5);
     }
 
     updateAnimation(timeDiff) {
@@ -30,9 +29,9 @@ class Vehicle {
         }
     }
 
-    distanceTo(otherObject) {
-        let dx = this.x - otherObject.x;
-        let dy = this.y - otherObject.y;
+    distanceTo(otherObjectPosition) {
+        let dx = this.position.x - otherObjectPosition.x;
+        let dy = this.position.y - otherObjectPosition.y;
         return Math.sqrt(dx * dx + dy * dy);
     }
 
