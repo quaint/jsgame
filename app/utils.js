@@ -2,8 +2,8 @@
  * @param {Number} delta
  * @returns {Number} delta
  */
-import Sphere from "./sphere";
-import Point from "./point";
+import Sphere from "./geometry/sphere";
+import Point from "./geometry/point";
 
 function normalizeAngle(delta) {
     if (delta > Math.PI) {
@@ -54,9 +54,9 @@ function drag(connectedObject, movingObject, otherObjects) {
     let collision = false;
     for (let i = 0; i < otherObjects.length; i++) {
         let point = new Point(
-            newX + Math.cos(connectedObject.angle) * connectedObject.radius,
-            newY + Math.sin(connectedObject.angle) * connectedObject.radius);
-        let sphere = new Sphere(point, connectedObject.radius);
+            newX + Math.cos(connectedObject.angle) * connectedObject.boundingSphereRadius,
+            newY + Math.sin(connectedObject.angle) * connectedObject.boundingSphereRadius);
+        let sphere = new Sphere(point, connectedObject.boundingSphereRadius);
         if (checkCollision(otherObjects[i], sphere)) {
             collision = true;
             break;
@@ -104,4 +104,8 @@ function toDegrees(radians) {
     return radians * 180 / Math.PI;
 }
 
-export {checkCollision, drag, getRandomInt, intersects, normalizeAngle, toDegrees, toRadians}
+function max(first, second) {
+    return first > second ? first : second;
+}
+
+export {checkCollision, drag, getRandomInt, intersects, normalizeAngle, toDegrees, toRadians, max}

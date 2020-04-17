@@ -1,4 +1,4 @@
-import Size from "./size";
+import Size from "../geometry/size";
 
 export default class Field {
     constructor(position, grid, sprite, ctx) {
@@ -71,10 +71,10 @@ export default class Field {
     };
 
     getArrayOfPointsForLine(line) {
-        let x0 = Math.floor((line.x1 - this.position.x) / this.grid);
-        let y0 = Math.floor((line.y1 - this.position.y) / this.grid);
-        let x1 = Math.floor((line.x2 - this.position.x) / this.grid);
-        let y1 = Math.floor((line.y2 - this.position.y) / this.grid);
+        let x0 = Math.floor((line.start.x - this.position.x) / this.grid);
+        let y0 = Math.floor((line.start.y - this.position.y) / this.grid);
+        let x1 = Math.floor((line.end.x - this.position.x) / this.grid);
+        let y1 = Math.floor((line.end.y - this.position.y) / this.grid);
         let dx = Math.abs(x1 - x0);
         let sx = x0 < x1 ? 1 : -1;
         let dy = Math.abs(y1 - y0);

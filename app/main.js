@@ -1,13 +1,14 @@
-import Field from "./field";
-import Combine from "./combine";
-import Machine from "./machine";
-import Trailer from "./trailer";
-import Bar from "./bar";
-import Tractor from "./tractor";
+import Field from "./entities/field";
+import Combine from "./entities/combine";
+import Machine from "./entities/machine";
+import Trailer from "./entities/trailer";
+import Bar from "./ui/bar";
+import Tractor from "./entities/tractor";
 import fieldData from "./fielddata";
-import keycode from "./keycode";
-import Point from "./point";
-import Size from "./size";
+import keyCode from "./keycode";
+import Point from "./geometry/point";
+import Size from "./geometry/size";
+import BarRenderer from "./renderers/bar_renderer";
 
 window.requestAnimFrame = (function (callback) {
     return window.requestAnimationFrame ||
@@ -70,45 +71,46 @@ spritesImage.onload = function () {
 };
 spritesImage.src = require('../assets/atlas.png');
 
-let field = new Field(new Point(100, 100), 10, spritesImage, fieldContext);
+let field = new Field(new Point(100, 100), 20, spritesImage, fieldContext);
 
-let combine1 = new Combine(new Point(150, 150), new Size(71, 80), 3000, 300, spritesImage, bufferContext);
-let combine2 = new Combine(new Point(150, 300), new Size(71, 80), 3000, 300, spritesImage, bufferContext);
+let combine1 = new Combine(new Point(150, 150), new Size(71, 80), new Point(0.58, 0.5), 3000, 300, spritesImage, bufferContext);
+let combine2 = new Combine(new Point(150, 300), new Size(71, 80), new Point(0.58, 0.5), 3000, 300, spritesImage, bufferContext);
 
-let tractor1 = new Tractor(new Point(220, 450), new Size(31, 20), 200, spritesImage, bufferContext);
-let trailer1 = new Trailer(new Point(160, 450), new Size(56, 24), 9000, spritesImage, bufferContext);
-let trailer2 = new Trailer(new Point(100, 450), new Size(56, 24), 9000, spritesImage, bufferContext);
+let tractor1 = new Tractor(new Point(220, 450), new Size(31, 20), new Point(0.0, 0.5), 200, spritesImage, bufferContext);
+let trailer1 = new Trailer(new Point(160, 450), new Size(56, 24), new Point(0.0, 0.5), 9000, spritesImage, bufferContext);
+let trailer2 = new Trailer(new Point(100, 450), new Size(56, 24), new Point(0.0, 0.5), 9000, spritesImage, bufferContext);
 tractor1.connectedObject = trailer1;
 trailer1.connectedObject = trailer2;
 
-let tractor2 = new Tractor(new Point(220, 550), new Size(31, 20), 200, spritesImage, bufferContext);
-let machine1 = new Machine(new Point(150, 550), new Size(16, 40), spritesImage, bufferContext);
+let tractor2 = new Tractor(new Point(220, 550), new Size(31, 20), new Point(0.0, 0.5), 200, spritesImage, bufferContext);
+let machine1 = new Machine(new Point(150, 550), new Size(16, 40), new Point(0.0, 0.5), spritesImage, bufferContext);
 tractor2.connectedObject = machine1;
 
 let activeMachine = combine1;
 
-let grainBar = new Bar(new Point(10, 10), combine1.maxGrain, 80, false, bufferContext, "grain");
-let trailerBar = new Bar(new Point(40, 10), trailer1.maxGrain, 80, false, bufferContext, "trailer");
-let fuelBar = new Bar(new Point(70, 10), combine1.maxFuel, 20, true, bufferContext, "fuel");
+let grainBar = new Bar(new Point(10, 10), 0.8, false, "grain");
+let trailerBar = new Bar(new Point(40, 10), 0.8, false, "trailer");
+let fuelBar = new Bar(new Point(70, 10), 0.2, true, "fuel");
+let barRenderer = new BarRenderer(bufferContext);
 
 document.onkeydown = function (event) {
     switch (event.keyCode) {
-        case keycode.LEFT:
+        case keyCode.LEFT:
             rotateDirection = -1;
             break;
-        case keycode.UP:
+        case keyCode.UP:
             moveDirection = -1;
             break;
-        case keycode.RIGHT:
+        case keyCode.RIGHT:
             rotateDirection = 1;
             break;
-        case keycode.DOWN:
+        case keyCode.DOWN:
             moveDirection = 1;
             break;
-        case keycode.NUMBER_1:
+        case keyCode.NUMBER_1:
             command1 = true;
             break;
-        // case keycode.NUMBER_2:
+        // case keyCode.NUMBER_2:
         //     command2 = true;
         //     break;
         default:
@@ -118,18 +120,18 @@ document.onkeydown = function (event) {
 
 document.onkeyup = function (event) {
     switch (event.keyCode) {
-        case keycode.LEFT:
-        case keycode.RIGHT:
+        case keyCode.LEFT:
+        case keyCode.RIGHT:
             rotateDirection = 0;
             break;
-        case keycode.UP:
-        case keycode.DOWN:
+        case keyCode.UP:
+        case keyCode.DOWN:
             moveDirection = 0;
             break;
-        case keycode.NUMBER_1:
+        case keyCode.NUMBER_1:
             command1 = false;
             break;
-        case keycode.NUMBER_2:
+        case keyCode.NUMBER_2:
             command2 = !command2;
             break;
         default:
@@ -183,22 +185,22 @@ function animate(lastTime) {
         }
     }
 
-    grainBar.update(activeMachine.grain);
-    trailerBar.update(trailer1.grain);
-    fuelBar.update(activeMachine.fuel);
+    grainBar.update(activeMachine.grain / activeMachine.maxGrain);
+    trailerBar.update(trailer1.grain / trailer1.maxGrain);
+    fuelBar.update(activeMachine.fuel / activeMachine.maxFuel);
 
-    if (activeMachine.x > centerX && activeMachine.x < field.widthInPx - centerX) {
-        worldX = -activeMachine.x + centerX;
-    } else if (activeMachine.x <= centerX) {
+    if (activeMachine.position.x > centerX && activeMachine.position.x < field.widthInPx - centerX) {
+        worldX = -activeMachine.position.x + centerX;
+    } else if (activeMachine.position.x <= centerX) {
         worldX = 0;
-    } else if (activeMachine.x > field.widthInPx - centerX) {
+    } else if (activeMachine.position.x > field.widthInPx - centerX) {
         worldX = -field.widthInPx + centerX * 2;
     }
-    if (activeMachine.y > centerY && activeMachine.y < field.heightInPx - centerY) {
-        worldY = -activeMachine.y + centerY;
-    } else if (activeMachine.y <= centerY) {
+    if (activeMachine.position.y > centerY && activeMachine.position.y < field.heightInPx - centerY) {
+        worldY = -activeMachine.position.y + centerY;
+    } else if (activeMachine.position.y <= centerY) {
         worldY = 0;
-    } else if (activeMachine.y > field.heightInPx - centerY) {
+    } else if (activeMachine.position.y > field.heightInPx - centerY) {
         worldY = -field.heightInPx + centerY * 2;
     }
 
@@ -211,9 +213,10 @@ function animate(lastTime) {
     trailer1.draw();
     trailer2.draw();
     machine1.draw();
-    grainBar.draw();
-    trailerBar.draw();
-    fuelBar.draw();
+
+    barRenderer.render(grainBar);
+    barRenderer.render(trailerBar);
+    barRenderer.render(fuelBar);
 
     // bufferContext.fillText(Math.floor((fieldPartsCount-fieldPartsLeft)/fieldPartsCount * 100) + "% done", 80, 20);
 
