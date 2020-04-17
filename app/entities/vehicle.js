@@ -43,6 +43,8 @@ var Vehicle = /** @class */ (function () {
         var dy = this.position.y - otherObjectPosition.y;
         return Math.sqrt(dx * dx + dy * dy);
     };
+    Vehicle.prototype.updateTrailer = function (timeDiff, trailer) {
+    };
     return Vehicle;
 }());
 exports["default"] = Vehicle;

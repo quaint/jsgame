@@ -4,5 +4,8 @@
   "main": "index.js",
   "repository": "https://github.com/quaint/jsgame.git",
   "author": "Tomasz Wiśniewski <twisnia@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^3.8.3"
+  }
 }

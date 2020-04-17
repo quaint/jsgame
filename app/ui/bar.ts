@@ -7,10 +7,10 @@ export default class Bar {
     textMargin: number;
     level: number;
     warningLevel: number;
-    warningBelow: number;
+    warningBelow: boolean;
     title: string;
     
-    constructor(position: Point, warningLevel: number, warningBelow: number, title: string) {
+    constructor(position: Point, warningLevel: number, warningBelow: boolean, title: string) {
         this.position = position;
         this.size = new Size(20, 100);
         this.textMargin = 12;

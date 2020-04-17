@@ -5,20 +5,26 @@ import Size from "../geometry/size";
 
 export default class Vehicle {
 
-    private position: Point;
-    private size: Size;
-    private readonly angle: number;
-    private sprite: any;
-    private ctx: CanvasRenderingContext2D;
-    private linearSpeed: number;
-    private animationFrame: number;
-    private animationDelta: number;
-    private readonly msPerFrame: number;
-    private connectedObject: Vehicle;
-    private readonly boundingSphereRadius: number;
-    private anchor: Point;
-    private readonly xDiff: number;
-    private pivot: Point;
+    position: Point;
+    size: Size;
+    angle: number;
+    sprite: any;
+    ctx: CanvasRenderingContext2D;
+    linearSpeed: number;
+    animationFrame: number;
+    animationDelta: number;
+    readonly msPerFrame: number;
+        connectedObject: Vehicle;
+    readonly boundingSphereRadius: number;
+    anchor: Point;
+    readonly xDiff: number;
+    pivot: Point;
+    maxAngle: number;
+    workSpeed: number;
+    fuel: number;
+    maxFuel: number;
+    grain: number;
+    maxGrain: number;
 
     constructor(position: Point, size: Size, anchor: Point, sprite: any, ctx: CanvasRenderingContext2D) {
         this.position = position;
@@ -65,4 +71,7 @@ export default class Vehicle {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
+    updateTrailer(timeDiff, trailer) {
+
+    }
 }

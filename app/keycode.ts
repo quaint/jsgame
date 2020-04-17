@@ -1,10 +1,9 @@
-"use strict";
 /**
  * A list of JavaScript key codes to reference by name.
  * From 'Foundation HTML5 Animation with JavaScript': http://amzn.com/1430236655?tag=html5anim-20
  */
-exports.__esModule = true;
-var keyCode = {
+
+const keyCode = {
     BACKSPACE: 8,
     TAB: 9,
     ENTER: 13,
@@ -21,13 +20,16 @@ var keyCode = {
     PAGE_DOWN: 34,
     END: 35,
     HOME: 36,
+
     //arrows
     LEFT: 37,
     UP: 38,
     RIGHT: 39,
     DOWN: 40,
+
     INSERT: 45,
     DELETE: 46,
+
     //numbers
     NUMBER_0: 48,
     NUMBER_1: 49,
@@ -39,6 +41,7 @@ var keyCode = {
     NUMBER_7: 55,
     NUMBER_8: 56,
     NUMBER_9: 57,
+
     //letters
     A: 65,
     B: 66,
@@ -66,9 +69,11 @@ var keyCode = {
     X: 88,
     Y: 89,
     Z: 90,
+
     LEFT_WINDOW_KEY: 91,
     RIGHT_WINDOW_KEY: 92,
     SELECT_KEY: 93,
+
     //number pad
     NUMPAD_0: 96,
     NUMPAD_1: 97,
@@ -86,6 +91,7 @@ var keyCode = {
     NUMPAD_SUBTRACT: 109,
     NUMPAD_DECIMAL: 110,
     NUMPAD_DIVIDE: 111,
+
     //function keys
     F1: 112,
     F2: 113,
@@ -102,8 +108,10 @@ var keyCode = {
     F13: 124,
     F14: 125,
     F15: 126,
+
     NUM_LOCK: 144,
     SCROLL_LOCK: 145,
+
     //punctuation
     SEMICOLON: 186,
     EQUAL: 187,
@@ -117,5 +125,5 @@ var keyCode = {
     RIGHTBRACKET: 221,
     QUOTE: 222
 };
-exports["default"] = keyCode;
-//# sourceMappingURL=keycode.js.map
+
+export default keyCode;
