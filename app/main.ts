@@ -10,7 +10,7 @@ import Point from "./geometry/point";
 import Size from "./geometry/size";
 import BarRenderer from "./renderers/bar_renderer";
 import Vehicle from "./entities/vehicle";
-// import image from "../assets/atlas.png";
+import atlas from '../assets/atlas.png'
 
 // window.requestAnimFrame = (function (callback) {
 //     return window.requestAnimationFrame ||
@@ -71,7 +71,7 @@ spritesImage.onload = function () {
     let time = date.getTime();
     animate(time);
 };
-spritesImage.src = "atlas.png";
+spritesImage.src = atlas;
 
 let field = new Field(new Point(100, 100), 20, spritesImage, fieldContext);
 
@@ -116,8 +116,9 @@ document.onkeydown = function (event) {
         //     command2 = true;
         //     break;
         default:
-            return true;
+            return false;
     }
+    return false;
 };
 
 document.onkeyup = function (event) {
@@ -137,8 +138,9 @@ document.onkeyup = function (event) {
             command2 = !command2;
             break;
         default:
-            return true;
+            return false;
     }
+    return false;
 };
 
 function animate(lastTime) {

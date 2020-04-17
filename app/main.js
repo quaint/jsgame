@@ -11,7 +11,7 @@ var keycode_1 = require("./keycode");
 var point_1 = require("./geometry/point");
 var size_1 = require("./geometry/size");
 var bar_renderer_1 = require("./renderers/bar_renderer");
-// import image from "../assets/atlas.png";
+var atlas_png_1 = require("../assets/atlas.png");
 // window.requestAnimFrame = (function (callback) {
 //     return window.requestAnimationFrame ||
 //         window.webkitRequestAnimationFrame ||
@@ -63,7 +63,7 @@ spritesImage.onload = function () {
     var time = date.getTime();
     animate(time);
 };
-spritesImage.src = "atlas.png";
+spritesImage.src = atlas_png_1["default"];
 var field = new field_1["default"](new point_1["default"](100, 100), 20, spritesImage, fieldContext);
 var combine1 = new combine_1["default"](new point_1["default"](150, 150), new size_1["default"](71, 80), new point_1["default"](0.58, 0.5), 3000, 300, spritesImage, bufferContext);
 var combine2 = new combine_1["default"](new point_1["default"](150, 300), new size_1["default"](71, 80), new point_1["default"](0.58, 0.5), 3000, 300, spritesImage, bufferContext);
@@ -101,8 +101,9 @@ document.onkeydown = function (event) {
         //     command2 = true;
         //     break;
         default:
-            return true;
+            return false;
     }
+    return false;
 };
 document.onkeyup = function (event) {
     switch (event.keyCode) {
@@ -121,8 +122,9 @@ document.onkeyup = function (event) {
             command2 = !command2;
             break;
         default:
-            return true;
+            return false;
     }
+    return false;
 };
 function animate(lastTime) {
     // update
