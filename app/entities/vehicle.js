@@ -7,18 +7,18 @@ var Vehicle = /** @class */ (function () {
     function Vehicle(position, size, anchor, sprite, ctx) {
         this.position = position;
         this.size = size;
-        this.angle = 0;
         this.sprite = sprite;
         this.ctx = ctx;
-        this.linearSpeed = 10;
-        this.animationFrame = 0;
-        this.animationDelta = 0;
-        this.msPerFrame = 100;
-        this.connectedObject = null;
-        this.boundingSphereRadius = utils.max(size.width, size.height) * 0.5;
         this.anchor = anchor;
+        this.boundingSphereRadius = utils.max(size.width, size.height) * 0.5;
+        this.angle = 0;
+        this.linearSpeed = 10;
+        this.connectedObject = null;
         this.xDiff = -this.size.width * (this.anchor.x - 0.5);
         this.pivot = new point_1["default"](-this.size.width * this.anchor.x, -this.size.height * this.anchor.y);
+        this.msPerFrame = 100;
+        this.animationFrame = 0;
+        this.animationDelta = 0;
     }
     Vehicle.prototype.getBoundingSphere = function () {
         return new sphere_1["default"](new point_1["default"](this.position.x + this.xDiff, this.position.y), this.boundingSphereRadius);
@@ -38,12 +38,10 @@ var Vehicle = /** @class */ (function () {
             this.animationDelta += timeDiff;
         }
     };
-    Vehicle.prototype.distanceTo = function (otherObjectPosition) {
-        var dx = this.position.x - otherObjectPosition.x;
-        var dy = this.position.y - otherObjectPosition.y;
+    Vehicle.prototype.distanceTo = function (position) {
+        var dx = this.position.x - position.x;
+        var dy = this.position.y - position.y;
         return Math.sqrt(dx * dx + dy * dy);
-    };
-    Vehicle.prototype.updateTrailer = function (timeDiff, trailer) {
     };
     return Vehicle;
 }());

@@ -99,7 +99,7 @@ var Combine = /** @class */ (function (_super) {
     Combine.prototype.updateTrailer = function (timeDiff, trailer) {
         var timeDelta = timeDiff * 0.001;
         if (this.pouring) {
-            var distance = this.distanceTo(trailer);
+            var distance = this.distanceTo(trailer.position);
             if (this.grain > 0 && distance < this.size.width) {
                 this.grain -= timeDelta * this.pouringSpeed;
                 if (trailer.grain < trailer.maxGrain) {

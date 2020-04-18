@@ -4,8 +4,10 @@ import configuration from "../configuration";
 import Sphere from "../geometry/sphere";
 import Point from "../geometry/point";
 import Line from "../geometry/line";
+import IsUsingTrailer from "./is_using_trailer";
+import Trailer from "./trailer";
 
-export default class Combine extends Vehicle {
+export default class Combine extends Vehicle implements IsUsingTrailer {
     private pouringSpeed: number;
     grain: number;
     maxGrain: any;
@@ -114,10 +116,10 @@ export default class Combine extends Vehicle {
         this.workingTime = this.defaultWorkingTime;
     }
 
-    updateTrailer(timeDiff, trailer) {
+    updateTrailer(timeDiff: number, trailer: Trailer) {
         let timeDelta = timeDiff * 0.001;
         if (this.pouring) {
-            let distance = this.distanceTo(trailer);
+            let distance = this.distanceTo(trailer.position);
             if (this.grain > 0 && distance < this.size.width) {
                 this.grain -= timeDelta * this.pouringSpeed;
                 if (trailer.grain < trailer.maxGrain) {

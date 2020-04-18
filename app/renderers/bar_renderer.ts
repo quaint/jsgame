@@ -1,7 +1,7 @@
 import Renderer from "./renderer";
 import Bar from "../ui/bar";
 
-export default class BarRenderer implements Renderer {
+export default class Bar_renderer implements Renderer {
 
     ctx: CanvasRenderingContext2D;
 

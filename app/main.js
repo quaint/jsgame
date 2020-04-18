@@ -155,7 +155,7 @@ function animate(lastTime) {
     tractor1.update(timeDiff, rotateDirection, moveDirection, command1, activeMachine === tractor1, [combine1, combine2, tractor2, machine1]);
     tractor2.update(timeDiff, rotateDirection, moveDirection, command1, activeMachine === tractor2, [combine1, combine2, tractor1, trailer1, trailer2]);
     machine1.updateBack();
-    if (activeMachine !== tractor1 && activeMachine !== tractor2) {
+    if (activeMachine instanceof combine_1["default"]) {
         activeMachine.updateTrailer(timeDiff, trailer1);
         if (moveDirection < 0) {
             field.updateFromCombine(activeMachine, fieldContext, spritesImage);
@@ -166,9 +166,9 @@ function animate(lastTime) {
             field.updateFromMachine(activeMachine.connectedObject, fieldContext, spritesImage);
         }
     }
-    grainBar.update(activeMachine.grain / activeMachine.maxGrain);
-    trailerBar.update(trailer1.grain / trailer1.maxGrain);
-    fuelBar.update(activeMachine.fuel / activeMachine.maxFuel);
+    grainBar.updateLevel(activeMachine.grain / activeMachine.maxGrain);
+    trailerBar.updateLevel(trailer1.grain / trailer1.maxGrain);
+    fuelBar.updateLevel(activeMachine.fuel / activeMachine.maxFuel);
     if (activeMachine.position.x > centerX && activeMachine.position.x < field.widthInPx - centerX) {
         worldX = -activeMachine.position.x + centerX;
     }

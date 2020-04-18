@@ -3,7 +3,7 @@ import Sphere from "../geometry/sphere";
 import * as utils from "../utils";
 import Size from "../geometry/size";
 
-export default class Vehicle {
+export default abstract class Vehicle {
 
     position: Point;
     size: Size;
@@ -14,33 +14,37 @@ export default class Vehicle {
     animationFrame: number;
     animationDelta: number;
     readonly msPerFrame: number;
-        connectedObject: Vehicle;
     readonly boundingSphereRadius: number;
+
+    connectedObject: Vehicle;
     anchor: Point;
     readonly xDiff: number;
     pivot: Point;
     maxAngle: number;
+
     workSpeed: number;
     fuel: number;
     maxFuel: number;
     grain: number;
     maxGrain: number;
 
-    constructor(position: Point, size: Size, anchor: Point, sprite: any, ctx: CanvasRenderingContext2D) {
+    protected constructor(position: Point, size: Size, anchor: Point, sprite: any, ctx: CanvasRenderingContext2D) {
         this.position = position;
         this.size = size;
-        this.angle = 0;
         this.sprite = sprite;
         this.ctx = ctx;
-        this.linearSpeed = 10;
-        this.animationFrame = 0;
-        this.animationDelta = 0;
-        this.msPerFrame = 100;
-        this.connectedObject = null;
-        this.boundingSphereRadius = utils.max(size.width, size.height) * 0.5;
         this.anchor = anchor;
+        this.boundingSphereRadius = utils.max(size.width, size.height) * 0.5;
+
+        this.angle = 0;
+        this.linearSpeed = 10;
+        this.connectedObject = null;
         this.xDiff = -this.size.width * (this.anchor.x - 0.5);
         this.pivot = new Point(-this.size.width * this.anchor.x, -this.size.height * this.anchor.y)
+
+        this.msPerFrame = 100;
+        this.animationFrame = 0;
+        this.animationDelta = 0;
     }
 
     getBoundingSphere(): Sphere {
@@ -65,13 +69,9 @@ export default class Vehicle {
         }
     }
 
-    distanceTo(otherObjectPosition: Point): number {
-        let dx = this.position.x - otherObjectPosition.x;
-        let dy = this.position.y - otherObjectPosition.y;
+    distanceTo(position: Point): number {
+        let dx = this.position.x - position.x;
+        let dy = this.position.y - position.y;
         return Math.sqrt(dx * dx + dy * dy);
-    }
-
-    updateTrailer(timeDiff, trailer) {
-
     }
 }

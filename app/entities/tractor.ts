@@ -4,6 +4,8 @@ import * as utils from "../utils";
 import Sphere from "../geometry/sphere";
 import Point from "../geometry/point";
 import Size from "../geometry/size";
+import Is_using_trailer from "./is_using_trailer";
+import Trailer from "./trailer";
 
 export default class Tractor extends Vehicle {
 

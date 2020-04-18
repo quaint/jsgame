@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-var BarRenderer = /** @class */ (function () {
+var Bar_renderer = /** @class */ (function () {
     function BarRenderer(ctx) {
         this.ctx = ctx;
     }
@@ -26,4 +26,4 @@ var BarRenderer = /** @class */ (function () {
     return BarRenderer;
 }());
 exports["default"] = BarRenderer;
-//# sourceMappingURL=bar_renderer.js.map
+//# sourceMappingURL=barRenderer.js.map

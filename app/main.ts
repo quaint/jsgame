@@ -11,6 +11,7 @@ import Size from "./geometry/size";
 import BarRenderer from "./renderers/bar_renderer";
 import Vehicle from "./entities/vehicle";
 import atlas from '../assets/atlas.png'
+import IsUsingTrailer from "./entities/is_using_trailer"
 
 // window.requestAnimFrame = (function (callback) {
 //     return window.requestAnimationFrame ||
@@ -177,7 +178,7 @@ function animate(lastTime) {
         [combine1, combine2, tractor1, trailer1, trailer2]);
     machine1.updateBack();
 
-    if (activeMachine !== tractor1 && activeMachine !== tractor2) {
+    if (activeMachine instanceof Combine) {
         activeMachine.updateTrailer(timeDiff, trailer1);
         if (moveDirection < 0) {
             field.updateFromCombine(activeMachine, fieldContext, spritesImage);
@@ -189,9 +190,9 @@ function animate(lastTime) {
         }
     }
 
-    grainBar.update(activeMachine.grain / activeMachine.maxGrain);
-    trailerBar.update(trailer1.grain / trailer1.maxGrain);
-    fuelBar.update(activeMachine.fuel / activeMachine.maxFuel);
+    grainBar.updateLevel(activeMachine.grain / activeMachine.maxGrain);
+    trailerBar.updateLevel(trailer1.grain / trailer1.maxGrain);
+    fuelBar.updateLevel(activeMachine.fuel / activeMachine.maxFuel);
 
     if (activeMachine.position.x > centerX && activeMachine.position.x < field.widthInPx - centerX) {
         worldX = -activeMachine.position.x + centerX;
