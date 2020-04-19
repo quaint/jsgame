@@ -17,8 +17,8 @@ var line_1 = require("../geometry/line");
 var configuration_1 = require("../configuration");
 var Machine = /** @class */ (function (_super) {
     __extends(Machine, _super);
-    function Machine(position, size, anchor, sprite, ctx) {
-        var _this = _super.call(this, position, size, anchor, sprite, ctx) || this;
+    function Machine(position, size, sprite, ctx) {
+        var _this = _super.call(this, position, size, sprite, ctx) || this;
         _this.radius = _this.size.height / 2;
         _this.maxAngle = 0;
         _this.workSpeed = 30;
@@ -41,10 +41,9 @@ var Machine = /** @class */ (function (_super) {
         this.ctx.save();
         this.ctx.translate(this.position.x, this.position.y);
         this.ctx.rotate(this.angle); // * Math.PI / 180
-        // this.ctx.strokeRect(this.anchor.x * -this.size.width, this.anchor.y * -this.size.height, this.size.width,
-        //     this.size.height);
-        this.ctx.drawImage(this.sprite, 0, 230, this.size.width, this.size.height, this.pivot.x, this.pivot.y, this.size.width, this.size.height);
+        this.ctx.drawImage(this.sprite, 0, 230, this.size.width, this.size.height, this.topLeftOffset.x, this.topLeftOffset.y, this.size.width, this.size.height);
         this.ctx.restore();
+        _super.prototype.draw.call(this);
         if (configuration_1["default"].debug) {
             this.ctx.save();
             this.ctx.strokeStyle = "#00ff00";
@@ -52,14 +51,6 @@ var Machine = /** @class */ (function (_super) {
             this.ctx.moveTo(this.back.start.x, this.back.start.y);
             this.ctx.lineTo(this.back.end.x, this.back.end.y);
             this.ctx.stroke();
-            this.ctx.fillRect(this.getPin().x, this.getPin().y, 2, 2);
-            // this.ctx.fillRect(this.position.x, this.position.y, 5, 5);
-            this.ctx.beginPath();
-            var boundingSphere = this.getBoundingSphere();
-            this.ctx.arc(boundingSphere.position.x, boundingSphere.position.y, boundingSphere.radius, 0, 2 * Math.PI, false);
-            this.ctx.strokeRect(this.position.x + this.pivot.x, this.position.y + this.pivot.y, this.size.width, this.size.height);
-            this.ctx.stroke();
-            this.ctx.restore();
         }
     };
     return Machine;

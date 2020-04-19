@@ -4,6 +4,7 @@
  */
 import Sphere from "./geometry/sphere";
 import Point from "./geometry/point";
+import Vehicle from "./entities/vehicle";
 
 function normalizeAngle(delta) {
     if (delta > Math.PI) {
@@ -23,30 +24,25 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-/*
- * @param {Vehicle} connectedObject
- * @param {Vehicle} movingObject
- * @param {[Vehicle]} otherObjects
- * @returns {boolean} result
- */
 function drag(connectedObject, movingObject, otherObjects) {
     let objectDx = movingObject.position.x - connectedObject.position.x;
     let objectDy = movingObject.position.y - connectedObject.position.y;
     let angle = Math.atan2(objectDy, objectDx);
     let maxAngle = toRadians(connectedObject.maxAngle);
-    let delta = connectedObject.angle - movingObject.angle;
+    let angleDelta = connectedObject.angle - movingObject.angle;
 
-    delta = normalizeAngle(delta);
-    if (delta <= maxAngle && delta >= -maxAngle) {
+    angleDelta = normalizeAngle(angleDelta);
+
+    if (angleDelta <= maxAngle && angleDelta >= -maxAngle) {
         connectedObject.angle = angle;
-    } else if (delta > maxAngle) {
-        connectedObject.angle = angle - delta + maxAngle;
-    } else if (delta < -maxAngle) {
-        connectedObject.angle = angle - delta - maxAngle;
+    } else if (angleDelta > maxAngle) {
+        connectedObject.angle = angle - angleDelta + maxAngle;
+    } else if (angleDelta < -maxAngle) {
+        connectedObject.angle = angle - angleDelta - maxAngle;
     }
 
-    let objectWidth = connectedObject.getPin().x - connectedObject.position.x;
-    let objectHeight = connectedObject.getPin().y - connectedObject.position.y;
+    let objectWidth = connectedObject.getFrontPin().x - connectedObject.position.x;
+    let objectHeight = connectedObject.getFrontPin().y - connectedObject.position.y;
 
     let newX = movingObject.position.x - objectWidth;
     let newY = movingObject.position.y - objectHeight;
@@ -108,4 +104,18 @@ function max(first, second) {
     return first > second ? first : second;
 }
 
-export {checkCollision, drag, getRandomInt, intersects, normalizeAngle, toDegrees, toRadians, max}
+function distanceBetween(pointOne: Point, pointTwo: Point): number {
+    let dx = pointOne.x - pointTwo.x;
+    let dy = pointOne.y - pointTwo.y;
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
+function updatePositionAndAngle(object, newObject) {
+    object.position = newObject.position;
+    object.angle = newObject.angle;
+}
+
+export {
+    checkCollision, drag, getRandomInt, intersects, normalizeAngle, toDegrees, toRadians, max,
+    distanceBetween
+}

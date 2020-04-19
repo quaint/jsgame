@@ -25,30 +25,24 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 exports.getRandomInt = getRandomInt;
-/*
- * @param {Vehicle} connectedObject
- * @param {Vehicle} movingObject
- * @param {[Vehicle]} otherObjects
- * @returns {boolean} result
- */
 function drag(connectedObject, movingObject, otherObjects) {
     var objectDx = movingObject.position.x - connectedObject.position.x;
     var objectDy = movingObject.position.y - connectedObject.position.y;
     var angle = Math.atan2(objectDy, objectDx);
     var maxAngle = toRadians(connectedObject.maxAngle);
-    var delta = connectedObject.angle - movingObject.angle;
-    delta = normalizeAngle(delta);
-    if (delta <= maxAngle && delta >= -maxAngle) {
+    var angleDelta = connectedObject.angle - movingObject.angle;
+    angleDelta = normalizeAngle(angleDelta);
+    if (angleDelta <= maxAngle && angleDelta >= -maxAngle) {
         connectedObject.angle = angle;
     }
-    else if (delta > maxAngle) {
-        connectedObject.angle = angle - delta + maxAngle;
+    else if (angleDelta > maxAngle) {
+        connectedObject.angle = angle - angleDelta + maxAngle;
     }
-    else if (delta < -maxAngle) {
-        connectedObject.angle = angle - delta - maxAngle;
+    else if (angleDelta < -maxAngle) {
+        connectedObject.angle = angle - angleDelta - maxAngle;
     }
-    var objectWidth = connectedObject.getPin().x - connectedObject.position.x;
-    var objectHeight = connectedObject.getPin().y - connectedObject.position.y;
+    var objectWidth = connectedObject.getFrontPin().x - connectedObject.position.x;
+    var objectHeight = connectedObject.getFrontPin().y - connectedObject.position.y;
     var newX = movingObject.position.x - objectWidth;
     var newY = movingObject.position.y - objectHeight;
     var collision = false;
@@ -105,4 +99,14 @@ function max(first, second) {
     return first > second ? first : second;
 }
 exports.max = max;
+function distanceBetween(pointOne, pointTwo) {
+    var dx = pointOne.x - pointTwo.x;
+    var dy = pointOne.y - pointTwo.y;
+    return Math.sqrt(dx * dx + dy * dy);
+}
+exports.distanceBetween = distanceBetween;
+function updatePositionAndAngle(object, newObject) {
+    object.position = newObject.position;
+    object.angle = newObject.angle;
+}
 //# sourceMappingURL=utils.js.map

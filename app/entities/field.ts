@@ -1,22 +1,22 @@
 import Size from "../geometry/size";
 import Point from "../geometry/point";
+import Combine from "./combine";
+import Line from "../geometry/line";
+
+export enum FieldType {Plant, Stubble, Straw, Water, Grass, Ground}
 
 export default class Field {
+
     private position: Point;
-    private grid: number;
+    private readonly grid: number;
     private size: Size;
     widthInPx: number;
     heightInPx: number;
-    private parts: any[];
+    private readonly parts: any[];
     private ctx: any;
-    private sprite: any;
-    private typePlant: number;
-    private typeStubble: number;
-    private typeStraw: number;
-    private typeWater: number;
-    private typeGrass: number;
-    private typeGround: number;
-    constructor(position, grid, sprite, ctx) {
+    private readonly sprite: any;
+
+    constructor(position: Point, grid: number, sprite: any, ctx: any) {
         this.position = position;
         this.grid = grid;
         this.size = new Size(0, 0);
@@ -25,36 +25,30 @@ export default class Field {
         this.parts = [];
         this.ctx = ctx;
         this.sprite = sprite;
-        this.typePlant = 0;
-        this.typeStubble = 1;
-        this.typeStraw = 2;
-        this.typeWater = 3;
-        this.typeGrass = 4;
-        this.typeGround = 5;
     };
 
-    updateFromCombine(combine, ctx, spritesImage) {
+    updateFromCombine(combine: Combine): void {
         let headerPoints = this.getArrayOfPointsForLine(combine.header);
         for (let i = 0; i < headerPoints.length; i++) {
-            this.update(combine, headerPoints[i], this.typeStubble);
+            this.update(combine, headerPoints[i], FieldType.Stubble);
         }
 
         if (combine.isProcessing()) {
             let backPoints = this.getArrayOfPointsForLine(combine.back);
             for (let j = 0; j < backPoints.length; j++) {
-                this.update(combine, backPoints[j], this.typeStraw);
+                this.update(combine, backPoints[j], FieldType.Straw);
             }
         }
     };
 
-    updateFromMachine(machine, ctx, spritesImage) {
+    updateFromMachine(machine): void {
         let backPoints = this.getArrayOfPointsForLine(machine.back);
         for (let j = 0; j < backPoints.length; j++) {
-            this.update(machine, backPoints[j], this.typeGround);
+            this.update(machine, backPoints[j], FieldType.Ground);
         }
     };
 
-    load(fieldData) {
+    load(fieldData: Array<string>): void {
         this.size.width = fieldData[0].length;
         this.size.height = fieldData.length;
         this.widthInPx = this.size.width * this.grid;
@@ -73,7 +67,7 @@ export default class Field {
         }
     };
 
-    draw() {
+    draw(): void {
         for (let i = 0; i < this.size.width; i++) {
             for (let j = 0; j < this.size.height; j++) {
                 let partOfField = this.parts[i][j];
@@ -85,7 +79,7 @@ export default class Field {
         }
     };
 
-    getArrayOfPointsForLine(line) {
+    getArrayOfPointsForLine(line: Line): Array<Point> {
         let x0 = Math.floor((line.start.x - this.position.x) / this.grid);
         let y0 = Math.floor((line.start.y - this.position.y) / this.grid);
         let x1 = Math.floor((line.end.x - this.position.x) / this.grid);
@@ -97,10 +91,7 @@ export default class Field {
         let err = (dx > dy ? dx : -dy) / 2;
         let points = [];
         while (true) {
-            points.push({
-                x: x0,
-                y: y0
-            });
+            points.push(new Point(x0, y0));
             if (x0 === x1 && y0 === y1) {
                 break;
             }
@@ -117,48 +108,50 @@ export default class Field {
         return points;
     }
 
-    update(combine, point, type) {
+    update(combine: Combine, point: Point, type: FieldType): void {
         if (this.parts[point.x] === undefined || this.parts[point.x][point.y] === undefined) {
             return;
         }
         let partOfField = this.parts[point.x][point.y];
-        if (partOfField.type === this.typePlant && type === this.typeStubble) {
+        if (partOfField.type === FieldType.Plant && type === FieldType.Stubble) {
             partOfField.type = type;
             if (combine.notifyShouldProcess) {
                 combine.notifyShouldProcess();
             }
             this.drawPart(point, type);
-        } else if ((partOfField.type === this.typeStubble && type === this.typeStraw) ||
-            type === this.typeGround) {
+        } else if ((partOfField.type === FieldType.Stubble && type === FieldType.Straw) ||
+            type === FieldType.Ground) {
             partOfField.type = type;
             this.drawPart(point, type);
         }
     }
 
-    drawPart(point, type) {
+    drawPart(point: Point, type: FieldType): void {
         switch (type) {
-            case this.typePlant:
+            case FieldType.Plant:
                 this.drawFieldPartAt(point, 0);
                 break;
-            case this.typeStubble:
+            case FieldType.Stubble:
                 this.drawFieldPartAt(point, 20);
                 break;
-            case this.typeStraw:
+            case FieldType.Straw:
                 this.drawFieldPartAt(point, 40);
                 break;
-            case this.typeWater:
+            case FieldType.Water:
                 this.drawFieldPartAt(point, 60);
                 break;
-            case this.typeGrass:
+            case FieldType.Grass:
                 this.drawFieldPartAt(point, 80);
                 break;
-            case this.typeGround:
+            case FieldType.Ground:
                 this.drawFieldPartAt(point, 100);
                 break;
         }
     }
 
-    drawFieldPartAt(point, x) {
-        this.ctx.drawImage(this.sprite, x, 60, this.grid, this.grid, point.x * this.grid + this.position.x, point.y * this.grid + this.position.y, this.grid, this.grid);
+    drawFieldPartAt(point: Point, x): void {
+        this.ctx.drawImage(this.sprite, x, 60, this.grid, this.grid,
+            point.x * this.grid + this.position.x, point.y * this.grid + this.position.y,
+            this.grid, this.grid);
     }
 }

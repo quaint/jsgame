@@ -11,7 +11,6 @@ import Size from "./geometry/size";
 import BarRenderer from "./renderers/bar_renderer";
 import Vehicle from "./entities/vehicle";
 import atlas from '../assets/atlas.png'
-import IsUsingTrailer from "./entities/is_using_trailer"
 
 // window.requestAnimFrame = (function (callback) {
 //     return window.requestAnimationFrame ||
@@ -51,6 +50,11 @@ fieldCanvas.width = bufferWidth;
 fieldCanvas.height = bufferHeight;
 let fieldContext = fieldCanvas.getContext("2d");
 
+let overlayCanvas = document.createElement('canvas');
+overlayCanvas.width = bufferWidth;
+overlayCanvas.height = bufferHeight;
+let overlayContext = overlayCanvas.getContext("2d");
+
 let rotateDirection = 0;
 let moveDirection = 0;
 let command1 = false;
@@ -76,17 +80,22 @@ spritesImage.src = atlas;
 
 let field = new Field(new Point(100, 100), 20, spritesImage, fieldContext);
 
-let combine1 = new Combine(new Point(150, 150), new Size(71, 80), new Point(0.58, 0.5), 3000, 300, spritesImage, bufferContext);
-let combine2 = new Combine(new Point(150, 300), new Size(71, 80), new Point(0.58, 0.5), 3000, 300, spritesImage, bufferContext);
+let combine1 = new Combine(new Point(150, 150),3000, 300, spritesImage, bufferContext);
+let combine2 = new Combine(new Point(150, 300),3000, 300, spritesImage, bufferContext);
 
-let tractor1 = new Tractor(new Point(220, 450), new Size(31, 20), new Point(0.0, 0.5), 200, spritesImage, bufferContext);
-let trailer1 = new Trailer(new Point(160, 450), new Size(56, 24), new Point(0.0, 0.5), 9000, spritesImage, bufferContext);
-let trailer2 = new Trailer(new Point(100, 450), new Size(56, 24), new Point(0.0, 0.5), 9000, spritesImage, bufferContext);
+let tractor1 = new Tractor(new Point(220, 450), new Size(31, 20),
+    200, spritesImage, bufferContext);
+let trailer1 = new Trailer(new Point(160, 450), new Size(56, 24),
+    9000, spritesImage, bufferContext);
+let trailer2 = new Trailer(new Point(100, 450), new Size(56, 24),
+    9000, spritesImage, bufferContext);
 tractor1.connectedObject = trailer1;
 trailer1.connectedObject = trailer2;
 
-let tractor2 = new Tractor(new Point(220, 550), new Size(31, 20), new Point(0.0, 0.5), 200, spritesImage, bufferContext);
-let machine1 = new Machine(new Point(150, 550), new Size(16, 40), new Point(0.0, 0.5), spritesImage, bufferContext);
+let tractor2 = new Tractor(new Point(220, 550), new Size(31, 20),
+    200, spritesImage, bufferContext);
+let machine1 = new Machine(new Point(150, 550), new Size(16, 40),
+    spritesImage, bufferContext);
 tractor2.connectedObject = machine1;
 
 let activeMachine: Vehicle = combine1;
@@ -94,7 +103,7 @@ let activeMachine: Vehicle = combine1;
 let grainBar = new Bar(new Point(10, 10), 0.8, false, "grain");
 let trailerBar = new Bar(new Point(40, 10), 0.8, false, "trailer");
 let fuelBar = new Bar(new Point(70, 10), 0.2, true, "fuel");
-let barRenderer = new BarRenderer(bufferContext);
+let barRenderer = new BarRenderer(overlayContext);
 
 document.onkeydown = function (event) {
     switch (event.keyCode) {
@@ -110,9 +119,9 @@ document.onkeydown = function (event) {
         case keyCode.DOWN:
             moveDirection = 1;
             break;
-        case keyCode.NUMBER_1:
-            command1 = true;
-            break;
+        // case keyCode.NUMBER_1:
+        //     command1 = true;
+        //     break;
         // case keyCode.NUMBER_2:
         //     command2 = true;
         //     break;
@@ -133,7 +142,7 @@ document.onkeyup = function (event) {
             moveDirection = 0;
             break;
         case keyCode.NUMBER_1:
-            command1 = false;
+            command1 = !command1;
             break;
         case keyCode.NUMBER_2:
             command2 = !command2;
@@ -172,21 +181,21 @@ function animate(lastTime) {
         [combine2, tractor1, tractor2, trailer1, trailer2, machine1]);
     combine2.update(timeDiff, rotateDirection, moveDirection, command1, activeMachine === combine2,
         [combine1, tractor1, tractor2, trailer1, trailer2, machine1]);
-    tractor1.update(timeDiff, rotateDirection, moveDirection, command1, activeMachine === tractor1,
+    tractor1.update(timeDiff, rotateDirection, moveDirection, activeMachine === tractor1,
         [combine1, combine2, tractor2, machine1]);
-    tractor2.update(timeDiff, rotateDirection, moveDirection, command1, activeMachine === tractor2,
+    tractor2.update(timeDiff, rotateDirection, moveDirection, activeMachine === tractor2,
         [combine1, combine2, tractor1, trailer1, trailer2]);
     machine1.updateBack();
 
     if (activeMachine instanceof Combine) {
         activeMachine.updateTrailer(timeDiff, trailer1);
         if (moveDirection < 0) {
-            field.updateFromCombine(activeMachine, fieldContext, spritesImage);
+            field.updateFromCombine(activeMachine);
         }
     }
     if (activeMachine === tractor2) {
         if (moveDirection < 0) {
-            field.updateFromMachine(activeMachine.connectedObject, fieldContext, spritesImage);
+            field.updateFromMachine(activeMachine.connectedObject);
         }
     }
 
@@ -210,6 +219,7 @@ function animate(lastTime) {
     }
 
     bufferContext.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
+    overlayContext.clearRect(0, 0, bufferCanvas.width, bufferCanvas.height);
 
     combine1.draw();
     combine2.draw();
@@ -228,6 +238,7 @@ function animate(lastTime) {
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.drawImage(fieldCanvas, worldX, worldY);
     context.drawImage(bufferCanvas, worldX, worldY);
+    context.drawImage(overlayCanvas, 0, 0);
 
     lastTime = time;
     window.requestAnimationFrame(function () {

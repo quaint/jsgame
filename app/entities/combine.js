@@ -13,13 +13,13 @@ exports.__esModule = true;
 var utils = require("../utils");
 var vehicle_1 = require("./vehicle");
 var configuration_1 = require("../configuration");
-var sphere_1 = require("../geometry/sphere");
 var point_1 = require("../geometry/point");
 var line_1 = require("../geometry/line");
+var size_1 = require("../geometry/size");
 var Combine = /** @class */ (function (_super) {
     __extends(Combine, _super);
-    function Combine(position, size, anchor, maxGrain, maxFuel, sprite, ctx) {
-        var _this = _super.call(this, position, size, anchor, sprite, ctx) || this;
+    function Combine(position, maxGrain, maxFuel, sprite, ctx) {
+        var _this = _super.call(this, position, new size_1["default"](71, 80), sprite, ctx) || this;
         _this.linearSpeed = configuration_1["default"].combineLinearSpeed;
         _this.pouringSpeed = 100;
         _this.grain = 0;
@@ -37,7 +37,6 @@ var Combine = /** @class */ (function (_super) {
         var centerToBack = _this.size.width - 30;
         _this.radiusBack = Math.sqrt(Math.pow(backHeight, 2) + Math.pow(centerToBack, 2));
         _this.angleBack = Math.atan2(backHeight, centerToBack);
-        _this.anchor = new point_1["default"](0.0, 0.5);
         _this.pouring = false;
         return _this;
     }
@@ -47,17 +46,12 @@ var Combine = /** @class */ (function (_super) {
     Combine.prototype.update = function (timeDiff, rotateDirection, moveDirection, command, isActive, otherObjects) {
         var timeDelta = timeDiff * 0.001;
         if (isActive) {
-            var linearDistEachFrame = this.linearSpeed * timeDelta;
             this.pouring = command;
             if (moveDirection !== 0 || this.pouring) {
-                if (this.fuel > 0) {
-                    this.fuel -= timeDelta;
-                }
-                else {
-                    this.fuel = 0;
-                }
+                this.updateFuel(timeDelta);
             }
             if (this.fuel > 0) {
+                var linearDistEachFrame = this.linearSpeed * timeDelta;
                 var newAngle = this.angle;
                 if (moveDirection === 1) {
                     newAngle += utils.toRadians(linearDistEachFrame * -rotateDirection);
@@ -66,20 +60,13 @@ var Combine = /** @class */ (function (_super) {
                     newAngle += utils.toRadians(linearDistEachFrame * rotateDirection);
                 }
                 newAngle = utils.normalizeAngle(newAngle);
+                this.newAngle = newAngle;
                 var newX = this.position.x - moveDirection * Math.cos(this.angle) * linearDistEachFrame;
                 var newY = this.position.y - moveDirection * Math.sin(this.angle) * linearDistEachFrame;
-                var collision = false;
-                for (var i = 0; i < otherObjects.length; i++) {
-                    var sphere = new sphere_1["default"](new point_1["default"](newX, newY), this.boundingSphereRadius);
-                    if (utils.checkCollision(otherObjects[i].getBoundingSphere(), sphere)) {
-                        collision = true;
-                        break;
-                    }
-                }
-                if (!collision) {
-                    this.position.x = newX;
-                    this.position.y = newY;
-                    this.angle = newAngle;
+                this.newPosition = new point_1["default"](newX, newY);
+                if (!this.isInCollision(otherObjects)) {
+                    this.setPositionFromNew();
+                    this.setAngleFromNew();
                     this.updateHeader();
                     this.updateBack();
                 }
@@ -90,6 +77,14 @@ var Combine = /** @class */ (function (_super) {
         }
         this.updateAnimation(timeDiff);
     };
+    Combine.prototype.updateFuel = function (timeDelta) {
+        if (this.fuel > 0) {
+            this.fuel -= timeDelta;
+        }
+        else {
+            this.fuel = 0;
+        }
+    };
     Combine.prototype.notifyShouldProcess = function () {
         if (this.grain < this.maxGrain) {
             this.grain += 1;
@@ -99,7 +94,7 @@ var Combine = /** @class */ (function (_super) {
     Combine.prototype.updateTrailer = function (timeDiff, trailer) {
         var timeDelta = timeDiff * 0.001;
         if (this.pouring) {
-            var distance = this.distanceTo(trailer.position);
+            var distance = utils.distanceBetween(this.position, trailer.position);
             if (this.grain > 0 && distance < this.size.width) {
                 this.grain -= timeDelta * this.pouringSpeed;
                 if (trailer.grain < trailer.maxGrain) {
@@ -115,17 +110,9 @@ var Combine = /** @class */ (function (_super) {
         if (this.isProcessing()) {
             this.ctx.drawImage(this.sprite, this.animationFrame * 20, 80, 20, 20, -this.size.width + 20, -this.size.height / 2 + 31, 20, 20);
         }
-        this.ctx.drawImage(this.sprite, 0, 100, this.size.width, this.size.height, this.pivot.x, this.pivot.y, this.size.width, this.size.height);
+        this.ctx.drawImage(this.sprite, 0, 100, this.size.width, this.size.height, this.topLeftOffset.x, this.topLeftOffset.y, this.size.width, this.size.height);
         this.ctx.restore();
-        if (configuration_1["default"].debug) {
-            this.ctx.save();
-            this.ctx.strokeStyle = "#00ff00";
-            this.ctx.beginPath();
-            this.ctx.arc(this.getBoundingSphere().position.x, this.getBoundingSphere().position.y, this.getBoundingSphere().radius, 0, 2 * Math.PI, false);
-            this.ctx.stroke();
-            this.ctx.strokeRect(this.position.x + this.pivot.x, this.position.y + this.pivot.y, this.size.width, this.size.height);
-            this.ctx.restore();
-        }
+        _super.prototype.draw.call(this);
     };
     Combine.prototype.updateHeader = function () {
         var diagonalAngle1 = this.angle + this.angleHeader;

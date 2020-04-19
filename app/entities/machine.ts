@@ -4,6 +4,7 @@ import Point from "../geometry/point";
 import Line from "../geometry/line";
 import configuration from "../configuration";
 import Sphere from "../geometry/sphere";
+import Size from "../geometry/size";
 
 export default class Machine extends Vehicle {
 
@@ -12,8 +13,8 @@ export default class Machine extends Vehicle {
     private radiusBack: number;
     private angleBack: number;
 
-    constructor(position, size, anchor, sprite, ctx) {
-        super(position, size, anchor, sprite, ctx);
+    constructor(position: Point, size: Size, sprite, ctx) {
+        super(position, size, sprite, ctx);
         this.radius = this.size.height / 2;
         this.maxAngle = 0;
         this.workSpeed = 30;
@@ -24,7 +25,7 @@ export default class Machine extends Vehicle {
         this.angleBack = Math.atan2(backHeight, centerToBack);
     }
 
-    updateBack() {
+    updateBack(): void {
         let diagonalAngleBack1 = this.angle + this.angleBack - utils.toRadians(180); //flip to back of machine
         let diagonalAngleBack2 = this.angle - this.angleBack - utils.toRadians(180); //flip to back of machine
         this.back.start.x = Math.cos(diagonalAngleBack1) * this.radiusBack + this.position.x;
@@ -33,15 +34,14 @@ export default class Machine extends Vehicle {
         this.back.end.y = Math.sin(diagonalAngleBack2) * this.radiusBack + this.position.y;
     }
 
-    draw() {
+    draw(): void {
         this.ctx.save();
         this.ctx.translate(this.position.x, this.position.y);
         this.ctx.rotate(this.angle); // * Math.PI / 180
-        // this.ctx.strokeRect(this.anchor.x * -this.size.width, this.anchor.y * -this.size.height, this.size.width,
-        //     this.size.height);
         this.ctx.drawImage(this.sprite, 0, 230, this.size.width, this.size.height,
-            this.pivot.x, this.pivot.y, this.size.width, this.size.height);
+            this.topLeftOffset.x, this.topLeftOffset.y, this.size.width, this.size.height);
         this.ctx.restore();
+        super.draw();
         if (configuration.debug) {
             this.ctx.save();
             this.ctx.strokeStyle = "#00ff00";
@@ -49,14 +49,6 @@ export default class Machine extends Vehicle {
             this.ctx.moveTo(this.back.start.x, this.back.start.y);
             this.ctx.lineTo(this.back.end.x, this.back.end.y);
             this.ctx.stroke();
-            this.ctx.fillRect(this.getPin().x, this.getPin().y, 2, 2);
-            // this.ctx.fillRect(this.position.x, this.position.y, 5, 5);
-            this.ctx.beginPath();
-            let boundingSphere = this.getBoundingSphere();
-            this.ctx.arc(boundingSphere.position.x, boundingSphere.position.y, boundingSphere.radius, 0, 2 * Math.PI, false);
-            this.ctx.strokeRect(this.position.x + this.pivot.x, this.position.y + this.pivot.y, this.size.width, this.size.height);
-            this.ctx.stroke();
-            this.ctx.restore();
         }
     }
 }

@@ -1,6 +1,16 @@
 "use strict";
 exports.__esModule = true;
 var size_1 = require("../geometry/size");
+var point_1 = require("../geometry/point");
+var FieldType;
+(function (FieldType) {
+    FieldType[FieldType["Plant"] = 0] = "Plant";
+    FieldType[FieldType["Stubble"] = 1] = "Stubble";
+    FieldType[FieldType["Straw"] = 2] = "Straw";
+    FieldType[FieldType["Water"] = 3] = "Water";
+    FieldType[FieldType["Grass"] = 4] = "Grass";
+    FieldType[FieldType["Ground"] = 5] = "Ground";
+})(FieldType = exports.FieldType || (exports.FieldType = {}));
 var Field = /** @class */ (function () {
     function Field(position, grid, sprite, ctx) {
         this.position = position;
@@ -11,31 +21,25 @@ var Field = /** @class */ (function () {
         this.parts = [];
         this.ctx = ctx;
         this.sprite = sprite;
-        this.typePlant = 0;
-        this.typeStubble = 1;
-        this.typeStraw = 2;
-        this.typeWater = 3;
-        this.typeGrass = 4;
-        this.typeGround = 5;
     }
     ;
-    Field.prototype.updateFromCombine = function (combine, ctx, spritesImage) {
+    Field.prototype.updateFromCombine = function (combine) {
         var headerPoints = this.getArrayOfPointsForLine(combine.header);
         for (var i = 0; i < headerPoints.length; i++) {
-            this.update(combine, headerPoints[i], this.typeStubble);
+            this.update(combine, headerPoints[i], FieldType.Stubble);
         }
         if (combine.isProcessing()) {
             var backPoints = this.getArrayOfPointsForLine(combine.back);
             for (var j = 0; j < backPoints.length; j++) {
-                this.update(combine, backPoints[j], this.typeStraw);
+                this.update(combine, backPoints[j], FieldType.Straw);
             }
         }
     };
     ;
-    Field.prototype.updateFromMachine = function (machine, ctx, spritesImage) {
+    Field.prototype.updateFromMachine = function (machine) {
         var backPoints = this.getArrayOfPointsForLine(machine.back);
         for (var j = 0; j < backPoints.length; j++) {
-            this.update(machine, backPoints[j], this.typeGround);
+            this.update(machine, backPoints[j], FieldType.Ground);
         }
     };
     ;
@@ -82,10 +86,7 @@ var Field = /** @class */ (function () {
         var err = (dx > dy ? dx : -dy) / 2;
         var points = [];
         while (true) {
-            points.push({
-                x: x0,
-                y: y0
-            });
+            points.push(new point_1["default"](x0, y0));
             if (x0 === x1 && y0 === y1) {
                 break;
             }
@@ -106,37 +107,37 @@ var Field = /** @class */ (function () {
             return;
         }
         var partOfField = this.parts[point.x][point.y];
-        if (partOfField.type === this.typePlant && type === this.typeStubble) {
+        if (partOfField.type === FieldType.Plant && type === FieldType.Stubble) {
             partOfField.type = type;
             if (combine.notifyShouldProcess) {
                 combine.notifyShouldProcess();
             }
             this.drawPart(point, type);
         }
-        else if ((partOfField.type === this.typeStubble && type === this.typeStraw) ||
-            type === this.typeGround) {
+        else if ((partOfField.type === FieldType.Stubble && type === FieldType.Straw) ||
+            type === FieldType.Ground) {
             partOfField.type = type;
             this.drawPart(point, type);
         }
     };
     Field.prototype.drawPart = function (point, type) {
         switch (type) {
-            case this.typePlant:
+            case FieldType.Plant:
                 this.drawFieldPartAt(point, 0);
                 break;
-            case this.typeStubble:
+            case FieldType.Stubble:
                 this.drawFieldPartAt(point, 20);
                 break;
-            case this.typeStraw:
+            case FieldType.Straw:
                 this.drawFieldPartAt(point, 40);
                 break;
-            case this.typeWater:
+            case FieldType.Water:
                 this.drawFieldPartAt(point, 60);
                 break;
-            case this.typeGrass:
+            case FieldType.Grass:
                 this.drawFieldPartAt(point, 80);
                 break;
-            case this.typeGround:
+            case FieldType.Ground:
                 this.drawFieldPartAt(point, 100);
                 break;
         }
