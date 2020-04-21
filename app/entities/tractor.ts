@@ -8,6 +8,7 @@ export default class Tractor extends Vehicle {
 
     fuel: number;
     maxFuel: number;
+    private timeMultiplier = 0.001;
 
     constructor(position: Point, size: Size, maxFuel: number, sprite, ctx) {
         super(position, size, sprite, ctx);
@@ -16,110 +17,88 @@ export default class Tractor extends Vehicle {
         this.maxFuel = maxFuel;
     }
 
+
     update(timeDiff: number, rotateDirection: number, moveDirection: number, isActive: boolean,
            otherObjects: Array<Vehicle>): void {
 
-        if (isActive) {
-            let timeDelta = timeDiff * 0.001;
-            if (this.connectedObject.workSpeed) {
-                this.linearSpeed = this.connectedObject.workSpeed;
-            }
+        if (!isActive) {
+            return
+        }
 
-            let linearDistEachFrame = this.linearSpeed * timeDelta;
+        this.adjustLinearSpeedTo(this.connectedObject);
 
-            if (moveDirection !== 0) {
-                this.updateFuel(timeDelta);
-            }
+        let timeDelta = timeDiff * this.timeMultiplier;
+        let linearDistEachFrame = this.linearSpeed * timeDelta;
 
-            if (this.fuel > 0) {
-                let newAngle = this.angle;
-                if (moveDirection === 1) {
-                    newAngle += utils.toRadians(linearDistEachFrame * -rotateDirection);
-                } else if (moveDirection === -1) {
-                    newAngle += utils.toRadians(linearDistEachFrame * rotateDirection);
-                }
-                newAngle = utils.normalizeAngle(newAngle);
-                this.newAngle = newAngle;
+        this.updateFuel(timeDelta, moveDirection);
 
-                let newX = this.position.x - moveDirection * Math.cos(newAngle) * linearDistEachFrame;
-                let newY = this.position.y - moveDirection * Math.sin(newAngle) * linearDistEachFrame;
-                this.newPosition = new Point(newX, newY);
+        if (this.fuel > 0) {
+            this.updateAngle(moveDirection, linearDistEachFrame, rotateDirection);
+            this.updatePosition(moveDirection, linearDistEachFrame);
 
-
-                if (!this.isInCollision(otherObjects)) {
+            if (!this.isInCollision(otherObjects)) {
+                if (!this.connectedObject) {
                     this.setPositionFromNew();
                     this.setAngleFromNew();
+                    return
+                }
 
-                    if (this.connectedObject) {
-                        this.connectedObject.dragFromPointAngleAndSetNewPosition(this.getBackPin(), this.angle);
-                        // if (!this.connectedObject.isInCollision(otherObjects)) {
-                        //     this.connectedObject.setPositionFromNew();
-                        //     this.connectedObject.setAngleFromNew();
-                        // }
-
-                        if (this.connectedObject.connectedObject) {
-                            this.connectedObject.connectedObject.dragFromPointAngleAndSetNewPosition(
-                                this.connectedObject.getBackPin(), this.connectedObject.angle);
-                            // if (!this.connectedObject.connectedObject.isInCollision(otherObjects)) {
-                            //     this.connectedObject.connectedObject.setPositionFromNew();
-                            //     this.connectedObject.connectedObject.setAngleFromNew();
-                            // }
-                        }
+                this.connectedObject.dragFromPointAngleAndSetNewPosition(this.getBackPin(), this.newAngle);
+                if (!this.connectedObject.isInCollision(otherObjects)) {
+                    if (!this.connectedObject.connectedObject) {
+                        this.setPositionFromNew();
+                        this.setAngleFromNew();
+                        this.connectedObject.setPositionFromNew();
+                        this.connectedObject.setAngleFromNew();
+                        return
                     }
 
-                    // if (this.connectedObject) {
-                    //     let firstConnectedObj = this.createCheckObject(this.connectedObject);
-                    //     let newObj = {
-                    //         position: new Point(newX, newY),
-                    //         angle: this.angle,
-                    //         maxAngle: this.maxAngle,
-                    //     };
-                    //     let canDragFirst = utils.drag(firstConnectedObj, newObj, otherObjects);
-                    //     if (canDragFirst && this.connectedObject.connectedObject) {
-                    //         let secondConnectedObj = this.createCheckObject(this.connectedObject.connectedObject);
-                    //         let canDragSecond = utils.drag(secondConnectedObj, firstConnectedObj, otherObjects);
-                    //         if (canDragSecond) {
-                    //             utils.updatePositionAndAngle(this.connectedObject, firstConnectedObj);
-                    //             utils.updatePositionAndAngle(this.connectedObject.connectedObject, secondConnectedObj);
-                    //             let newObj = {position: new Point(newX, newY), angle: newAngle};
-                    //             utils.updatePositionAndAngle(this, newObj);
-                    //         }
-                    //     } else if (canDragFirst) {
-                    //         utils.updatePositionAndAngle(this.connectedObject, firstConnectedObj);
-                    //         let newObj = {position: new Point(newX, newY), angle: newAngle};
-                    //         utils.updatePositionAndAngle(this, newObj);
-                    //     }
-                    // } else {
-                    //     let newObj = {position: new Point(newX, newY), angle: newAngle};
-                    //     utils.updatePositionAndAngle(this, newObj);
-                    // }
+                    this.connectedObject.connectedObject.dragFromPointAngleAndSetNewPosition(
+                        this.connectedObject.getBackPin(), this.connectedObject.newAngle);
+                    if (!this.connectedObject.connectedObject.isInCollision(otherObjects)) {
+                        this.setPositionFromNew();
+                        this.setAngleFromNew();
+                        this.connectedObject.setPositionFromNew();
+                        this.connectedObject.setAngleFromNew();
+                        this.connectedObject.connectedObject.setPositionFromNew();
+                        this.connectedObject.connectedObject.setAngleFromNew();
+                    }
                 }
             }
         }
     };
 
-    private updateFuel(timeDelta): void {
-        if (this.fuel > 0) {
-            this.fuel -= timeDelta;
-        } else {
-            this.fuel = 0;
+    private updatePosition(moveDirection: number, linearDistEachFrame) {
+        let newX = this.position.x - moveDirection * Math.cos(this.newAngle) * linearDistEachFrame;
+        let newY = this.position.y - moveDirection * Math.sin(this.newAngle) * linearDistEachFrame;
+        this.newPosition = new Point(newX, newY);
+    }
+
+    private updateAngle(moveDirection: number, linearDistEachFrame, rotateDirection: number) {
+        let newAngle = this.angle;
+        if (moveDirection === 1) {
+            newAngle += utils.toRadians(linearDistEachFrame * -rotateDirection);
+        } else if (moveDirection === -1) {
+            newAngle += utils.toRadians(linearDistEachFrame * rotateDirection);
+        }
+        newAngle = utils.normalizeAngle(newAngle);
+        this.newAngle = newAngle;
+    }
+
+    private adjustLinearSpeedTo(object: Vehicle): void {
+        if (object.workSpeed) {
+            this.linearSpeed = object.workSpeed;
         }
     }
 
-    createCheckObject(obj) {
-        return {
-            radius: obj.boundingSphereRadius,
-            size: obj.size,
-            position: obj.position,
-            angle: obj.angle,
-            maxAngle: obj.maxAngle,
-            getPin: function () {
-                return new Point(
-                    this.position.x + Math.cos(this.angle) * (this.size.width - 0),
-                    this.position.y + Math.sin(this.angle) * (this.size.width - 0)
-                );
+    private updateFuel(timeDelta: number, moveDirection: number): void {
+        if (moveDirection !== 0) {
+            if (this.fuel > 0) {
+                this.fuel -= timeDelta;
+            } else {
+                this.fuel = 0;
             }
-        };
+        }
     }
 
     draw(): void {

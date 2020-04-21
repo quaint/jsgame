@@ -35,10 +35,10 @@ var Vehicle = /** @class */ (function () {
         return new sphere_1["default"](new point_1["default"](point.x, point.y), this.boundingSphereRadius);
     };
     Vehicle.prototype.getFrontPin = function () {
-        return new point_1["default"](this.position.x + Math.cos(this.angle) * this.size.halfOfWidth, this.position.y + Math.sin(this.angle) * this.size.halfOfWidth);
+        return new point_1["default"](this.position.x + Math.cos(this.newAngle) * this.size.halfOfWidth, this.position.y + Math.sin(this.newAngle) * this.size.halfOfWidth);
     };
     Vehicle.prototype.getBackPin = function () {
-        return new point_1["default"](this.position.x - Math.cos(this.angle) * this.size.halfOfWidth, this.position.y - Math.sin(this.angle) * this.size.halfOfWidth);
+        return new point_1["default"](this.newPosition.x - Math.cos(this.newAngle) * this.size.halfOfWidth, this.newPosition.y - Math.sin(this.newAngle) * this.size.halfOfWidth);
     };
     Vehicle.prototype.dragFromPointAngleAndSetNewPosition = function (point, pointAngle) {
         var objectsDx = point.x - this.position.x;
@@ -47,20 +47,18 @@ var Vehicle = /** @class */ (function () {
         var maxAngle = utils_1.toRadians(this.maxAngle);
         var angleDelta = this.angle - pointAngle;
         angleDelta = utils_2.normalizeAngle(angleDelta);
-        if (angleDelta <= maxAngle && angleDelta >= -maxAngle) {
-            this.angle = angle;
-        }
-        else if (angleDelta > maxAngle) {
-            this.angle = angle - angleDelta + maxAngle;
+        if (angleDelta > maxAngle) {
+            angle = angle - angleDelta + maxAngle;
         }
         else if (angleDelta < -maxAngle) {
-            this.angle = angle - angleDelta - maxAngle;
+            angle = angle - angleDelta - maxAngle;
         }
+        this.newAngle = angle;
         var pinAndDragPointDx = this.getFrontPin().x - this.position.x;
         var pinAndDragPointDy = this.getFrontPin().y - this.position.y;
         var newX = point.x - pinAndDragPointDx;
         var newY = point.y - pinAndDragPointDy;
-        this.position = new point_1["default"](newX, newY);
+        this.newPosition = new point_1["default"](newX, newY);
     };
     Vehicle.prototype.updateAnimation = function (timeDiff) {
         if (this.animationDelta > this.msPerFrame) {

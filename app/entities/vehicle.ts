@@ -74,14 +74,14 @@ export default abstract class Vehicle {
 
     getFrontPin(): Point {
         return new Point(
-            this.position.x + Math.cos(this.angle) * this.size.halfOfWidth,
-            this.position.y + Math.sin(this.angle) * this.size.halfOfWidth);
+            this.position.x + Math.cos(this.newAngle) * this.size.halfOfWidth,
+            this.position.y + Math.sin(this.newAngle) * this.size.halfOfWidth);
     }
 
     getBackPin(): Point {
         return new Point(
-            this.position.x - Math.cos(this.angle) * this.size.halfOfWidth,
-            this.position.y - Math.sin(this.angle) * this.size.halfOfWidth);
+            this.newPosition.x - Math.cos(this.newAngle) * this.size.halfOfWidth,
+            this.newPosition.y - Math.sin(this.newAngle) * this.size.halfOfWidth);
     }
 
     dragFromPointAngleAndSetNewPosition(point: Point, pointAngle: number): void {
@@ -93,20 +93,19 @@ export default abstract class Vehicle {
         let angleDelta = this.angle - pointAngle;
         angleDelta = normalizeAngle(angleDelta);
 
-        if (angleDelta <= maxAngle && angleDelta >= -maxAngle) {
-            this.angle = angle;
-        } else if (angleDelta > maxAngle) {
-            this.angle = angle - angleDelta + maxAngle;
+        if (angleDelta > maxAngle) {
+            angle = angle - angleDelta + maxAngle;
         } else if (angleDelta < -maxAngle) {
-            this.angle = angle - angleDelta - maxAngle;
+            angle = angle - angleDelta - maxAngle;
         }
+        this.newAngle = angle;
 
         let pinAndDragPointDx = this.getFrontPin().x - this.position.x;
         let pinAndDragPointDy = this.getFrontPin().y - this.position.y;
 
         let newX = point.x - pinAndDragPointDx;
         let newY = point.y - pinAndDragPointDy;
-        this.position = new Point(newX, newY);
+        this.newPosition = new Point(newX, newY);
     }
 
     updateAnimation(timeDiff: number): void {
