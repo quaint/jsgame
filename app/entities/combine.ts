@@ -1,7 +1,6 @@
 import * as utils from "../utils";
 import Vehicle from "./vehicle";
 import configuration from "../configuration";
-import Sphere from "../geometry/sphere";
 import Point from "../geometry/point";
 import Line from "../geometry/line";
 import IsUsingTrailer from "./is_using_trailer";
@@ -37,8 +36,8 @@ export default class Combine extends Vehicle implements IsUsingTrailer {
         this.defaultWorkingTime = 1000;
         this.workingSpeed = 1000;
 
-        this.header = new Line(new Point(0, 0), new Point(0,0));
-        this.back = new Line(new Point(0, 0), new Point(0,0));
+        this.header = new Line(new Point(0, 0), new Point(0, 0));
+        this.back = new Line(new Point(0, 0), new Point(0, 0));
 
         this.radiusHeader = this.size.height / 2;
         this.angleHeader = utils.toRadians(60);
@@ -55,7 +54,7 @@ export default class Combine extends Vehicle implements IsUsingTrailer {
     }
 
     update(timeDiff: number, rotateDirection: number, moveDirection: number, command: boolean,
-           isActive: boolean, otherObjects: Array<Vehicle>): void {
+        isActive: boolean, otherObjects: Array<Vehicle>): void {
 
         let timeDelta = timeDiff * 0.001;
 
@@ -131,7 +130,8 @@ export default class Combine extends Vehicle implements IsUsingTrailer {
         this.ctx.translate(this.position.x, this.position.y);
         this.ctx.rotate(this.angle);
         if (this.isProcessing()) {
-            this.ctx.drawImage(this.sprite, this.animationFrame * 20, 80, 20, 20, -this.size.width + 20, -this.size.height / 2 + 31, 20, 20);
+            this.ctx.drawImage(this.sprite, this.animationFrame * 20, 80, 20, 20, 
+                -this.size.width + 20, -this.size.height / 2 + 31, 20, 20);
         }
         this.ctx.drawImage(this.sprite, 0, 100, this.size.width, this.size.height,
             this.topLeftOffset.x, this.topLeftOffset.y, this.size.width, this.size.height);

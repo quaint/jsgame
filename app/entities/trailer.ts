@@ -21,12 +21,13 @@ export default class Trailer extends Vehicle {
         this.ctx.save();
         this.ctx.translate(this.position.x, this.position.y);
         this.ctx.rotate(this.angle); // * Math.PI / 180
-        // if (this.grain > 0) {
-        //     this.ctx.drawImage(this.sprite, 20, 20, 20, 20, -this.size.width, -this.size.height / 2, this.size.width, this.size.height);
-        // } else {
-        this.ctx.drawImage(this.sprite, 0, 180, this.size.width, this.size.height,
-            this.topLeftOffset.x, this.topLeftOffset.y, this.size.width, this.size.height);
-        // }
+        if (this.grain > 0) {
+            this.ctx.drawImage(this.sprite, 0, 270, this.size.width, this.size.height,
+                this.topLeftOffset.x, this.topLeftOffset.y, this.size.width, this.size.height);
+        } else {
+            this.ctx.drawImage(this.sprite, 0, 180, this.size.width, this.size.height,
+                this.topLeftOffset.x, this.topLeftOffset.y, this.size.width, this.size.height);
+        }
         this.ctx.restore();
         super.draw();
     }

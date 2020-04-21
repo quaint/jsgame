@@ -4,8 +4,8 @@ import Machine from "./entities/machine";
 import Trailer from "./entities/trailer";
 import Bar from "./ui/bar";
 import Tractor from "./entities/tractor";
-import {default as fieldData} from "./fielddata";
-import {default as keyCode} from "./keycode";
+import { default as fieldData } from "./fielddata";
+import { default as keyCode } from "./keycode";
 import Point from "./geometry/point";
 import Size from "./geometry/size";
 import BarRenderer from "./renderers/bar_renderer";
@@ -35,7 +35,7 @@ let centerY = screenHeight / 2;
 let bufferWidth = 3040;
 let bufferHeight = 1920;
 
-let canvas = <HTMLCanvasElement> document.getElementById("canvas");
+let canvas = <HTMLCanvasElement>document.getElementById("canvas");
 canvas.width = screenWidth;
 canvas.height = screenHeight;
 let context = canvas.getContext("2d");
@@ -80,8 +80,8 @@ spritesImage.src = atlas;
 
 let field = new Field(new Point(100, 100), 20, spritesImage, fieldContext);
 
-let combine1 = new Combine(new Point(150, 150),3000, 300, spritesImage, bufferContext);
-let combine2 = new Combine(new Point(150, 300),3000, 300, spritesImage, bufferContext);
+let combine1 = new Combine(new Point(150, 150), 3000, 300, spritesImage, bufferContext);
+let combine2 = new Combine(new Point(150, 300), 3000, 300, spritesImage, bufferContext);
 
 let tractor1 = new Tractor(new Point(220, 450), new Size(31, 20),
     200, spritesImage, bufferContext);

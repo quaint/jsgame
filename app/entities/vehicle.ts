@@ -84,8 +84,7 @@ export default abstract class Vehicle {
             this.position.y - Math.sin(this.angle) * this.size.halfOfWidth);
     }
 
-    dragFromPointAndAngle(point: Point, pointAngle: number): void {
-
+    dragFromPointAngleAndSetNewPosition(point: Point, pointAngle: number): void {
         let objectsDx = point.x - this.position.x;
         let objectsDy = point.y - this.position.y;
         let angle = Math.atan2(objectsDy, objectsDx);
@@ -107,7 +106,6 @@ export default abstract class Vehicle {
 
         let newX = point.x - pinAndDragPointDx;
         let newY = point.y - pinAndDragPointDy;
-
         this.position = new Point(newX, newY);
     }
 

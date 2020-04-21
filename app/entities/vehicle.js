@@ -40,7 +40,7 @@ var Vehicle = /** @class */ (function () {
     Vehicle.prototype.getBackPin = function () {
         return new point_1["default"](this.position.x - Math.cos(this.angle) * this.size.halfOfWidth, this.position.y - Math.sin(this.angle) * this.size.halfOfWidth);
     };
-    Vehicle.prototype.dragFromPointAndAngle = function (point, pointAngle) {
+    Vehicle.prototype.dragFromPointAngleAndSetNewPosition = function (point, pointAngle) {
         var objectsDx = point.x - this.position.x;
         var objectsDy = point.y - this.position.y;
         var angle = Math.atan2(objectsDy, objectsDx);

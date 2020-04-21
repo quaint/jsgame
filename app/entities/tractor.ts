@@ -51,10 +51,19 @@ export default class Tractor extends Vehicle {
                     this.setAngleFromNew();
 
                     if (this.connectedObject) {
-                        this.connectedObject.dragFromPointAndAngle(this.getBackPin(), this.angle);
+                        this.connectedObject.dragFromPointAngleAndSetNewPosition(this.getBackPin(), this.angle);
+                        // if (!this.connectedObject.isInCollision(otherObjects)) {
+                        //     this.connectedObject.setPositionFromNew();
+                        //     this.connectedObject.setAngleFromNew();
+                        // }
+
                         if (this.connectedObject.connectedObject) {
-                            this.connectedObject.connectedObject.dragFromPointAndAngle(
+                            this.connectedObject.connectedObject.dragFromPointAngleAndSetNewPosition(
                                 this.connectedObject.getBackPin(), this.connectedObject.angle);
+                            // if (!this.connectedObject.connectedObject.isInCollision(otherObjects)) {
+                            //     this.connectedObject.connectedObject.setPositionFromNew();
+                            //     this.connectedObject.connectedObject.setAngleFromNew();
+                            // }
                         }
                     }
 

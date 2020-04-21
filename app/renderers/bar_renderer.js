@@ -1,10 +1,10 @@
 "use strict";
 exports.__esModule = true;
 var Bar_renderer = /** @class */ (function () {
-    function BarRenderer(ctx) {
+    function Bar_renderer(ctx) {
         this.ctx = ctx;
     }
-    BarRenderer.prototype.render = function (bar) {
+    Bar_renderer.prototype.render = function (bar) {
         var barHeight = bar.level * bar.size.height;
         this.ctx.save();
         this.ctx.fillStyle = "#ffffff";
@@ -23,7 +23,7 @@ var Bar_renderer = /** @class */ (function () {
         this.ctx.fillText(bar.title, bar.position.x, bar.position.y + bar.size.height + bar.textMargin);
         this.ctx.restore();
     };
-    return BarRenderer;
+    return Bar_renderer;
 }());
-exports["default"] = BarRenderer;
-//# sourceMappingURL=barRenderer.js.map
+exports["default"] = Bar_renderer;
+//# sourceMappingURL=bar_renderer.js.map

@@ -1,8 +1,11 @@
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -50,9 +53,17 @@ var Tractor = /** @class */ (function (_super) {
                     this.setPositionFromNew();
                     this.setAngleFromNew();
                     if (this.connectedObject) {
-                        this.connectedObject.dragFromPointAndAngle(this.getBackPin(), this.angle);
+                        this.connectedObject.dragFromPointAngleAndSetNewPosition(this.getBackPin(), this.angle);
+                        // if (!this.connectedObject.isInCollision(otherObjects)) {
+                        //     this.connectedObject.setPositionFromNew();
+                        //     this.connectedObject.setAngleFromNew();
+                        // }
                         if (this.connectedObject.connectedObject) {
-                            this.connectedObject.connectedObject.dragFromPointAndAngle(this.connectedObject.getBackPin(), this.connectedObject.angle);
+                            this.connectedObject.connectedObject.dragFromPointAngleAndSetNewPosition(this.connectedObject.getBackPin(), this.connectedObject.angle);
+                            // if (!this.connectedObject.connectedObject.isInCollision(otherObjects)) {
+                            //     this.connectedObject.connectedObject.setPositionFromNew();
+                            //     this.connectedObject.connectedObject.setAngleFromNew();
+                            // }
                         }
                     }
                     // if (this.connectedObject) {
